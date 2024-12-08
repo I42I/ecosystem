@@ -1,0 +1,58 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ecosystem.ViewModels"
+        xmlns:models="using:ecosystem.Models.Core"
+        x:Class="ecosystem.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="Ecosystem"
+        Width="800" Height="450"
+        WindowStartupLocation="CenterScreen"
+        Background="White">
+
+    <Grid>
+        <Border BorderBrush="Black" BorderThickness="1">
+            <Canvas Name="WorldCanvas" Width="800" Height="450">
+                <Rectangle Width="800" Height="450" Fill="#E0E0E0"/>
+                
+                <ItemsControl ItemsSource="{Binding Entities, Mode=OneWay}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas Width="800" Height="450"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type models:Entity}">
+                            <Canvas>
+                                <Ellipse
+                                    Width="10"
+                                    Height="10"
+                                    Fill="{Binding Color}">
+                                    <Ellipse.RenderTransform>
+                                        <TranslateTransform 
+                                            X="{Binding Position.X}"
+                                            Y="{Binding Position.Y}"/>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                            </Canvas>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Canvas>
+        </Border>
+
+        <StackPanel Orientation="Horizontal" 
+                    VerticalAlignment="Bottom" 
+                    HorizontalAlignment="Center"
+                    Margin="10">
+            <Button Command="{Binding StartSimulationCommand}" 
+                    Margin="5">Start</Button>
+            <Button Command="{Binding PauseSimulationCommand}" 
+                    Margin="5">Pause</Button>
+            <Button Command="{Binding ResetSimulationCommand}" 
+                    Margin="5">Reset</Button>
+            <TextBlock Text="{Binding Status}" 
+                      VerticalAlignment="Center"
+                      Margin="10,0"/>
+        </StackPanel>
+    </Grid>
+</Window>
