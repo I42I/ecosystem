@@ -8,13 +8,6 @@ public class Position : INotifyPropertyChanged
     private double _x;
     private double _y;
 
-    public Position(double x, double y)
-    {
-        Console.WriteLine($"Creating position at ({x}, {y})");
-        X = x;
-        Y = y;
-    }
-
     public double X
     {
         get => _x;
@@ -24,12 +17,12 @@ public class Position : INotifyPropertyChanged
             {
                 _x = value;
                 Console.WriteLine($"Position X changed to {value}");
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(X)));
+                OnPropertyChanged(nameof(X));
             }
         }
     }
 
-    public double Y 
+    public double Y
     {
         get => _y;
         set
@@ -38,9 +31,24 @@ public class Position : INotifyPropertyChanged
             {
                 _y = value;
                 Console.WriteLine($"Position Y changed to {value}");
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Y)));
+                OnPropertyChanged(nameof(Y));
             }
         }
+    }
+
+    public Position(double x, double y)
+    {
+        X = x;
+        Y = y;
+    }
+
+    public Position() : this(0, 0) 
+    {
+    }
+
+    private void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

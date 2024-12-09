@@ -7,7 +7,7 @@ using ecosystem.Services.World;
 
 namespace ecosystem.Models.Entities.Animals;
 
-public abstract class Animal : LifeForm, IMoveable, IReproducible
+public abstract class Animal : MoveableEntity, IReproducible
 {
     protected readonly IEntityLocator<Animal> _entityLocator;
     protected readonly IWorldService _worldService;
@@ -27,7 +27,6 @@ public abstract class Animal : LifeForm, IMoveable, IReproducible
     {
         _entityLocator = entityLocator;
         _worldService = worldService;
-        Position = position;
         IsMale = isMale;
         VisionRadius = visionRadius;
         ContactRadius = contactRadius;
@@ -40,22 +39,7 @@ public abstract class Animal : LifeForm, IMoveable, IReproducible
     public double ReproductionCooldown { get; set; }
     public double HungerThreshold { get; set; }
     public double ReproductionEnergyThreshold { get; set; }
-    public double MovementSpeed { get; set; }
     public double ReproductionEnergyCost { get; set; }
-
-    // Implémentation de IMoveable
-    public void Move(double deltaX, double deltaY)
-    {
-        Position = new Position(Position.X + deltaX, Position.Y + deltaY);
-        InternalConsumeEnergy(CalculateMovementEnergyCost(deltaX, deltaY));
-    }
-
-    public double GetDistanceTo(IMoveable other)
-    {
-        double deltaX = Position.X - other.Position.X;
-        double deltaY = Position.Y - other.Position.Y;
-        return Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
-    }
 
     public override double GetEnvironmentMovementModifier()
     {

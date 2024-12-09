@@ -71,18 +71,4 @@ public abstract class Plant : LifeForm
         // OrganicWaste waste = new OrganicWaste(Position, Energy);
         // Add waste to the ecosystem
     }
-
-    public double MovementSpeed => 0.0;
-
-    public void Move(double deltaX, double deltaY)
-    {
-        // Les plantes ne peuvent pas se déplacer
-    }
-
-    public double GetDistanceTo(IMoveable other)
-    {
-        double deltaX = Position.X - other.Position.X;
-        double deltaY = Position.Y - other.Position.Y;
-        return Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
-    }
 }

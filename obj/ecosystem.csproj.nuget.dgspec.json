@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\ECAM\\BAC 3\\POO\\ecosystem\\ecosystem.csproj": {}
+    "D:\\ECAM\\BAC 3\\ProgOO\\ecosystem\\ecosystem.csproj": {}
   },
   "projects": {
-    "C:\\ECAM\\BAC 3\\POO\\ecosystem\\ecosystem.csproj": {
+    "D:\\ECAM\\BAC 3\\ProgOO\\ecosystem\\ecosystem.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\ECAM\\BAC 3\\POO\\ecosystem\\ecosystem.csproj",
+        "projectUniqueName": "D:\\ECAM\\BAC 3\\ProgOO\\ecosystem\\ecosystem.csproj",
         "projectName": "ecosystem",
-        "projectPath": "C:\\ECAM\\BAC 3\\POO\\ecosystem\\ecosystem.csproj",
+        "projectPath": "D:\\ECAM\\BAC 3\\ProgOO\\ecosystem\\ecosystem.csproj",
         "packagesPath": "C:\\Users\\Masur\\.nuget\\packages\\",
-        "outputPath": "C:\\ECAM\\BAC 3\\POO\\ecosystem\\obj\\",
+        "outputPath": "D:\\ECAM\\BAC 3\\ProgOO\\ecosystem\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Masur\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -37,7 +37,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.100"
       },
       "frameworks": {
         "net8.0": {
@@ -87,12 +88,30 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[8.0.11, 8.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.403/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

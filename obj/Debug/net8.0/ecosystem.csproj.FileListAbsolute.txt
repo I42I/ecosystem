@@ -277,3 +277,4 @@ C:\ECAM\BAC 3\POO\ecosystem\obj\Debug\net8.0\ecosystem.pdb
 C:\ECAM\BAC 3\POO\ecosystem\obj\Debug\net8.0\ecosystem.csproj.Up2Date
 C:\ECAM\BAC 3\POO\ecosystem\obj\Debug\net8.0\ecosystem.genruntimeconfig.cache
 C:\ECAM\BAC 3\POO\ecosystem\obj\Debug\net8.0\ref\ecosystem.dll
+D:\ECAM\BAC 3\ProgOO\ecosystem\obj\Debug\net8.0\ecosystem.sourcelink.json

@@ -30,11 +30,10 @@ public class Grass : Plant
 
     protected override Plant CreateOffspring(Position position)
     {
-        var offspringPosition = new Position(position.X, position.Y);
         return new Grass(
             healthPoints: HealthPoints / 2,
             energy: Energy / 2,
-            position: offspringPosition
+            position: new Position(position.X, position.Y)
         );
     }
 
