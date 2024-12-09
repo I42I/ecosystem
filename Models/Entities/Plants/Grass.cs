@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Media;
 using ecosystem.Models.Entities.Environment;
 using ecosystem.Models.Core;
@@ -17,6 +18,7 @@ public class Grass : Plant
         RootRadius = 5.0;
         SeedRadius = 10.0;
         Color = new SolidColorBrush(Colors.Green);
+        Console.WriteLine($"Created Grass with color Green at {Position.X}, {Position.Y}");
     }
 
     public override EnvironmentType PreferredEnvironment => EnvironmentType.Ground;
