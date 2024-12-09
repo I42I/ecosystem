@@ -26,7 +26,7 @@ public abstract class Entity : INotifyPropertyChanged
 
     private void Position_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        Console.WriteLine($"Position property changed: {e.PropertyName}");
+        // Console.WriteLine($"Position property changed: {e.PropertyName}");
         OnPropertyChanged($"Position.{e.PropertyName}");
         
         if (e.PropertyName == nameof(Position.X) || e.PropertyName == nameof(Position.Y))

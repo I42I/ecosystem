@@ -56,12 +56,17 @@ public abstract class Carnivore : Animal, IPredator
 
     public virtual void MoveTowardsPrey(Animal prey)
     {
-        double distance = GetDistanceTo(prey);
+        _directionChangeTicks = 0;
+        
+        double dx = prey.Position.X - Position.X;
+        double dy = prey.Position.Y - Position.Y;
+        double distance = Math.Sqrt(dx * dx + dy * dy);
+
         if (distance > 0)
         {
-            double dx = (prey.Position.X - Position.X) / distance;
-            double dy = (prey.Position.Y - Position.Y) / distance;
-            Move(dx, dy);
+            _currentDirectionX = dx / distance;
+            _currentDirectionY = dy / distance;
+            Move(_currentDirectionX, _currentDirectionY);
         }
     }
 
@@ -74,8 +79,15 @@ public abstract class Carnivore : Animal, IPredator
     {
         if (CanAttack(prey))
         {
-            prey.TakeDamage(CalculateAttackDamage());
-            Energy += CalculateEnergyGain();
+            int damage = CalculateAttackDamage();
+            prey.TakeDamage(damage);
+            Energy += damage / 4;
+            
+            if (prey.IsDead)
+            {
+                var meat = new Meat(prey.Position, prey.Energy);
+                _worldService.AddEntity(meat);
+            }
         }
     }
 

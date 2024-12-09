@@ -11,6 +11,8 @@ public abstract class LifeForm : Entity, IVital, IEnvironmentSensitive
     public double BasalMetabolicRate { get; protected set; }
     public bool IsDead { get; protected set; }
     public EnvironmentType Environment { get; protected set; }
+    public int MaxHealthPoints { get; }
+    public int MaxEnergy { get; }
 
     public abstract EnvironmentType PreferredEnvironment { get; }
 
@@ -20,12 +22,14 @@ public abstract class LifeForm : Entity, IVital, IEnvironmentSensitive
     }
 
     protected LifeForm(
-        int healthPoints, 
-        int energy, 
+        int healthPoints,
+        int energy,
         Position position,
         double basalMetabolicRate,
         EnvironmentType environment) : base(position)
     {
+        MaxHealthPoints = healthPoints;
+        MaxEnergy = energy;
         HealthPoints = healthPoints;
         Energy = energy;
         BasalMetabolicRate = basalMetabolicRate;
@@ -33,18 +37,22 @@ public abstract class LifeForm : Entity, IVital, IEnvironmentSensitive
     }
 
     private double _accumulatedBasalCost = 0;
-    
+
     public override void Update()
     {
         if (IsDead) return;
         
-        _accumulatedBasalCost += BasalMetabolicRate * 1.0/10;
-        
+        _accumulatedBasalCost += BasalMetabolicRate * 0.1;
         if (_accumulatedBasalCost >= 1)
         {
             int energyToConsume = (int)Math.Floor(_accumulatedBasalCost);
             ConsumeEnergy(energyToConsume);
             _accumulatedBasalCost -= energyToConsume;
+        }
+
+        if (Energy >= MaxEnergy * 0.9 && HealthPoints < MaxHealthPoints)
+        {
+            HealthPoints += 1;
         }
         
         UpdateBehavior();

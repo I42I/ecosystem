@@ -1,22 +1,29 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using ecosystem.Helpers;
 using ecosystem.Models.Core;
 using ecosystem.Models.Entities.Environment;
 using ecosystem.Models.Behaviors;
+using ecosystem.Services.World;
 
 namespace ecosystem.Models.Entities.Plants;
 
 public abstract class Plant : LifeForm
 {
+    protected abstract double BaseAbsorptionRate { get; }
+    protected readonly IWorldService _worldService;
+
     protected Plant(
         int healthPoints,
         int energy,
         Position position,
         double basalMetabolicRate,
-        EnvironmentType environment)
+        EnvironmentType environment,
+        IWorldService worldService)
         : base(healthPoints, energy, position, basalMetabolicRate, environment)
     {
+        _worldService = worldService;
     }
 
     public double RootRadius { get; protected set; }
@@ -24,30 +31,41 @@ public abstract class Plant : LifeForm
 
     protected override void UpdateBehavior()
     {
-        ConsumeOrganicWaste();
+        ConsumeEnergy(1);
+
+        var nearbyWaste = _worldService.Entities
+            .OfType<OrganicWaste>()
+            .Where(w => GetDistanceTo(w) <= RootRadius)
+            .ToList();
+
+        foreach (var waste in nearbyWaste)
+        {
+            AbsorbWaste(waste);
+        }
+
         if (CanSpreadSeeds())
         {
             SpreadSeeds();
         }
     }
 
-    private void ConsumeOrganicWaste()
+    public virtual double GetDistanceTo(OrganicWaste other)
     {
-        List<OrganicWaste> wastes = FindOrganicWasteInRadius(RootRadius);
-        foreach (var waste in wastes)
+        var dx = Position.X - other.Position.X;
+        var dy = Position.Y - other.Position.Y;
+        return Math.Sqrt(dx * dx + dy * dy);
+    }
+
+    protected virtual void AbsorbWaste(OrganicWaste waste)
+    {
+        double absorbedEnergy = waste.EnergyValue * BaseAbsorptionRate;
+        Energy += (int)absorbedEnergy;
+        waste.EnergyValue -= (int)absorbedEnergy;
+        
+        if (waste.EnergyValue <= 0)
         {
-            AbsorbWaste(waste);
+            _worldService.RemoveEntity(waste);
         }
-    }
-
-    private List<OrganicWaste> FindOrganicWasteInRadius(double radius)
-    {
-        return new List<OrganicWaste>();
-    }
-
-    private void AbsorbWaste(OrganicWaste waste)
-    {
-        Energy += waste.EnergyValue;
     }
 
     protected abstract bool CanSpreadSeeds();
@@ -62,13 +80,7 @@ public abstract class Plant : LifeForm
 
     protected override void OnDeath()
     {
-        CreateOrganicWaste();
-    }
-
-    private void CreateOrganicWaste()
-    {
-        // Instantiate an OrganicWaste object at the plant's position
-        // OrganicWaste waste = new OrganicWaste(Position, Energy);
-        // Add waste to the ecosystem
+        var waste = new OrganicWaste(Position, Energy);
+        _worldService.AddEntity(waste);
     }
 }

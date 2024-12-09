@@ -13,7 +13,7 @@ namespace ecosystem.Models.Entities.Animals.Herbivores;
 
 public class Rabbit : Herbivore
 {
-    private readonly IEntityLocator<Plant> _plantLocator;
+    protected override int BaseBiteSize => 8;
     protected override double BaseHungerThreshold => 55.0;
     protected override double BaseReproductionThreshold => 70.0;
     protected override double BaseReproductionEnergyCost => 20.0;
@@ -29,6 +29,7 @@ public class Rabbit : Herbivore
         bool isMale)
         : base(
             entityLocator,
+            plantLocator,
             worldService,
             position,
             healthPoints,
@@ -39,7 +40,6 @@ public class Rabbit : Herbivore
             basalMetabolicRate: 0.8)
     {
         MovementSpeed = 1.5;
-        _plantLocator = plantLocator;
         HungerThreshold = BaseHungerThreshold;
         ReproductionEnergyThreshold = BaseReproductionThreshold;
         ReproductionEnergyCost = BaseReproductionEnergyCost;
@@ -47,21 +47,9 @@ public class Rabbit : Herbivore
         Console.WriteLine($"Created Rabbit with color {Color} at {Position.X}, {Position.Y}");
     }
 
-    protected override Plant? FindNearestPlant()
-    {
-        return _plantLocator.FindNearest(
-            _worldService.Entities.OfType<Plant>(),
-            VisionRadius);
-    }
-
     public override void SearchForMate()
     {
         // Implémenter la recherche de partenaire avec WorldService
-    }
-
-    protected override void SearchForFood()
-    {
-        // Recherche de nourriture pour les herbivores
     }
 
     protected override void GiveBirth()
@@ -76,5 +64,38 @@ public class Rabbit : Herbivore
             position: new Position(x, y),
             isMale: RandomHelper.NextDouble() > 0.5
         );
+    }
+
+    protected override void Rest()
+    {
+        StayWithGroup();
+    }
+
+    private void StayWithGroup()
+    {
+        var nearbyRabbits = _worldService.Entities
+            .OfType<Rabbit>()
+            .Where(r => r != this && GetDistanceTo(r) <= VisionRadius)
+            .ToList();
+
+        if (nearbyRabbits.Any())
+        {
+            var centerX = nearbyRabbits.Average(r => r.Position.X);
+            var centerY = nearbyRabbits.Average(r => r.Position.Y);
+            
+            var (rx, ry) = RandomHelper.GetRandomDirection();
+            double dx = (centerX - Position.X) * 0.5 + rx * 0.5;
+            double dy = (centerY - Position.Y) * 0.5 + ry * 0.5;
+            
+            double length = Math.Sqrt(dx * dx + dy * dy);
+            if (length > 0)
+            {
+                Move(dx/length * 0.5, dy/length * 0.5);
+            }
+        }
+        else
+        {
+            base.Rest();
+        }
     }
 }

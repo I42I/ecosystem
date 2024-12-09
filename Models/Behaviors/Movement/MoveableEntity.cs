@@ -20,11 +20,16 @@ public abstract class MoveableEntity : LifeForm, IMoveable
 
     protected abstract int CalculateMovementEnergyCost(double deltaX, double deltaY);
 
+    protected double _currentDirectionX = 0;
+    protected double _currentDirectionY = 0;
+    protected int _directionChangeTicks = 0;
+
     public virtual void Move(double deltaX, double deltaY)
     {
         Console.WriteLine($"Moving from ({Position.X}, {Position.Y}) by ({deltaX}, {deltaY})");
 
-        double frameAdjustedSpeed = MovementSpeed * (1.0/60.0);
+        double frameAdjustedSpeed = MovementSpeed * (1.0/10.0);
+        
         double scaledDeltaX = deltaX * frameAdjustedSpeed;
         double scaledDeltaY = deltaY * frameAdjustedSpeed;
 

@@ -19,6 +19,8 @@ public class Fox : Carnivore
     protected override double BaseReproductionThreshold => 60.0;
     protected override double BaseReproductionEnergyCost => 30.0;
     public override EnvironmentType PreferredEnvironment => EnvironmentType.Ground;
+    private double _territoryRadius = 100.0;
+    private Position _territoryCenter;
 
     public Fox(
         IEntityLocator<Animal> entityLocator,
@@ -41,6 +43,7 @@ public class Fox : Carnivore
             basalMetabolicRate: 1.2)
     {
         MovementSpeed = 2.0;
+        _territoryCenter = position;
         AttackPower = BaseAttackPower;
         AttackRange = BaseAttackRange;
         HungerThreshold = BaseHungerThreshold;
@@ -65,7 +68,7 @@ public class Fox : Carnivore
 
         if (distance > 0)
         {
-            Move(dx / distance, dy / distance);
+            Move(dx / distance * 1.5, dy / distance * 1.5);
         }
     }
 
@@ -104,6 +107,43 @@ public class Fox : Carnivore
         return _worldService.Entities
             .OfType<Rabbit>()
             .Where(r => !r.IsDead);
+    }
+
+    protected override void Rest()
+    {
+        PatrolTerritory();
+    }
+
+    protected virtual void PatrolTerritory()
+    {
+        Console.WriteLine("Patrolling territory");
+        if (_directionChangeTicks <= 0)
+        {
+            double distanceFromCenter = Math.Sqrt(
+                Math.Pow(Position.X - _territoryCenter.X, 2) + 
+                Math.Pow(Position.Y - _territoryCenter.Y, 2));
+
+            if (distanceFromCenter > _territoryRadius)
+            {
+                double dx = _territoryCenter.X - Position.X;
+                double dy = _territoryCenter.Y - Position.Y;
+                double distance = Math.Sqrt(dx * dx + dy * dy);
+                
+                _currentDirectionX = dx / distance;
+                _currentDirectionY = dy / distance;
+            }
+            else
+            {
+                double angle = RandomHelper.Instance.NextDouble() * 2 * Math.PI;
+                _currentDirectionX = Math.Cos(angle);
+                _currentDirectionY = Math.Sin(angle);
+            }
+            
+            _directionChangeTicks = RandomHelper.Instance.Next(120, 300);
+        }
+        
+        _directionChangeTicks--;
+        Move(_currentDirectionX, _currentDirectionY);
     }
 }
 

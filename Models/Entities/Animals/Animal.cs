@@ -1,8 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ecosystem.Models.Core;
 using ecosystem.Models.Entities.Environment;
 using ecosystem.Models.Behaviors;
+using ecosystem.Models.Behaviors.Base;
+using ecosystem.Models.Behaviors.Survival;
+using ecosystem.Models.Behaviors.Reproduction;
+using ecosystem.Models.Behaviors.Movement;
 using ecosystem.Services.World;
 using ecosystem.Helpers;
 
@@ -12,6 +17,7 @@ public abstract class Animal : MoveableEntity, IReproducible
 {
     protected readonly IEntityLocator<Animal> _entityLocator;
     protected readonly IWorldService _worldService;
+    private readonly List<IBehavior> _behaviors;
 
     protected Animal(
         IEntityLocator<Animal> entityLocator,
@@ -31,6 +37,13 @@ public abstract class Animal : MoveableEntity, IReproducible
         IsMale = isMale;
         VisionRadius = visionRadius;
         ContactRadius = contactRadius;
+        _behaviors = new List<IBehavior>
+        {
+            new FleeingBehavior(),   // Priority 3
+            new HungerBehavior(),    // Priority 2
+            new ReproductionBehavior(), // Priority 1
+            new RestBehavior()       // Priority 0
+        };
     }
 
     public bool IsMale { get; set; }
@@ -48,7 +61,7 @@ public abstract class Animal : MoveableEntity, IReproducible
     }
 
     protected override abstract int CalculateMovementEnergyCost(double deltaX, double deltaY);
-    
+
     public bool CanReproduce()
     {
         return NeedsToReproduce();
@@ -80,38 +93,47 @@ public abstract class Animal : MoveableEntity, IReproducible
 
     protected override void UpdateBehavior()
     {
-        Console.WriteLine($"Updating behavior for {GetType().Name}");
-        if (NeedsToEat())
-        {
-            Console.WriteLine("Needs to eat - searching for food");
-            SearchForFood();
-        }
-        else if (NeedsToReproduce())
-        {
-            Console.WriteLine("Needs to reproduce - searching for mate");
-            SearchForMate();
-        }
-        else
-        {
-            Console.WriteLine("Resting");
-            Rest();
-        }
+        var applicableBehavior = _behaviors
+            .Where(b => b.CanExecute(this))
+            .OrderByDescending(b => b.Priority)
+            .FirstOrDefault();
+
+        applicableBehavior?.Execute(this);
     }
 
-    protected abstract void SearchForFood();
+    public abstract void SearchForFood();
     public abstract void SearchForMate();
-
+    
     protected virtual void Rest()
     {
-        double angle = RandomHelper.Instance.NextDouble() * 2 * Math.PI;
-        double dx = Math.Cos(angle);
-        double dy = Math.Sin(angle);
+        Console.WriteLine($"{GetType().Name} is resting");
+        if (_directionChangeTicks <= 0)
+        {
+            double angle = RandomHelper.Instance.NextDouble() * 2 * Math.PI;
+            _currentDirectionX = Math.Cos(angle);
+            _currentDirectionY = Math.Sin(angle);
+            _directionChangeTicks = RandomHelper.Instance.Next(60, 180);
+        }
+        
+        _directionChangeTicks--;
+        
+        double variation = (RandomHelper.Instance.NextDouble() - 0.5) * 0.2;
+        double dx = _currentDirectionX + variation;
+        double dy = _currentDirectionY + variation;
+
+        double length = Math.Sqrt(dx * dx + dy * dy);
+        if (length > 0)
+        {
+            dx /= length;
+            dy /= length;
+        }
+        
         Move(dx, dy);
     }
 
     protected bool NeedsToEat()
     {
-        Console.WriteLine($"Energy: {Energy}, HungerThreshold: {HungerThreshold}, HealthPoints: {HealthPoints}");
+        Console.WriteLine($"{GetType().Name} - Energy: {Energy}, HungerThreshold: {HungerThreshold}, HealthPoints: {HealthPoints}");
         return Energy <= HungerThreshold;
     }
 
