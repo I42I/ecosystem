@@ -1,56 +1,57 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:ecosystem.ViewModels"
-        xmlns:models="using:ecosystem.Models.Core"
         x:Class="ecosystem.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="Ecosystem"
         Width="800" Height="450"
-        WindowStartupLocation="CenterScreen"
-        Background="White">
+        CanResize="False">
+    
+    <Grid Width="800" Height="450">
+        <!-- Background Grid -->
+        <Grid Width="800" Height="400">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="200"/>
+                <RowDefinition Height="200"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="400"/>
+                <ColumnDefinition Width="400"/>
+            </Grid.ColumnDefinitions>
 
-    <Grid>
-        <Border BorderBrush="Black" BorderThickness="1">
-            <Canvas Name="WorldCanvas" Width="800" Height="450">
-                <Rectangle Width="800" Height="450" Fill="#E0E0E0"/>
-                
-                <ItemsControl ItemsSource="{Binding Entities, Mode=OneWay}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <Canvas Width="800" Height="450"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="{x:Type models:Entity}">
-                            <Canvas>
-                                <Ellipse
-                                    Width="10"
-                                    Height="10"
-                                    Fill="{Binding Color}">
-                                    <Ellipse.RenderTransform>
-                                        <TranslateTransform 
-                                            X="{Binding Position.X}"
-                                            Y="{Binding Position.Y}"/>
-                                    </Ellipse.RenderTransform>
-                                </Ellipse>
-                            </Canvas>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </Canvas>
-        </Border>
+            <Rectangle Grid.Row="0" Grid.Column="0" Fill="SandyBrown"/>
+            <Rectangle Grid.Row="0" Grid.Column="1" Fill="LightBlue"/>
+            <Rectangle Grid.Row="1" Grid.Column="0" Fill="LightGreen"/>
+            <Rectangle Grid.Row="1" Grid.Column="1" Fill="SandyBrown"/>
+        </Grid>
 
-        <StackPanel Orientation="Horizontal" 
-                    VerticalAlignment="Bottom" 
+        <!-- Entity Layer -->
+        <ItemsControl ItemsSource="{Binding Entities}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas Width="800" Height="400"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Ellipse Width="10" Height="10"
+                            Fill="{Binding Color}"
+                            Canvas.Left="{Binding Position.X}"
+                            Canvas.Top="{Binding Position.Y}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- Controls -->
+        <StackPanel Height="50" 
+                    VerticalAlignment="Bottom"
                     HorizontalAlignment="Center"
+                    Orientation="Horizontal"
                     Margin="10">
-            <Button Command="{Binding StartSimulationCommand}" 
-                    Margin="5">Start</Button>
-            <Button Command="{Binding PauseSimulationCommand}" 
-                    Margin="5">Pause</Button>
-            <Button Command="{Binding ResetSimulationCommand}" 
-                    Margin="5">Reset</Button>
-            <TextBlock Text="{Binding Status}" 
+            <Button Command="{Binding StartSimulationCommand}">Start</Button>
+            <Button Command="{Binding PauseSimulationCommand}" Margin="5,0">Pause</Button>
+            <Button Command="{Binding ResetSimulationCommand}">Reset</Button>
+            <TextBlock Text="{Binding Status}"
                       VerticalAlignment="Center"
                       Margin="10,0"/>
         </StackPanel>

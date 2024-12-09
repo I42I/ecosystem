@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 using ecosystem.Helpers;
 using ecosystem.Models.Core;
 using ecosystem.Models.Behaviors;
@@ -123,9 +124,9 @@ public class SimulationEngine : ISimulationEngine
         }
     }
 
-    private (double X, double Y) GetRandomPosition()
+    private Position GetRandomPosition()
     {
-        return (
+        return new Position(
             _random.Next(0, 800),
             _random.Next(0, 450)
         );
@@ -133,29 +134,32 @@ public class SimulationEngine : ISimulationEngine
 
     public void UpdateSimulation()
     {
-        var entities = _worldService.Entities.ToList();
-        foreach (var entity in entities)
+        Dispatcher.UIThread.InvokeAsync(() =>
         {
-            if (entity is LifeForm lifeForm && !lifeForm.IsDead)
+            var entities = _worldService.Entities.ToList();
+            foreach (var entity in entities)
             {
-                var environment = _worldService.GetEnvironmentAt(lifeForm.Position);
-                if ((lifeForm.Environment & environment) == 0)
+                if (entity is LifeForm lifeForm && !lifeForm.IsDead)
                 {
-                    lifeForm.TakeDamage(5);
-                }
+                    var environment = _worldService.GetEnvironmentAt(lifeForm.Position);
+                    if ((lifeForm.Environment & environment) == 0)
+                    {
+                        lifeForm.TakeDamage(5);
+                    }
 
-                lifeForm.Update();
+                    lifeForm.Update();
 
-                if (entity is Animal animal)
-                {
-                    HandleAnimalBehavior(animal);
+                    if (entity is Animal animal)
+                    {
+                        HandleAnimalBehavior(animal);
+                    }
                 }
             }
-        }
 
-        CleanupDeadEntities();
+            CleanupDeadEntities();
 
-        SimulationUpdated?.Invoke(this, EventArgs.Empty);
+            SimulationUpdated?.Invoke(this, EventArgs.Empty);
+        });
     }
 
     private void HandleAnimalBehavior(Animal animal)

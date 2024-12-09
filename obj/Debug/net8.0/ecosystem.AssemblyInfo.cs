@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ecosystem")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f0ef9519204df1f8e3896a61b04ea85de6ab247f")]
 [assembly: System.Reflection.AssemblyProductAttribute("ecosystem")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ecosystem")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

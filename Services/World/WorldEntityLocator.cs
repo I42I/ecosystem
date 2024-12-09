@@ -27,7 +27,7 @@ public class WorldEntityLocator<T> : IEntityLocator<T> where T : Entity
         return entities.Where(e => GetDistance(e.Position) <= radius);
     }
 
-    private double GetDistance((double X, double Y) position)
+    private double GetDistance(Position position)
     {
         return Math.Sqrt(position.X * position.X + position.Y * position.Y);
     }

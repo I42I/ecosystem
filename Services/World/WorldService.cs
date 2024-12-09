@@ -17,7 +17,8 @@ public class WorldService : IWorldService
 
     public void AddEntity(Entity entity)
     {
-        Console.WriteLine($"Adding entity at position ({entity.Position.X}, {entity.Position.Y})");
+        ArgumentNullException.ThrowIfNull(entity);
+        Console.WriteLine($"Adding {entity.GetType().Name} at position ({entity.Position.X}, {entity.Position.Y}) with color {entity.Color}");
         Entities.Add(entity);
         Console.WriteLine($"Total entities: {Entities.Count}");
     }
@@ -27,7 +28,7 @@ public class WorldService : IWorldService
         Entities.Remove(entity);
     }
 
-    public EnvironmentType GetEnvironmentAt((double X, double Y) position)
+    public EnvironmentType GetEnvironmentAt(Position position)
     {
         return Grid.GetEnvironmentAt((int)position.X, (int)position.Y);
     }

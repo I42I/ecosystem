@@ -12,7 +12,7 @@ public abstract class Plant : LifeForm
     protected Plant(
         int healthPoints,
         int energy,
-        (double X, double Y) position,
+        Position position,
         double basalMetabolicRate,
         EnvironmentType environment)
         : base(healthPoints, energy, position, basalMetabolicRate, environment)
@@ -51,17 +51,13 @@ public abstract class Plant : LifeForm
     }
 
     protected abstract bool CanSpreadSeeds();
-    protected abstract Plant CreateOffspring((double X, double Y) position);
+    protected abstract Plant CreateOffspring(Position position);
 
     private void SpreadSeeds()
     {
-        var (x, y) = RandomHelper.GetRandomPositionInRadius(
-            Position.X,
-            Position.Y,
-            SeedRadius
-        );
-        
-        var offspring = CreateOffspring((x, y));
+        var (x, y) = RandomHelper.GetRandomPositionInRadius(Position.X, Position.Y, SeedRadius);
+        var randomPosition = new Position(x, y);
+        var offspring = CreateOffspring(randomPosition);
     }
 
     protected override void OnDeath()

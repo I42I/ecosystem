@@ -1,8 +1,11 @@
+using Avalonia.Media;
 using ecosystem.Models.Entities.Environment;
 using ecosystem.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using ecosystem.Models.Behaviors;
+using ecosystem.Models.Core;
+using ecosystem.Services.World;
 
 namespace ecosystem.Models.Entities.Animals.Carnivores;
 
@@ -11,23 +14,24 @@ public class Shark : Carnivore
     public Shark(
         IEntityLocator<Animal> entityLocator,
         IEntityLocator<Animal> preyLocator,
+        IWorldService worldService,
         int healthPoints,
         int energy,
-        (double X, double Y) position,
-        bool isMale
-    ) : base(
-        entityLocator,
-        preyLocator,
-        healthPoints,
-        energy,
-        position,
-        isMale,
-        visionRadius: 15.0,
-        contactRadius: 3.0,
-        basalMetabolicRate: 1.5,
-        environment: EnvironmentType.Water
-    )
+        Position position,
+        bool isMale)
+        : base(
+            entityLocator,
+            preyLocator,
+            worldService,
+            position,
+            healthPoints,
+            energy,
+            isMale,
+            visionRadius: 15.0,
+            contactRadius: 3.0,
+            basalMetabolicRate: 1.5)
     {
+        Color = new SolidColorBrush(Colors.Gray);
     }
 
     protected override double BaseAttackPower => 25.0;

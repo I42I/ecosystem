@@ -1,48 +1,48 @@
 using System;
-using System.ComponentModel;
-using Avalonia;
 using Avalonia.Media;
+using System.ComponentModel;
 
-namespace ecosystem.Models.Core;
-
-public abstract class Entity : INotifyPropertyChanged
+namespace ecosystem.Models.Core
 {
-    private Position _position = null!;
-    public Position Position
+    public abstract class Entity : INotifyPropertyChanged
     {
-        get => _position;
-        protected set
+        private Position _position = null!;
+        private IBrush? _color;
+
+        public Position Position
         {
-            if (value is null)
-                throw new ArgumentNullException(nameof(value));
-            _position = value;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Position)));
+            get => _position;
+            protected set
+            {
+                if (_position != value)
+                {
+                    Console.WriteLine($"Entity position changing to ({value.X}, {value.Y})");
+                    _position = value ?? throw new ArgumentNullException(nameof(value));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Position)));
+                }
+            }
         }
-    }
 
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    private IBrush _color = new SolidColorBrush(Colors.Black);
-    public IBrush Color
-    {
-        get => _color;
-        protected set
+        public IBrush? Color
         {
-            if (value is null)
-                throw new ArgumentNullException(nameof(value));
-            _color = value;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Color)));
+            get => _color;
+            protected set
+            {
+                if (_color != value)
+                {
+                    _color = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Color)));
+                }
+            }
         }
-    }
 
-    protected Entity((double X, double Y) position)
-    {
-        if (position.X < 0 || position.Y < 0)
-            throw new ArgumentException("Position must be non-negative", nameof(position));
-            
-        Position = new Position(position.X, position.Y);
-        Console.WriteLine($"Created entity at position {Position.X}, {Position.Y}");
-    }
+        protected Entity(Position position)
+        {
+            _position = position ?? throw new ArgumentNullException(nameof(position));
+        }
 
-    public virtual void Update() { }
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public virtual void Update() { }
+    }
 }

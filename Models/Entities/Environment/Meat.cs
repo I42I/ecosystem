@@ -5,7 +5,7 @@ namespace ecosystem.Models.Entities.Environment;
 
 public class Meat : LifeForm
 {
-    public Meat((double X, double Y) position, int energyValue)
+    public Meat(Position position, int energyValue)
         : base(
             healthPoints: energyValue,
             energy: energyValue,

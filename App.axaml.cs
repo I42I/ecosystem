@@ -15,6 +15,7 @@ using ecosystem.Views;
 using ecosystem.Helpers;
 using ecosystem.Models.Behaviors;
 using ecosystem.Models.Entities.Animals;
+using ecosystem.Models.Entities.Plants;
 
 namespace ecosystem;
 
@@ -35,11 +36,11 @@ public partial class App : Application
             {
                 var services = new ServiceCollection();
             
-                // Register services
                 services.AddSingleton<IWorldService, WorldService>();
                 services.AddSingleton<IEntityFactory, EntityFactory>();
                 services.AddSingleton<ISimulationEngine, SimulationEngine>();
                 services.AddSingleton<IEntityLocator<Animal>, WorldEntityLocator<Animal>>();
+                services.AddSingleton<IEntityLocator<Plant>, WorldEntityLocator<Plant>>();
                 services.AddTransient<MainWindowViewModel>();
 
                 Services = services.BuildServiceProvider();

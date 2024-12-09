@@ -21,7 +21,7 @@ public abstract class LifeForm : Entity, IVital, IEnvironmentSensitive
     protected LifeForm(
         int healthPoints, 
         int energy, 
-        (double X, double Y) position,
+        Position position,
         double basalMetabolicRate,
         EnvironmentType environment) : base(position)
     {

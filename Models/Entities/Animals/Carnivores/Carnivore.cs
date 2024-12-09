@@ -5,6 +5,8 @@ using ecosystem.Helpers;
 using ecosystem.Models.Entities.Environment;
 using ecosystem.Models.Behaviors;
 using ecosystem.Models.Entities.Animals;
+using ecosystem.Models.Core;
+using ecosystem.Services.World;
 
 namespace ecosystem.Models.Entities.Animals.Carnivores;
 
@@ -20,15 +22,16 @@ public abstract class Carnivore : Animal, IPredator
     protected Carnivore(
         IEntityLocator<Animal> entityLocator,
         IEntityLocator<Animal> preyLocator,
+        IWorldService worldService, 
+        Position position,
         int healthPoints,
         int energy,
-        (double X, double Y) position,
         bool isMale,
         double visionRadius,
         double contactRadius,
-        double basalMetabolicRate,
-        EnvironmentType environment
-    ) : base(entityLocator, healthPoints, energy, position, isMale, visionRadius, contactRadius, basalMetabolicRate, environment)
+        double basalMetabolicRate)
+        : base(entityLocator, worldService, position, healthPoints, energy, isMale, 
+               visionRadius, contactRadius, basalMetabolicRate, EnvironmentType.Ground)
     {
         _preyLocator = preyLocator;
         AttackPower = BaseAttackPower;

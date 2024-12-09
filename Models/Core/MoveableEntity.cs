@@ -3,7 +3,7 @@ using ecosystem.Models.Behaviors;
 
 namespace ecosystem.Models.Core;
 
-public abstract class MoveableEntity((double X, double Y) position) : Entity(position), IMoveable
+public abstract class MoveableEntity(Position position) : Entity(position), IMoveable
 {
     public virtual double MovementSpeed { get; protected set; }
 

@@ -10,5 +10,5 @@ public interface IWorldService
     GridWorld Grid { get; }
     void AddEntity(Entity entity);
     void RemoveEntity(Entity entity);
-    EnvironmentType GetEnvironmentAt((double X, double Y) position);
+    EnvironmentType GetEnvironmentAt(Position position);
 }

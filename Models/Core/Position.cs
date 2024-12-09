@@ -1,22 +1,47 @@
+using System;
+using System.ComponentModel;
+
 namespace ecosystem.Models.Core;
 
-public class Position
+public class Position : INotifyPropertyChanged
 {
-    public double X { get; set; }
-    public double Y { get; set; }
+    private double _x;
+    private double _y;
 
     public Position(double x, double y)
     {
+        Console.WriteLine($"Creating position at ({x}, {y})");
         X = x;
         Y = y;
     }
 
-    public void Deconstruct(out double x, out double y)
+    public double X
     {
-        x = X;
-        y = Y;
+        get => _x;
+        set
+        {
+            if (_x != value)
+            {
+                _x = value;
+                Console.WriteLine($"Position X changed to {value}");
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(X)));
+            }
+        }
     }
 
-    public static implicit operator (double X, double Y)(Position position) => (position.X, position.Y);
-    public static implicit operator Position((double X, double Y) tuple) => new(tuple.X, tuple.Y);
+    public double Y 
+    {
+        get => _y;
+        set
+        {
+            if (_y != value)
+            {
+                _y = value;
+                Console.WriteLine($"Position Y changed to {value}");
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Y)));
+            }
+        }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 }

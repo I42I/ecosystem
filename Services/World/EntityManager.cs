@@ -33,7 +33,7 @@ public class EntityManager : IEntityManager
             .Where(e => CalculateDistance(source.Position, e.Position) <= radius);
     }
 
-    private double CalculateDistance((double X, double Y) pos1, (double X, double Y) pos2)
+    private double CalculateDistance(Position pos1, Position pos2)
     {
         var dx = pos1.X - pos2.X;
         var dy = pos1.Y - pos2.Y;

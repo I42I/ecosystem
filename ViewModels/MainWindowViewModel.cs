@@ -86,26 +86,33 @@ public partial class MainWindowViewModel : ViewModelBase
             
             for (int i = 0; i < 5; i++)
             {
-                var fox = _entityFactory.CreateAnimal<Fox>(100, 100, 
-                    (100 + i * 50, 100 + i * 30), true);
+                var foxPosition = new Position(
+                    Math.Min(100 + i * 50, 750),
+                    Math.Min(100 + i * 30, 400)
+                );
+                var fox = _entityFactory.CreateAnimal<Fox>(100, 100, foxPosition, i % 2 == 0);
                 _worldService.AddEntity(fox);
             }
 
             for (int i = 0; i < 10; i++)
             {
-                var rabbit = _entityFactory.CreateAnimal<Rabbit>(80, 80, 
-                    (200 + i * 40, 200 + i * 20), i % 2 == 0);
+                var rabbitPosition = new Position(
+                    Math.Min(200 + i * 40, 750),
+                    Math.Min(200 + i * 20, 400)
+                );
+                var rabbit = _entityFactory.CreateAnimal<Rabbit>(80, 80, rabbitPosition, i % 2 == 0);
                 _worldService.AddEntity(rabbit);
             }
 
             for (int i = 0; i < 20; i++)
             {
-                var grass = _entityFactory.CreatePlant<Grass>(50, 50, 
-                    (300 + i * 20, 300 + i * 10));
+                var grassPosition = new Position(
+                    Math.Min(300 + i * 20, 750),
+                    Math.Min(300 + i * 10, 400)
+                );
+                var grass = _entityFactory.CreatePlant<Grass>(50, 50, grassPosition);
                 _worldService.AddEntity(grass);
             }
-
-            Console.WriteLine($"Created {_worldService.Entities.Count} entities");
         }
         catch (Exception ex)
         {

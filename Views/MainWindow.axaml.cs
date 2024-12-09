@@ -1,5 +1,6 @@
-using System;
 using Avalonia.Controls;
+using Avalonia.Markup.Xaml;
+using System;
 
 namespace ecosystem.Views;
 
@@ -9,7 +10,7 @@ public partial class MainWindow : Window
     {
         try
         {
-            InitializeComponent();
+            AvaloniaXamlLoader.Load(this);
             Console.WriteLine("MainWindow initialized successfully");
         }
         catch (Exception ex)

@@ -1,9 +1,13 @@
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using Avalonia.Media;
 using ecosystem.Helpers;
 using ecosystem.Models.Behaviors;
 using ecosystem.Models.Entities.Environment;
+using ecosystem.Models.Entities.Animals.Herbivores;
+using ecosystem.Services.World;
+using ecosystem.Models.Core;
 
 namespace ecosystem.Models.Entities.Animals.Carnivores;
 
@@ -18,24 +22,26 @@ public class Fox : Carnivore
     public Fox(
         IEntityLocator<Animal> entityLocator,
         IEntityLocator<Animal> preyLocator,
+        IWorldService worldService,
         int healthPoints,
         int energy,
-        (double X, double Y) position,
-        bool isMale
-    ) : base(
-        entityLocator,
-        preyLocator,
-        healthPoints,
-        energy,
-        position,
-        isMale,
-        visionRadius: 10.0,
-        contactRadius: 2.0,
-        basalMetabolicRate: 1.2,
-        environment: EnvironmentType.Ground
-    )
+        Position position,
+        bool isMale)
+        : base(
+            entityLocator,
+            preyLocator,
+            worldService,
+            position,
+            healthPoints,
+            energy,
+            isMale,
+            visionRadius: 10.0,
+            contactRadius: 2.0,
+            basalMetabolicRate: 1.2)
     {
         Color = new SolidColorBrush(Colors.Red);
+        Console.WriteLine($"Created Fox with color Red at {Position.X}, {Position.Y}");
+        
     }
 
     public override Animal? FindNearestPrey()
@@ -88,10 +94,9 @@ public class Fox : Carnivore
 
     protected override IEnumerable<Animal> GetPotentialPrey()
     {
-        // Dans le cas du renard, les proies potentielles sont les herbivores terrestres
-        // Cette implémentation devrait utiliser le WorldService ou EntityLocator
-        // pour trouver les herbivores à proximité
-        return Enumerable.Empty<Animal>();
+        return _entityLocator.FindInRadius(
+            _worldService.Entities.OfType<Rabbit>(),
+            VisionRadius);
     }
 }
 

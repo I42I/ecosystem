@@ -1,11 +1,12 @@
 using Avalonia.Media;
 using ecosystem.Models.Entities.Environment;
+using ecosystem.Models.Core;
 
 namespace ecosystem.Models.Entities.Plants;
 
 public class Grass : Plant
 {
-    public Grass(int healthPoints, int energy, (double X, double Y) position)
+    public Grass(int healthPoints, int energy, Position position)
         : base(
             healthPoints,
             energy,
@@ -25,12 +26,13 @@ public class Grass : Plant
         return Energy > 50 && HealthPoints > 50;
     }
 
-    protected override Plant CreateOffspring((double X, double Y) position)
+    protected override Plant CreateOffspring(Position position)
     {
+        var offspringPosition = new Position(position.X, position.Y);
         return new Grass(
             healthPoints: HealthPoints / 2,
             energy: Energy / 2,
-            position: position
+            position: offspringPosition
         );
     }
 

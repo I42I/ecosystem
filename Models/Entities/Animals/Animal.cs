@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using ecosystem.Models.Core;
 using ecosystem.Models.Entities.Environment;
 using ecosystem.Models.Behaviors;
+using ecosystem.Services.World;
 
 namespace ecosystem.Models.Entities.Animals;
 
 public abstract class Animal : LifeForm, IMoveable, IReproducible
 {
-    private readonly IEntityLocator<Animal> _entityLocator;
+    protected readonly IEntityLocator<Animal> _entityLocator;
+    protected readonly IWorldService _worldService;
 
     protected Animal(
         IEntityLocator<Animal> entityLocator,
+        IWorldService worldService,
+        Position position,
         int healthPoints,
         int energy,
-        (double X, double Y) position,
         bool isMale,
         double visionRadius,
         double contactRadius,
@@ -23,6 +26,8 @@ public abstract class Animal : LifeForm, IMoveable, IReproducible
         : base(healthPoints, energy, position, basalMetabolicRate, environment)
     {
         _entityLocator = entityLocator;
+        _worldService = worldService;
+        Position = position;
         IsMale = isMale;
         VisionRadius = visionRadius;
         ContactRadius = contactRadius;
@@ -41,7 +46,7 @@ public abstract class Animal : LifeForm, IMoveable, IReproducible
     // Implémentation de IMoveable
     public void Move(double deltaX, double deltaY)
     {
-        Position = (Position.X + deltaX, Position.Y + deltaY);
+        Position = new Position(Position.X + deltaX, Position.Y + deltaY);
         InternalConsumeEnergy(CalculateMovementEnergyCost(deltaX, deltaY));
     }
 

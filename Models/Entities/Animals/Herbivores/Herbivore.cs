@@ -6,6 +6,8 @@ using ecosystem.Helpers;
 using System.Linq;
 using ecosystem.Models.Entities.Plants;
 using ecosystem.Models.Entities.Environment;
+using ecosystem.Models.Core;
+using ecosystem.Services.World;
 
 namespace ecosystem.Models.Entities.Animals.Herbivores;
 
@@ -13,24 +15,16 @@ public abstract class Herbivore : Animal
 {
     protected Herbivore(
         IEntityLocator<Animal> entityLocator,
+        IWorldService worldService,
+        Position position,
         int healthPoints,
         int energy,
-        (double X, double Y) position,
         bool isMale,
         double visionRadius,
         double contactRadius,
-        double basalMetabolicRate,
-        EnvironmentType environment)
-        : base(
-            entityLocator,
-            healthPoints,
-            energy,
-            position,
-            isMale,
-            visionRadius,
-            contactRadius,
-            basalMetabolicRate,
-            environment)
+        double basalMetabolicRate)
+        : base(entityLocator, worldService, position, healthPoints, energy, isMale,
+               visionRadius, contactRadius, basalMetabolicRate, EnvironmentType.Ground)
     {
     }
 

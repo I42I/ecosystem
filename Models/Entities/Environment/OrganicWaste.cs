@@ -6,7 +6,7 @@ public class OrganicWaste : LifeForm
 {
     public int EnergyValue { get; }
 
-    public OrganicWaste((double X, double Y) position, int energyValue)
+    public OrganicWaste(Position position, int energyValue)
         : base(
             healthPoints: 0, 
             energy: 0, 
