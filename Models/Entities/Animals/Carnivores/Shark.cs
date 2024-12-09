@@ -11,6 +11,13 @@ namespace ecosystem.Models.Entities.Animals.Carnivores;
 
 public class Shark : Carnivore
 {
+    protected override double BaseAttackPower => 25.0;
+    protected override double BaseAttackRange => 2.0;
+    protected override double BaseHungerThreshold => 50.0;
+    protected override double BaseReproductionThreshold => 70.0;
+    protected override double BaseReproductionEnergyCost => 40.0;
+    public override EnvironmentType PreferredEnvironment => EnvironmentType.Water;
+
     public Shark(
         IEntityLocator<Animal> entityLocator,
         IEntityLocator<Animal> preyLocator,
@@ -33,12 +40,6 @@ public class Shark : Carnivore
     {
         Color = new SolidColorBrush(Colors.Gray);
     }
-
-    protected override double BaseAttackPower => 25.0;
-    protected override double BaseAttackRange => 2.0;
-    protected override double BaseHungerThreshold => 50.0;
-    protected override double BaseReproductionThreshold => 70.0;
-    public override EnvironmentType PreferredEnvironment => EnvironmentType.Water;
 
     public override double GetEnvironmentMovementModifier()
     {

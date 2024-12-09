@@ -13,6 +13,10 @@ namespace ecosystem.Models.Entities.Animals.Herbivores;
 
 public abstract class Herbivore : Animal
 {
+    protected abstract double BaseHungerThreshold { get; }
+    protected abstract double BaseReproductionThreshold { get; }
+    protected abstract double BaseReproductionEnergyCost { get; }
+
     protected Herbivore(
         IEntityLocator<Animal> entityLocator,
         IWorldService worldService,

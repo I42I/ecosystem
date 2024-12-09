@@ -16,7 +16,7 @@ public class Position : INotifyPropertyChanged
             if (_x != value)
             {
                 _x = value;
-                Console.WriteLine($"Position X changed to {value}");
+                // Console.WriteLine($"Position X changed to {value}");
                 OnPropertyChanged(nameof(X));
             }
         }
@@ -30,7 +30,7 @@ public class Position : INotifyPropertyChanged
             if (_y != value)
             {
                 _y = value;
-                Console.WriteLine($"Position Y changed to {value}");
+                // Console.WriteLine($"Position Y changed to {value}");
                 OnPropertyChanged(nameof(Y));
             }
         }

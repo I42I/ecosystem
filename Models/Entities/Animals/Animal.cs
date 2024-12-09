@@ -4,6 +4,7 @@ using ecosystem.Models.Core;
 using ecosystem.Models.Entities.Environment;
 using ecosystem.Models.Behaviors;
 using ecosystem.Services.World;
+using ecosystem.Helpers;
 
 namespace ecosystem.Models.Entities.Animals;
 
@@ -46,8 +47,8 @@ public abstract class Animal : MoveableEntity, IReproducible
         return Environment.HasFlag(PreferredEnvironment) ? 1.0 : 1.5;
     }
 
-    protected abstract int CalculateMovementEnergyCost(double deltaX, double deltaY);
-
+    protected override abstract int CalculateMovementEnergyCost(double deltaX, double deltaY);
+    
     public bool CanReproduce()
     {
         return NeedsToReproduce();
@@ -79,16 +80,20 @@ public abstract class Animal : MoveableEntity, IReproducible
 
     protected override void UpdateBehavior()
     {
+        Console.WriteLine($"Updating behavior for {GetType().Name}");
         if (NeedsToEat())
         {
+            Console.WriteLine("Needs to eat - searching for food");
             SearchForFood();
         }
         else if (NeedsToReproduce())
         {
+            Console.WriteLine("Needs to reproduce - searching for mate");
             SearchForMate();
         }
         else
         {
+            Console.WriteLine("Resting");
             Rest();
         }
     }
@@ -98,11 +103,15 @@ public abstract class Animal : MoveableEntity, IReproducible
 
     protected virtual void Rest()
     {
-        //  vide ou réduire le métabolisme
+        double angle = RandomHelper.Instance.NextDouble() * 2 * Math.PI;
+        double dx = Math.Cos(angle);
+        double dy = Math.Sin(angle);
+        Move(dx, dy);
     }
 
     protected bool NeedsToEat()
     {
+        Console.WriteLine($"Energy: {Energy}, HungerThreshold: {HungerThreshold}, HealthPoints: {HealthPoints}");
         return Energy <= HungerThreshold;
     }
 

@@ -18,9 +18,9 @@ public class WorldService : IWorldService
     public void AddEntity(Entity entity)
     {
         ArgumentNullException.ThrowIfNull(entity);
-        Console.WriteLine($"Adding {entity.GetType().Name} at position ({entity.Position.X}, {entity.Position.Y}) with color {entity.Color}");
+        // Console.WriteLine($"Adding {entity.GetType().Name} at position ({entity.Position.X}, {entity.Position.Y}) with color {entity.Color}");
         Entities.Add(entity);
-        Console.WriteLine($"Total entities: {Entities.Count}");
+        // Console.WriteLine($"Total entities: {Entities.Count}");
     }
 
     public void RemoveEntity(Entity entity)

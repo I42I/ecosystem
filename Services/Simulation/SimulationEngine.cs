@@ -74,7 +74,7 @@ public class SimulationEngine : ISimulationEngine
         _timer?.Dispose();
         if (_isRunning)
         {
-            var interval = Math.Max(50, (int)(1000 / _simulationSpeed));
+            var interval = Math.Max(16, (int)(1000 / (_simulationSpeed * 60)));
             _timer = new Timer(_ => 
             {
                 try
@@ -89,7 +89,7 @@ public class SimulationEngine : ISimulationEngine
                 {
                     Console.WriteLine($"Error in simulation: {ex}");
                 }
-            }, null, 100, interval);
+            }, null, 16, interval);
         }
     }
 

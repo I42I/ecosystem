@@ -7,12 +7,17 @@ using ecosystem.Models.Behaviors;
 using ecosystem.Models.Entities.Plants;
 using ecosystem.Services.World;
 using ecosystem.Models.Core;
+using ecosystem.Models.Entities.Animals.Carnivores;
 
 namespace ecosystem.Models.Entities.Animals.Herbivores;
 
 public class Rabbit : Herbivore
 {
     private readonly IEntityLocator<Plant> _plantLocator;
+    protected override double BaseHungerThreshold => 55.0;
+    protected override double BaseReproductionThreshold => 70.0;
+    protected override double BaseReproductionEnergyCost => 20.0;
+    public override EnvironmentType PreferredEnvironment => EnvironmentType.Ground;
 
     public Rabbit(
         IEntityLocator<Animal> entityLocator,
@@ -33,12 +38,14 @@ public class Rabbit : Herbivore
             contactRadius: 1.0,
             basalMetabolicRate: 0.8)
     {
+        MovementSpeed = 1.5;
         _plantLocator = plantLocator;
+        HungerThreshold = BaseHungerThreshold;
+        ReproductionEnergyThreshold = BaseReproductionThreshold;
+        ReproductionEnergyCost = BaseReproductionEnergyCost;
         Color = new SolidColorBrush(Colors.Brown);
-        Console.WriteLine($"Created Rabbit with color Gray at {Position.X}, {Position.Y}");
+        Console.WriteLine($"Created Rabbit with color {Color} at {Position.X}, {Position.Y}");
     }
-
-    public override EnvironmentType PreferredEnvironment => EnvironmentType.Ground;
 
     protected override Plant? FindNearestPlant()
     {

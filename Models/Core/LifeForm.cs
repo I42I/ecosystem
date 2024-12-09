@@ -1,3 +1,4 @@
+using System;
 using ecosystem.Models.Entities.Environment;
 using ecosystem.Models.Behaviors;
 
@@ -31,11 +32,21 @@ public abstract class LifeForm : Entity, IVital, IEnvironmentSensitive
         Environment = environment;
     }
 
+    private double _accumulatedBasalCost = 0;
+    
     public override void Update()
     {
         if (IsDead) return;
         
-        ConsumeEnergy((int)BasalMetabolicRate);
+        _accumulatedBasalCost += BasalMetabolicRate * 1.0/10;
+        
+        if (_accumulatedBasalCost >= 1)
+        {
+            int energyToConsume = (int)Math.Floor(_accumulatedBasalCost);
+            ConsumeEnergy(energyToConsume);
+            _accumulatedBasalCost -= energyToConsume;
+        }
+        
         UpdateBehavior();
     }
 

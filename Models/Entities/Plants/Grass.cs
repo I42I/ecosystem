@@ -18,7 +18,7 @@ public class Grass : Plant
         RootRadius = 5.0;
         SeedRadius = 10.0;
         Color = new SolidColorBrush(Colors.Green);
-        Console.WriteLine($"Created Grass with color Green at {Position.X}, {Position.Y}");
+        Console.WriteLine($"Created Grass with color {Color} at {Position.X}, {Position.Y}");
     }
 
     public override EnvironmentType PreferredEnvironment => EnvironmentType.Ground;

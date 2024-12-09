@@ -60,4 +60,13 @@ public static class RandomHelper
             return mean + standardDeviation * randomStandardNormal;
         }
     }
+
+    public static (double X, double Y) GetRandomDirection()
+    {
+        lock (lockObject)
+        {
+            double angle = Instance.NextDouble() * 2 * Math.PI;
+            return (Math.Cos(angle), Math.Sin(angle));
+        }
+    }
 }

@@ -84,7 +84,7 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             Console.WriteLine("Creating initial entities...");
             
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 1; i++)
             {
                 var foxPosition = new Position(
                     Math.Min(100 + i * 50, 750),
@@ -94,7 +94,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 _worldService.AddEntity(fox);
             }
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 1; i++)
             {
                 var rabbitPosition = new Position(
                     Math.Min(200 + i * 40, 750),
@@ -104,7 +104,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 _worldService.AddEntity(rabbit);
             }
 
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 1; i++)
             {
                 var grassPosition = new Position(
                     Math.Min(300 + i * 20, 750),

@@ -18,6 +18,7 @@ public abstract class Carnivore : Animal, IPredator
     protected abstract double BaseAttackRange { get; }
     protected abstract double BaseHungerThreshold { get; }
     protected abstract double BaseReproductionThreshold { get; }
+    protected abstract double BaseReproductionEnergyCost { get; }
 
     protected Carnivore(
         IEntityLocator<Animal> entityLocator,
@@ -92,11 +93,15 @@ public abstract class Carnivore : Animal, IPredator
                 Attack(prey);
             }
         }
+        else
+        {
+            Rest();
+        }
     }
 
     protected override int CalculateMovementEnergyCost(double deltaX, double deltaY)
     {
         double distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
-        return (int)(distance * 1.2);
+        return (int)(distance * GetEnvironmentMovementModifier() * 1.2);
     }
 }

@@ -18,11 +18,31 @@ public abstract class MoveableEntity : LifeForm, IMoveable
 
     public virtual double MovementSpeed { get; protected set; }
 
+    protected abstract int CalculateMovementEnergyCost(double deltaX, double deltaY);
+
     public virtual void Move(double deltaX, double deltaY)
     {
-        Position.X += deltaX;
-        Position.Y += deltaY;
+        Console.WriteLine($"Moving from ({Position.X}, {Position.Y}) by ({deltaX}, {deltaY})");
+
+        double frameAdjustedSpeed = MovementSpeed * (1.0/60.0);
+        double scaledDeltaX = deltaX * frameAdjustedSpeed;
+        double scaledDeltaY = deltaY * frameAdjustedSpeed;
+
+        Position.X += scaledDeltaX;
+        Position.Y += scaledDeltaY;
+
+        _accumulatedEnergyCost += CalculateMovementEnergyCost(scaledDeltaX, scaledDeltaY);
+    
+        if (_accumulatedEnergyCost >= 1)
+        {
+            int energyToConsume = (int)Math.Floor(_accumulatedEnergyCost);
+            ConsumeEnergy(energyToConsume);
+            _accumulatedEnergyCost -= energyToConsume;
+        }
+        Console.WriteLine($"New position: ({Position.X}, {Position.Y})");
     }
+
+    private double _accumulatedEnergyCost = 0;
 
     public virtual double GetDistanceTo(IMoveable other)
     {

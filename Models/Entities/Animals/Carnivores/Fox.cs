@@ -17,6 +17,7 @@ public class Fox : Carnivore
     protected override double BaseAttackRange => 1.5;
     protected override double BaseHungerThreshold => 40.0;
     protected override double BaseReproductionThreshold => 60.0;
+    protected override double BaseReproductionEnergyCost => 30.0;
     public override EnvironmentType PreferredEnvironment => EnvironmentType.Ground;
 
     public Fox(
@@ -39,8 +40,14 @@ public class Fox : Carnivore
             contactRadius: 2.0,
             basalMetabolicRate: 1.2)
     {
+        MovementSpeed = 2.0;
+        AttackPower = BaseAttackPower;
+        AttackRange = BaseAttackRange;
+        HungerThreshold = BaseHungerThreshold;
+        ReproductionEnergyThreshold = BaseReproductionThreshold;
+        ReproductionEnergyCost = BaseReproductionEnergyCost;
         Color = new SolidColorBrush(Colors.Red);
-        Console.WriteLine($"Created Fox with color Red at {Position.X}, {Position.Y}");
+        Console.WriteLine($"Created Fox with color {Color} at {Position.X}, {Position.Y}");
         
     }
 
@@ -52,13 +59,13 @@ public class Fox : Carnivore
 
     public override void MoveTowardsPrey(Animal prey)
     {
-        // Logique de déplacement terrestre
-        double distance = GetDistanceTo(prey);
+        double dx = prey.Position.X - Position.X;
+        double dy = prey.Position.Y - Position.Y;
+        double distance = Math.Sqrt(dx * dx + dy * dy);
+
         if (distance > 0)
         {
-            double dx = (prey.Position.X - Position.X) / distance;
-            double dy = (prey.Position.Y - Position.Y) / distance;
-            Move(dx, dy);
+            Move(dx / distance, dy / distance);
         }
     }
 
@@ -94,9 +101,9 @@ public class Fox : Carnivore
 
     protected override IEnumerable<Animal> GetPotentialPrey()
     {
-        return _entityLocator.FindInRadius(
-            _worldService.Entities.OfType<Rabbit>(),
-            VisionRadius);
+        return _worldService.Entities
+            .OfType<Rabbit>()
+            .Where(r => !r.IsDead);
     }
 }
 
