@@ -1,0 +1,8 @@
+@startuml
+interface IPredator {
+    FindNearestPrey() : Animal?
+    MoveTowardsPrey(prey:Animal) : void
+    CanAttack(prey:Animal) : bool
+    Attack(prey:Animal) : void
+}
+@enduml

@@ -1,0 +1,14 @@
+@startuml
+class GridWorld {
+    + Width : int <<get>>
+    + Height : int <<get>>
+    + GridWorld(width:int, height:int)
+    - InitializeGrid() : void
+    - FillZone(startX:int, startY:int, endX:int, endY:int, type:EnvironmentType) : void
+    + GetEnvironmentAt(x:int, y:int) : EnvironmentType
+    + GetEnvironmentColorAt(x:int, y:int) : IBrush
+}
+class "Dictionary`2"<T1,T2> {
+}
+GridWorld --> "environmentColors<EnvironmentType,IBrush>" "Dictionary`2"
+@enduml

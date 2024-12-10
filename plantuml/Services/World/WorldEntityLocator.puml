@@ -1,0 +1,12 @@
+@startuml
+class "WorldEntityLocator`1"<T> {
+    + WorldEntityLocator(worldService:IWorldService)
+    + FindNearest(entities:IEnumerable<T>, maxDistance:double) : T?
+    + FindInRadius(entities:IEnumerable<T>, radius:double) : IEnumerable<T>
+    - GetDistance(position:Position) : double
+}
+class "IEntityLocator`1"<T> {
+}
+"IEntityLocator`1" "<T>" <|-- "WorldEntityLocator`1"
+"WorldEntityLocator`1" --> "_worldService" IWorldService
+@enduml

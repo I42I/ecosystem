@@ -1,0 +1,15 @@
+@startuml
+class Rabbit {
+    # <<override>> BaseBiteSize : int <<get>>
+    # <<override>> BaseHungerThreshold : double <<get>>
+    # <<override>> BaseReproductionThreshold : double <<get>>
+    # <<override>> BaseReproductionEnergyCost : double <<get>>
+    + Rabbit(entityLocator:IEntityLocator<Animal>, plantLocator:IEntityLocator<Plant>, worldService:IWorldService, healthPoints:int, energy:int, position:Position, isMale:bool)
+    + <<override>> SearchForMate() : void
+    # <<override>> GiveBirth() : void
+    + <<override>> Rest() : void
+    - StayWithGroup() : void
+}
+Herbivore <|-- Rabbit
+Rabbit --> "PreferredEnvironment" EnvironmentType
+@enduml

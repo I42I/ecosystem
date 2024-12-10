@@ -1,4 +1,4 @@
-namespace ecosystem.Models.Behaviors;
+namespace ecosystem.Models.Behaviors.Survival;
 
 public interface IVital
 {

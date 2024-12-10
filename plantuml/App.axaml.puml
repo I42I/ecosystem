@@ -1,0 +1,9 @@
+@startuml
+class App <<partial>> {
+    + <<override>> Initialize() : void
+    + <<override>> OnFrameworkInitializationCompleted() : void
+    - DisableAvaloniaDataAnnotationValidation() : void
+}
+Application <|-- App
+App --> "Services" IServiceProvider
+@enduml

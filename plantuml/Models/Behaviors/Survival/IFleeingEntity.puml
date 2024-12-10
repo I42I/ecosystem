@@ -1,0 +1,8 @@
+@startuml
+interface IFleeingEntity {
+    VisionRadius : double <<get>>
+    FleeFromPredator(predator:Animal) : void
+    GetNearbyEntities(radius:double) : IEnumerable<Entity>
+}
+IFleeingEntity --> "Position" Position
+@enduml

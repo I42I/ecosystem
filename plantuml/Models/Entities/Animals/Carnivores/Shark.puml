@@ -1,0 +1,20 @@
+@startuml
+class Shark {
+    # <<override>> BaseAttackPower : double <<get>>
+    # <<override>> BaseAttackRange : double <<get>>
+    # <<override>> BaseHungerThreshold : double <<get>>
+    # <<override>> BaseReproductionThreshold : double <<get>>
+    # <<override>> BaseReproductionEnergyCost : double <<get>>
+    + Shark(entityLocator:IEntityLocator<Animal>, preyLocator:IEntityLocator<Animal>, worldService:IWorldService, healthPoints:int, energy:int, position:Position, isMale:bool)
+    + <<override>> GetEnvironmentMovementModifier() : double
+    + <<override>> FindNearestPrey() : Animal?
+    + <<override>> MoveTowardsPrey(prey:Animal) : void
+    # <<override>> CalculateAttackDamage() : int
+    # <<override>> CalculateEnergyGain() : int
+    + <<override>> SearchForMate() : void
+    # <<override>> GiveBirth() : void
+    # <<override>> GetPotentialPrey() : IEnumerable<Animal>
+}
+Carnivore <|-- Shark
+Shark --> "PreferredEnvironment" EnvironmentType
+@enduml

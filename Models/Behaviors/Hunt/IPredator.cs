@@ -1,6 +1,6 @@
 using ecosystem.Models.Entities.Animals;
 
-namespace ecosystem.Models.Behaviors;
+namespace ecosystem.Models.Behaviors.Hunt;
 
 public interface IPredator
 {

@@ -1,0 +1,15 @@
+@startuml
+class WorldService {
+    + WorldService()
+    + AddEntity(entity:Entity) : void
+    + RemoveEntity(entity:Entity) : void
+    + GetEnvironmentAt(position:Position) : EnvironmentType
+    + GetEntitiesInRange(position:Position, radius:double) : IEnumerable<Entity>
+    - GetDistance(pos1:Position, pos2:Position) : double
+}
+class "ObservableCollection`1"<T> {
+}
+IWorldService <|-- WorldService
+WorldService o-> "Entities<Entity>" "ObservableCollection`1"
+WorldService --> "Grid" GridWorld
+@enduml

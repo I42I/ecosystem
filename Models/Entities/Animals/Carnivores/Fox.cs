@@ -109,7 +109,7 @@ public class Fox : Carnivore
             .Where(r => !r.IsDead);
     }
 
-    protected override void Rest()
+    public override void Rest()
     {
         PatrolTerritory();
     }

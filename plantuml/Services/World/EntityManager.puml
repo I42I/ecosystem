@@ -1,0 +1,15 @@
+@startuml
+class EntityManager {
+    + EntityManager(worldService:IWorldService)
+    + AddEntity(entity:Entity) : void
+    + RemoveEntity(entity:Entity) : void
+    + GetNearbyEntities(source:Entity, radius:double) : IEnumerable<T>
+    - CalculateDistance(pos1:Position, pos2:Position) : double
+    + Update() : void
+}
+class "List`1"<T> {
+}
+IEntityManager <|-- EntityManager
+EntityManager o-> "_entities<Entity>" "List`1"
+EntityManager --> "_worldService" IWorldService
+@enduml

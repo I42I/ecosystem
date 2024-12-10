@@ -1,0 +1,6 @@
+@startuml
+interface IEntityFactory {
+    CreateAnimal(energy:double, health:double, position:Position, isMale:bool) : T
+    CreatePlant(energy:double, health:double, position:Position) : T
+}
+@enduml

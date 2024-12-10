@@ -17,7 +17,7 @@ public abstract class Animal : MoveableEntity, IReproducible
 {
     protected readonly IEntityLocator<Animal> _entityLocator;
     protected readonly IWorldService _worldService;
-    private readonly List<IBehavior> _behaviors;
+    private readonly List<IBehavior<Animal>> _behaviors;
 
     protected Animal(
         IEntityLocator<Animal> entityLocator,
@@ -37,13 +37,7 @@ public abstract class Animal : MoveableEntity, IReproducible
         IsMale = isMale;
         VisionRadius = visionRadius;
         ContactRadius = contactRadius;
-        _behaviors = new List<IBehavior>
-        {
-            new FleeingBehavior(),   // Priority 3
-            new HungerBehavior(),    // Priority 2
-            new ReproductionBehavior(), // Priority 1
-            new RestBehavior()       // Priority 0
-        };
+        _behaviors = new List<IBehavior<Animal>>();
     }
 
     public bool IsMale { get; set; }
@@ -54,13 +48,15 @@ public abstract class Animal : MoveableEntity, IReproducible
     public double HungerThreshold { get; set; }
     public double ReproductionEnergyThreshold { get; set; }
     public double ReproductionEnergyCost { get; set; }
+    public bool IsPregnant { get; set; }
+    protected IWorldService WorldService => _worldService;
 
     public override double GetEnvironmentMovementModifier()
     {
-        return Environment.HasFlag(PreferredEnvironment) ? 1.0 : 1.5;
+        return Environment.HasFlag(PreferredEnvironment) ? 1.0 : 2.0;
     }
 
-    protected override abstract int CalculateMovementEnergyCost(double deltaX, double deltaY);
+    // protected override abstract int CalculateMovementEnergyCost(double deltaX, double deltaY);
 
     public bool CanReproduce()
     {
@@ -83,12 +79,15 @@ public abstract class Animal : MoveableEntity, IReproducible
         }
     }
 
-    protected abstract void GiveBirth();
-
     protected bool IsInContactWith(LifeForm other)
     {
-        double distance = GetDistanceTo((IMoveable)other);
+        double distance = GetDistanceTo(other.Position);
         return distance <= ContactRadius;
+    }
+
+    public void AddBehavior(IBehavior<Animal> behavior)
+    {
+        _behaviors.Add(behavior);
     }
 
     protected override void UpdateBehavior()
@@ -102,9 +101,8 @@ public abstract class Animal : MoveableEntity, IReproducible
     }
 
     public abstract void SearchForFood();
-    public abstract void SearchForMate();
     
-    protected virtual void Rest()
+    public virtual void Rest()
     {
         Console.WriteLine($"{GetType().Name} is resting");
         if (_directionChangeTicks <= 0)
@@ -137,7 +135,7 @@ public abstract class Animal : MoveableEntity, IReproducible
         return Energy <= HungerThreshold;
     }
 
-    protected bool NeedsToReproduce()
+    public bool NeedsToReproduce()
     {
         return IsAdult && ReproductionCooldown <= 0 && Energy >= ReproductionEnergyThreshold;
     }
@@ -168,4 +166,6 @@ public abstract class Animal : MoveableEntity, IReproducible
     {
         return new List<Animal>();
     }
+
+    protected abstract Animal CreateOffspring(Position position);
 }

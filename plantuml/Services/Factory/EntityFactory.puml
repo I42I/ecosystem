@@ -1,0 +1,14 @@
+@startuml
+class EntityFactory {
+    + EntityFactory(animalLocator:IEntityLocator<Animal>, preyLocator:IEntityLocator<Animal>, plantLocator:IEntityLocator<Plant>, worldService:IWorldService)
+    + CreateAnimal(energy:double, health:double, position:Position, isMale:bool) : T
+    + CreatePlant(energy:double, health:double, position:Position) : T
+}
+class "IEntityLocator`1"<T> {
+}
+IEntityFactory <|-- EntityFactory
+EntityFactory --> "_animalLocator<Animal>" "IEntityLocator`1"
+EntityFactory --> "_preyLocator<Animal>" "IEntityLocator`1"
+EntityFactory --> "_plantLocator<Plant>" "IEntityLocator`1"
+EntityFactory --> "_worldService" IWorldService
+@enduml

@@ -1,0 +1,16 @@
+@startuml
+abstract class Plant {
+    # {abstract} BaseAbsorptionRate : double <<get>>
+    # Plant(healthPoints:int, energy:int, position:Position, basalMetabolicRate:double, environment:EnvironmentType, worldService:IWorldService)
+    + RootRadius : double <<get>> <<protected set>>
+    + SeedRadius : double <<get>> <<protected set>>
+    # <<override>> UpdateBehavior() : void
+    # <<virtual>> AbsorbWaste(waste:OrganicWaste) : void
+    # {abstract} CanSpreadSeeds() : bool
+    # {abstract} CreateOffspring(position:Position) : Plant
+    - SpreadSeeds() : void
+    # <<override>> OnDeath() : void
+}
+LifeForm <|-- Plant
+Plant --> "_worldService" IWorldService
+@enduml

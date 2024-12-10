@@ -1,0 +1,12 @@
+@startuml
+interface IWorldService {
+    AddEntity(entity:Entity) : void
+    RemoveEntity(entity:Entity) : void
+    GetEnvironmentAt(position:Position) : EnvironmentType
+    GetEntitiesInRange(position:Position, radius:double) : IEnumerable<Entity>
+}
+class "ObservableCollection`1"<T> {
+}
+IWorldService --> "Entities<Entity>" "ObservableCollection`1"
+IWorldService --> "Grid" GridWorld
+@enduml

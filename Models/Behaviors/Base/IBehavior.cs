@@ -2,9 +2,9 @@ using ecosystem.Models.Core;
 
 namespace ecosystem.Models.Behaviors.Base;
 
-public interface IBehavior
+public interface IBehavior<T> where T : LifeForm
 {
     int Priority { get; }
-    bool CanExecute(LifeForm entity);
-    void Execute(LifeForm entity);
+    bool CanExecute(T entity);
+    void Execute(T entity);
 }

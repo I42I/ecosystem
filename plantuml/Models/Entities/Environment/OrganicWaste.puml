@@ -1,0 +1,11 @@
+@startuml
+class OrganicWaste {
+    - _energyValue : int
+    + EnergyValue : int <<get>> <<set>>
+    + OrganicWaste(position:Position, energyValue:int)
+    # <<override>> UpdateBehavior() : void
+    # <<override>> OnDeath() : void
+}
+LifeForm <|-- OrganicWaste
+OrganicWaste --> "PreferredEnvironment" EnvironmentType
+@enduml

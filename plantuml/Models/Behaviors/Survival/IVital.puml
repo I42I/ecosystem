@@ -1,0 +1,9 @@
+@startuml
+interface IVital {
+    HealthPoints : int <<get>>
+    Energy : int <<get>>
+    IsDead : bool <<get>>
+    TakeDamage(amount:int) : void
+    ConsumeEnergy(amount:int) : void
+}
+@enduml

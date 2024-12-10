@@ -1,0 +1,6 @@
+@startuml
+abstract class EnvironmentBase {
+    + Name : string <<get>> <<set>>
+    # EnvironmentBase(name:string, size:(double Width, double Height))
+}
+@enduml

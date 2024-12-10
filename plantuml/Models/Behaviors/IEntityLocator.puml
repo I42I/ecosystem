@@ -1,0 +1,6 @@
+@startuml
+interface "IEntityLocator`1"<T> {
+    FindNearest(entities:IEnumerable<T>, maxDistance:double) : T?
+    FindInRadius(entities:IEnumerable<T>, radius:double) : IEnumerable<T>
+}
+@enduml

@@ -1,0 +1,15 @@
+@startuml
+abstract class Entity {
+    + GetDistanceTo(otherPosition:Position) : double
+    - Position_PropertyChanged(sender:object?, e:PropertyChangedEventArgs) : void
+    # Entity(position:Position)
+    + <<virtual>> Update() : void
+    # <<virtual>> OnPropertyChanged(propertyName:string) : void
+    +  <<event>> PropertyChanged : PropertyChangedEventHandler? 
+}
+INotifyPropertyChanged <|-- Entity
+Entity o-> "_position" Position
+Entity --> "Position" Position
+Entity o-> "_color" IBrush
+Entity --> "Color" IBrush
+@enduml

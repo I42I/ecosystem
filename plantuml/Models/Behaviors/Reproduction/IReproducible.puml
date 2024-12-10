@@ -1,0 +1,8 @@
+@startuml
+interface IReproducible {
+    CanReproduce() : bool
+    Reproduce(partner:IReproducible) : void
+    IsMale : bool <<get>>
+    ReproductionEnergyCost : double <<get>>
+}
+@enduml

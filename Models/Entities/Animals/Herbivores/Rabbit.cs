@@ -66,7 +66,7 @@ public class Rabbit : Herbivore
         );
     }
 
-    protected override void Rest()
+    public override void Rest()
     {
         StayWithGroup();
     }
@@ -75,7 +75,7 @@ public class Rabbit : Herbivore
     {
         var nearbyRabbits = _worldService.Entities
             .OfType<Rabbit>()
-            .Where(r => r != this && GetDistanceTo(r) <= VisionRadius)
+            .Where(r => r != this && GetDistanceTo(r.Position) <= VisionRadius)
             .ToList();
 
         if (nearbyRabbits.Any())

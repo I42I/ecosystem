@@ -1,0 +1,7 @@
+@startuml
+interface IBehavior {
+    Priority : int <<get>>
+    CanExecute(entity:LifeForm) : bool
+    Execute(entity:LifeForm) : void
+}
+@enduml

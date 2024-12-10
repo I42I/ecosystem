@@ -1,8 +1,8 @@
 using System;
-using ecosystem.Models.Behaviors;
+using ecosystem.Models.Core;
 using ecosystem.Models.Entities.Environment;
 
-namespace ecosystem.Models.Core;
+namespace ecosystem.Models.Behaviors.Movement;
 
 public abstract class MoveableEntity : LifeForm, IMoveable
 {
@@ -48,11 +48,4 @@ public abstract class MoveableEntity : LifeForm, IMoveable
     }
 
     private double _accumulatedEnergyCost = 0;
-
-    public virtual double GetDistanceTo(IMoveable other)
-    {
-        var dx = Position.X - other.Position.X;
-        var dy = Position.Y - other.Position.Y;
-        return Math.Sqrt(dx * dx + dy * dy);
-    }
 }

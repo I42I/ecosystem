@@ -1,0 +1,11 @@
+@startuml
+interface ISimulationEngine {
+     <<event>> SimulationUpdated : EventHandler? 
+    SimulationSpeed : double <<get>> <<set>>
+    Start() : void
+    Pause() : void
+    Reset() : void
+    InitializeSimulation() : void
+    UpdateSimulation() : void
+}
+@enduml

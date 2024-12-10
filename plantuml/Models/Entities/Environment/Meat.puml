@@ -1,0 +1,9 @@
+@startuml
+class Meat {
+    + Meat(position:Position, energyValue:int)
+    # <<override>> UpdateBehavior() : void
+    # <<override>> OnDeath() : void
+}
+LifeForm <|-- Meat
+Meat --> "PreferredEnvironment" EnvironmentType
+@enduml

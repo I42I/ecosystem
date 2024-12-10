@@ -1,0 +1,10 @@
+@startuml
+class Grass {
+    # <<override>> BaseAbsorptionRate : double <<get>>
+    + Grass(worldService:IWorldService, healthPoints:int, energy:int, position:Position)
+    # <<override>> CanSpreadSeeds() : bool
+    # <<override>> CreateOffspring(position:Position) : Plant
+}
+Plant <|-- Grass
+Grass --> "PreferredEnvironment" EnvironmentType
+@enduml

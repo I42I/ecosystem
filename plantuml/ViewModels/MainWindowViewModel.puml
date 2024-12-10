@@ -1,0 +1,23 @@
+@startuml
+class MainWindowViewModel <<partial>> {
+    - _status : string = "Ready"
+    - _simulationSpeed : double = 1.0
+    + MainWindowViewModel(simulationEngine:ISimulationEngine, worldService:IWorldService, entityFactory:IEntityFactory)
+    + InitializeAndStart() : void
+    - InitializeSimulation() : void
+    - CreateInitialEntities() : void
+    - StartSimulation() : void
+    - PauseSimulation() : void
+    - ResetSimulation() : void
+    - UpdateStatus() : void
+    <<partial>> - OnSimulationSpeedChanged(value:double) : void
+}
+class "ObservableCollection`1"<T> {
+}
+ViewModelBase <|-- MainWindowViewModel
+MainWindowViewModel --> "_simulationEngine" ISimulationEngine
+MainWindowViewModel --> "_worldService" IWorldService
+MainWindowViewModel --> "_entityFactory" IEntityFactory
+MainWindowViewModel --> "_world" GridWorld
+MainWindowViewModel --> "Entities<Entity>" "ObservableCollection`1"
+@enduml

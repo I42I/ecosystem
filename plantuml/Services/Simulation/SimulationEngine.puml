@@ -1,0 +1,27 @@
+@startuml
+class SimulationEngine {
+    +  <<event>> SimulationUpdated : EventHandler? 
+    - _isRunning : bool
+    - _timer : Timer?
+    - _simulationSpeed : double = 1.0
+    + SimulationEngine(worldService:IWorldService, entityFactory:IEntityFactory, animalLocator:IEntityLocator<Animal>, preyLocator:IEntityLocator<Animal>)
+    + SimulationSpeed : double <<get>> <<set>>
+    + Start() : void
+    + Pause() : void
+    + Reset() : void
+    - UpdateTimer() : void
+    + InitializeSimulation() : void
+    - GetRandomPosition() : Position
+    + UpdateSimulation() : void
+    - HandleAnimalBehavior(animal:Animal) : void
+    - CleanupDeadEntities() : void
+}
+class "IEntityLocator`1"<T> {
+}
+ISimulationEngine <|-- SimulationEngine
+SimulationEngine --> "_worldService" IWorldService
+SimulationEngine --> "_entityFactory" IEntityFactory
+SimulationEngine --> "_random" Random
+SimulationEngine --> "_animalLocator<Animal>" "IEntityLocator`1"
+SimulationEngine --> "_preyLocator<Animal>" "IEntityLocator`1"
+@enduml

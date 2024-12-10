@@ -1,0 +1,8 @@
+@startuml
+interface IEntityManager {
+    AddEntity(entity:Entity) : void
+    RemoveEntity(entity:Entity) : void
+    GetNearbyEntities(source:Entity, radius:double) : IEnumerable<T>
+    Update() : void
+}
+@enduml

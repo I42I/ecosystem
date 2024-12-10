@@ -1,38 +1,34 @@
 using System.Linq;
 using ecosystem.Models.Core;
-using ecosystem.Models.Entities.Animals.Herbivores;
+using ecosystem.Models.Entities.Animals;
 using ecosystem.Models.Entities.Animals.Carnivores;
 using ecosystem.Models.Behaviors.Base;
 
+
 namespace ecosystem.Models.Behaviors.Survival;
 
-public class FleeingBehavior : IBehavior
+public class FleeingBehavior : IBehavior<Animal>
 {
     public int Priority => 3;
     
-    public bool CanExecute(LifeForm entity)
+    public bool CanExecute(Animal animal)
     {
-        if (entity is Herbivore herbivore)
-        {
-            var nearbyPredators = herbivore._worldService.Entities
-                .OfType<Carnivore>()
-                .Where(c => herbivore.GetDistanceTo(c) <= herbivore.VisionRadius * 1.5);
-            return nearbyPredators.Any();
-        }
-        return false;
+        return animal is IFleeingEntity fleeingEntity && 
+               fleeingEntity.GetNearbyEntities(fleeingEntity.VisionRadius * 1.5)
+                          .OfType<Carnivore>()
+                          .Any();
     }
     
-    public void Execute(LifeForm entity)
+    public void Execute(Animal animal)
     {
-        if (entity is Herbivore herbivore)
+        if (animal is IFleeingEntity fleeingEntity)
         {
-            var predator = herbivore._worldService.Entities
+            var predator = fleeingEntity.GetNearbyEntities(fleeingEntity.VisionRadius * 1.5)
                 .OfType<Carnivore>()
-                .Where(c => herbivore.GetDistanceTo(c) <= herbivore.VisionRadius * 1.5)
-                .OrderBy(c => herbivore.GetDistanceTo(c))
+                .OrderBy(c => animal.GetDistanceTo(c.Position))
                 .First();
-            
-            herbivore.FleeFromPredator(predator);
+
+            fleeingEntity.FleeFromPredator(predator);
         }
     }
 }

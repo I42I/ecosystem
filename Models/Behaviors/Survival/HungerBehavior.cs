@@ -1,23 +1,23 @@
-using ecosystem.Models.Core;
 using ecosystem.Models.Entities.Animals;
 using ecosystem.Models.Behaviors.Base;
 
 namespace ecosystem.Models.Behaviors.Survival;
 
-public class HungerBehavior : IBehavior
+public class HungerBehavior : IBehavior<Animal>
 {
     public int Priority => 2;
-    
-    public bool CanExecute(LifeForm entity)
+
+    public bool CanExecute(Animal animal)
     {
-        return entity is Animal animal && animal.Energy <= animal.HungerThreshold;
+        return animal is IHungry hungryEntity &&
+               hungryEntity.HungerThreshold >= animal.Energy;
     }
-    
-    public void Execute(LifeForm entity)
+
+    public void Execute(Animal animal)
     {
-        if (entity is Animal animal)
+        if (animal is IHungry hungryEntity)
         {
-            animal.SearchForFood();
+            hungryEntity.SearchForFood();
         }
     }
 }

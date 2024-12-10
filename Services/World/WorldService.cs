@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System;
+using System.Linq;
 using System.Collections.ObjectModel;
 using ecosystem.Models.Core;
 using ecosystem.Models.Entities.Environment;
@@ -31,5 +33,17 @@ public class WorldService : IWorldService
     public EnvironmentType GetEnvironmentAt(Position position)
     {
         return Grid.GetEnvironmentAt((int)position.X, (int)position.Y);
+    }
+
+    public IEnumerable<Entity> GetEntitiesInRange(Position position, double radius)
+    {
+        return Entities.Where(e => GetDistance(position, e.Position) <= radius);
+    }
+
+    private double GetDistance(Position pos1, Position pos2)
+    {
+        var dx = pos1.X - pos2.X;
+        var dy = pos1.Y - pos2.Y;
+        return Math.Sqrt(dx * dx + dy * dy);
     }
 }

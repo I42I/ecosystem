@@ -9,10 +9,11 @@ using ecosystem.Models.Entities.Environment;
 using ecosystem.Models.Core;
 using ecosystem.Services.World;
 using ecosystem.Models.Entities.Animals.Carnivores;
+using ecosystem.Models.Behaviors.Survival;
 
 namespace ecosystem.Models.Entities.Animals.Herbivores;
 
-public abstract class Herbivore : Animal
+public abstract class Herbivore : Animal, IFleeingEntity
 {
     protected readonly IEntityLocator<Plant> _plantLocator;
     protected abstract double BaseHungerThreshold { get; }
@@ -45,7 +46,7 @@ public abstract class Herbivore : Animal
         );
     }
 
-    protected override void SearchForFood()
+    public override void SearchForFood()
     {
         var nearestPlant = FindNearestPlant();
         if (nearestPlant != null)
@@ -98,31 +99,36 @@ public abstract class Herbivore : Animal
     {
         var nearbyPredators = _worldService.Entities
             .OfType<Carnivore>()
-            .Where(c => GetDistanceTo(c) <= VisionRadius * 1.5)
+            .Where(c => GetDistanceTo(c.Position) <= VisionRadius * 1.5)
             .ToList();
 
         if (nearbyPredators.Any())
         {
-            FleeFromPredator(nearbyPredators.OrderBy(p => GetDistanceTo(p)).First());
+            FleeFromPredator(nearbyPredators.OrderBy(p => GetDistanceTo(p.Position)).First());
             return;
         }
 
         base.UpdateBehavior();
     }
 
-    protected virtual void FleeFromPredator(Animal predator)
+    public IEnumerable<Entity> GetNearbyEntities(double radius)
+    {
+        return WorldService.GetEntitiesInRange(Position, radius);
+    }
+
+    public void FleeFromPredator(Animal predator)
     {
         _directionChangeTicks = 0;
-        
+
         double dx = Position.X - predator.Position.X;
         double dy = Position.Y - predator.Position.Y;
         double distance = Math.Sqrt(dx * dx + dy * dy);
-        
+
         if (distance > 0)
         {
             _currentDirectionX = dx / distance;
             _currentDirectionY = dy / distance;
-            Move(_currentDirectionX * 1.5, _currentDirectionY * 1.5);
+            Move(_currentDirectionX * MovementSpeed, _currentDirectionY * MovementSpeed);
         }
     }
 }

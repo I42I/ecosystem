@@ -35,7 +35,7 @@ public abstract class Plant : LifeForm
 
         var nearbyWaste = _worldService.Entities
             .OfType<OrganicWaste>()
-            .Where(w => GetDistanceTo(w) <= RootRadius)
+            .Where(w => GetDistanceTo(w.Position) <= RootRadius)
             .ToList();
 
         foreach (var waste in nearbyWaste)
@@ -47,13 +47,6 @@ public abstract class Plant : LifeForm
         {
             SpreadSeeds();
         }
-    }
-
-    public virtual double GetDistanceTo(OrganicWaste other)
-    {
-        var dx = Position.X - other.Position.X;
-        var dy = Position.Y - other.Position.Y;
-        return Math.Sqrt(dx * dx + dy * dy);
     }
 
     protected virtual void AbsorbWaste(OrganicWaste waste)

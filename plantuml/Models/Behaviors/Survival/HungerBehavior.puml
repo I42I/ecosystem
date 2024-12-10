@@ -1,0 +1,8 @@
+@startuml
+class HungerBehavior {
+    + Priority : int <<get>>
+    + CanExecute(entity:LifeForm) : bool
+    + Execute(entity:LifeForm) : void
+}
+IBehavior <|-- HungerBehavior
+@enduml

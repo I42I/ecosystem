@@ -4,6 +4,7 @@ using ecosystem.Models;
 using ecosystem.Helpers;
 using ecosystem.Models.Entities.Environment;
 using ecosystem.Models.Behaviors;
+using ecosystem.Models.Behaviors.Hunt;
 using ecosystem.Models.Entities.Animals;
 using ecosystem.Models.Core;
 using ecosystem.Services.World;
@@ -94,7 +95,7 @@ public abstract class Carnivore : Animal, IPredator
     protected abstract int CalculateAttackDamage();
     protected abstract int CalculateEnergyGain();
 
-    protected override void SearchForFood()
+    public override void SearchForFood()
     {
         var prey = FindNearestPrey();
         if (prey != null)

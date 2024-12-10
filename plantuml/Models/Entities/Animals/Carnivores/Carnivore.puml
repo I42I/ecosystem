@@ -1,0 +1,26 @@
+@startuml
+abstract class Carnivore {
+    # {abstract} BaseAttackPower : double <<get>>
+    # {abstract} BaseAttackRange : double <<get>>
+    # {abstract} BaseHungerThreshold : double <<get>>
+    # {abstract} BaseReproductionThreshold : double <<get>>
+    # {abstract} BaseReproductionEnergyCost : double <<get>>
+    # Carnivore(entityLocator:IEntityLocator<Animal>, preyLocator:IEntityLocator<Animal>, worldService:IWorldService, position:Position, healthPoints:int, energy:int, isMale:bool, visionRadius:double, contactRadius:double, basalMetabolicRate:double)
+    + AttackPower : double <<get>> <<protected set>>
+    + AttackRange : double <<get>> <<protected set>>
+    + <<virtual>> FindNearestPrey() : Animal?
+    # {abstract} GetPotentialPrey() : IEnumerable<Animal>
+    + <<virtual>> MoveTowardsPrey(prey:Animal) : void
+    + <<virtual>> CanAttack(prey:Animal) : bool
+    + <<virtual>> Attack(prey:Animal) : void
+    # {abstract} CalculateAttackDamage() : int
+    # {abstract} CalculateEnergyGain() : int
+    + <<override>> SearchForFood() : void
+    # <<override>> CalculateMovementEnergyCost(deltaX:double, deltaY:double) : int
+}
+class "IEntityLocator`1"<T> {
+}
+Animal <|-- Carnivore
+IPredator <|-- Carnivore
+Carnivore --> "_preyLocator<Animal>" "IEntityLocator`1"
+@enduml

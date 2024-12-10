@@ -53,7 +53,7 @@ public class Shark : Carnivore
 
     public override void MoveTowardsPrey(Animal prey)
     {
-        double distance = GetDistanceTo(prey);
+        double distance = GetDistanceTo(prey.Position);
         if (distance > 0)
         {
             double dx = (prey.Position.X - Position.X) / distance;

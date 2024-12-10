@@ -1,0 +1,7 @@
+@startuml
+class ViewLocator {
+    + Build(param:object?) : Control?
+    + Match(data:object?) : bool
+}
+IDataTemplate <|-- ViewLocator
+@enduml
