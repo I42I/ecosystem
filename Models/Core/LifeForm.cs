@@ -28,7 +28,7 @@ public abstract class LifeForm : Entity
 
     protected abstract void UpdateBehavior();
 
-    protected void TakeDamage(int amount)
+    public void TakeDamage(int amount)
     {
         HealthPoints -= amount;
         if (HealthPoints <= 0)

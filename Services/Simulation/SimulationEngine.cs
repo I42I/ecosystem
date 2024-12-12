@@ -15,6 +15,17 @@ using ecosystem.Services.Factory;
 
 namespace ecosystem.Services.Simulation;
 
+public interface ISimulationEngine
+{
+    event EventHandler? SimulationUpdated;
+    double SimulationSpeed { get; set; }
+    void Start();
+    void Pause();
+    void Reset();
+    void InitializeSimulation();
+    void CreateInitialEntities();
+}
+
 public class SimulationEngine : ISimulationEngine
 {
     public event EventHandler? SimulationUpdated;
@@ -97,30 +108,44 @@ public class SimulationEngine : ISimulationEngine
     {
         try
         {
-            for (int i = 0; i < 5; i++)
+            CreateInitialEntities();
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("Failed to initialize simulation", ex);
+        }
+    }
+
+    public void CreateInitialEntities()
+    {
+        try
+        {
+            Console.WriteLine("Creating initial entities...");
+            
+            for (int i = 0; i < 1; i++)
             {
-                var position = GetRandomPosition();
-                var fox = _entityFactory.CreateAnimal<Fox>(100, 100, position, i % 2 == 0);
+                var foxPosition = GetRandomPosition();
+                var fox = _entityFactory.CreateAnimal<Fox>(100, 100, foxPosition, i % 2 == 0);
                 _worldService.AddEntity(fox);
             }
 
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < 1; i++)
             {
-                var position = GetRandomPosition();
-                var rabbit = _entityFactory.CreateAnimal<Rabbit>(80, 80, position, i % 2 == 0);
+                var rabbitPosition = GetRandomPosition();
+                var rabbit = _entityFactory.CreateAnimal<Rabbit>(80, 80, rabbitPosition, i % 2 == 0);
                 _worldService.AddEntity(rabbit);
             }
 
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 1; i++)
             {
-                var position = GetRandomPosition();
-                var grass = _entityFactory.CreatePlant<Grass>(50, 50, position);
+                var grassPosition = GetRandomPosition();
+                var grass = _entityFactory.CreatePlant<Grass>(50, 50, grassPosition);
                 _worldService.AddEntity(grass);
             }
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException("Failed to initialize simulation", ex);
+            Console.WriteLine($"Error creating entities: {ex}");
         }
     }
 

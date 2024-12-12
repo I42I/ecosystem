@@ -8,6 +8,5 @@ public interface IFleeingEntity
 {
     double VisionRadius { get; }
     void FleeFromPredator(Animal predator);
-    IEnumerable<Entity> GetNearbyEntities(double radius);
     Position Position { get; }
 }

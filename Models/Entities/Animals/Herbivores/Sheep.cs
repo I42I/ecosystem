@@ -48,13 +48,14 @@ public class Sheep : Herbivore
         MovementSpeed = 1.3;
     }
 
-    protected override Animal CreateOffspring(Position position)
+    public override Animal CreateOffspring(Position position)
     {
         return new Sheep(
             _entityLocator,
+            _plantLocator,
             _worldService,
             position,
-            healthPoints: HealthPoints,
+            healthPoints: HealthPoints / 2,
             energy: Energy / 2,
             isMale: RandomHelper.Instance.NextDouble() > 0.5
         );

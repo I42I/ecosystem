@@ -111,11 +111,6 @@ public abstract class Herbivore : Animal, IFleeingEntity
         base.UpdateBehavior();
     }
 
-    public IEnumerable<Entity> GetNearbyEntities(double radius)
-    {
-        return WorldService.GetEntitiesInRange(Position, radius);
-    }
-
     public void FleeFromPredator(Animal predator)
     {
         _directionChangeTicks = 0;

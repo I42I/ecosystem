@@ -13,7 +13,7 @@ using ecosystem.Helpers;
 
 namespace ecosystem.Models.Entities.Animals;
 
-public abstract class Animal : MoveableEntity, IReproducible
+public abstract class Animal : MoveableEntity, IMating
 {
     protected readonly IEntityLocator<Animal> _entityLocator;
     protected readonly IWorldService _worldService;
@@ -49,7 +49,7 @@ public abstract class Animal : MoveableEntity, IReproducible
     public double ReproductionEnergyThreshold { get; set; }
     public double ReproductionEnergyCost { get; set; }
     public bool IsPregnant { get; set; }
-    protected IWorldService WorldService => _worldService;
+    public IWorldService WorldService => _worldService;
 
     public override double GetEnvironmentMovementModifier()
     {
@@ -154,18 +154,10 @@ public abstract class Animal : MoveableEntity, IReproducible
 
     public override abstract EnvironmentType PreferredEnvironment { get; }
 
-    protected Animal? FindNearestMate()
+    protected override double GetEnvironmentMovementModifier()
     {
-        return _entityLocator.FindNearest(
-            GetPotentialMates(),
-            VisionRadius
-        );
+        return Environment.HasFlag(PreferredEnvironment) ? 1.0 : 2.0;
     }
 
-    private IEnumerable<Animal> GetPotentialMates()
-    {
-        return new List<Animal>();
-    }
-
-    protected abstract Animal CreateOffspring(Position position);
+    public abstract Animal CreateOffspring(Position position);
 }

@@ -1,5 +1,6 @@
 using ecosystem.Models.Behaviors.Base;
 using ecosystem.Models.Entities.Animals;
+using System.Collections.Generic;
 
 namespace ecosystem.Models.Behaviors.Reproduction;
 
@@ -26,10 +27,17 @@ public class ReproductionBehavior : IBehavior<Animal>
             }
         }
     }
-
-    private Animal? FindMate(Animal animal)
+    
+    protected Animal? FindNearestMate()
     {
-        // Implement logic to find a mate
-        return null; // Placeholder
+        return _entityLocator.FindNearest(
+            GetPotentialMates(),
+            VisionRadius
+        );
+    }
+
+    private IEnumerable<Animal> GetPotentialMates()
+    {
+        return new List<Animal>();
     }
 }

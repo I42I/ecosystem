@@ -21,7 +21,6 @@ public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly ISimulationEngine _simulationEngine;
     private readonly IWorldService _worldService;
-    private readonly IEntityFactory _entityFactory;
 
     [ObservableProperty]
     private string _status = "Ready";
@@ -34,90 +33,23 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public ObservableCollection<Entity> Entities => _worldService.Entities;
 
-    public MainWindowViewModel(
-        ISimulationEngine simulationEngine,
-        IWorldService worldService,
-        IEntityFactory entityFactory)
+    public MainWindowViewModel(ISimulationEngine simulationEngine, IWorldService worldService)
     {
         Console.WriteLine("Initializing MainWindowViewModel...");
         
         _simulationEngine = simulationEngine;
         _worldService = worldService;
-        _entityFactory = entityFactory;
 
-        _simulationEngine.SimulationUpdated += (s, e) => 
-        {
-            Dispatcher.UIThread.Post(UpdateStatus, DispatcherPriority.Background);
-        };
+        _simulationEngine.SimulationUpdated += (s, e) => UpdateStatus();
 
         _world = worldService.Grid;
     }
 
     public void InitializeAndStart()
     {
-        try
-        {
-            Console.WriteLine("Initializing simulation...");
-            InitializeSimulation();
-            
-            Console.WriteLine("Starting simulation...");
-            Dispatcher.UIThread.Post(() =>
-            {
-                StartSimulation();
-                Status = $"Running - Entities: {_worldService.Entities.Count}";
-            });
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error during initialization: {ex}");
-        }
-    }
-
-    private void InitializeSimulation()
-    {
-        CreateInitialEntities();
-    }
-
-    private void CreateInitialEntities()
-    {
-        try
-        {
-            Console.WriteLine("Creating initial entities...");
-            
-            for (int i = 0; i < 1; i++)
-            {
-                var foxPosition = new Position(
-                    Math.Min(100 + i * 50, 750),
-                    Math.Min(100 + i * 30, 400)
-                );
-                var fox = _entityFactory.CreateAnimal<Fox>(100, 100, foxPosition, i % 2 == 0);
-                _worldService.AddEntity(fox);
-            }
-
-            for (int i = 0; i < 1; i++)
-            {
-                var rabbitPosition = new Position(
-                    Math.Min(200 + i * 40, 750),
-                    Math.Min(200 + i * 20, 400)
-                );
-                var rabbit = _entityFactory.CreateAnimal<Rabbit>(80, 80, rabbitPosition, i % 2 == 0);
-                _worldService.AddEntity(rabbit);
-            }
-
-            for (int i = 0; i < 1; i++)
-            {
-                var grassPosition = new Position(
-                    Math.Min(300 + i * 20, 750),
-                    Math.Min(300 + i * 10, 400)
-                );
-                var grass = _entityFactory.CreatePlant<Grass>(50, 50, grassPosition);
-                _worldService.AddEntity(grass);
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error creating entities: {ex}");
-        }
+        _simulationEngine.InitializeSimulation();
+        _simulationEngine.Start();
+        Status = "Running";
     }
 
     [RelayCommand]
@@ -139,7 +71,6 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         _simulationEngine.Reset();
         Status = "Reset";
-        InitializeSimulation();
     }
 
     private void UpdateStatus()

@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using Avalonia.Media;
+using ecosystem.Helpers;
 
 namespace ecosystem.Models.Core;
 
@@ -26,9 +27,7 @@ public abstract class Entity : INotifyPropertyChanged
 
     public double GetDistanceTo(Position otherPosition)
     {
-        var dx = Position.X - otherPosition.X;
-        var dy = Position.Y - otherPosition.Y;
-        return Math.Sqrt(dx * dx + dy * dy);
+        return MathHelper.CalculateDistance(Position, otherPosition);
     }
 
     private void Position_PropertyChanged(object? sender, PropertyChangedEventArgs e)

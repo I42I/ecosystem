@@ -48,4 +48,10 @@ public abstract class MoveableEntity : LifeForm, IMoveable
     }
 
     private double _accumulatedEnergyCost = 0;
+
+    protected virtual double GetEnvironmentMovementModifier()
+    {
+        // Default implementation
+        return 1.0;
+    }
 }
