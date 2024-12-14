@@ -11,6 +11,7 @@ using ecosystem.Models.Behaviors.Survival;
 using ecosystem.Models.Behaviors.Movement;
 using ecosystem.Models.Behaviors.Reproduction;
 using ecosystem.Models.Behaviors.Base;
+using ecosystem.Services.Simulation;
 
 namespace ecosystem.Models.Entities.Animals.Herbivores;
 
@@ -27,6 +28,7 @@ public class Rabbit : Herbivore
         IEntityLocator<Animal> entityLocator,
         IEntityLocator<Plant> plantLocator,
         IWorldService worldService,
+        ITimeManager timeManager,
         Position position,
         int healthPoints,
         int energy,
@@ -35,6 +37,7 @@ public class Rabbit : Herbivore
             entityLocator,
             plantLocator,
             worldService,
+            timeManager,
             position,
             healthPoints,
             energy,
@@ -59,6 +62,7 @@ public class Rabbit : Herbivore
             _entityLocator,
             _plantLocator,
             _worldService,
+            _timeManager,
             position,
             healthPoints: HealthPoints / 2,
             energy: Energy / 2,

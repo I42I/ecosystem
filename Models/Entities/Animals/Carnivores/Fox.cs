@@ -7,7 +7,7 @@ using ecosystem.Models.Behaviors.Hunt;
 using ecosystem.Services.World;
 using ecosystem.Models.Core;
 using ecosystem.Models.Behaviors.Movement;
-using ecosystem.Models.Behaviors.Base;
+using ecosystem.Services.Simulation;
 
 namespace ecosystem.Models.Entities.Animals.Carnivores;
 
@@ -21,12 +21,12 @@ public class Fox : Carnivore
     protected override double SpeciesEnergyCostModifier => 1.2;
     public override EnvironmentType PreferredEnvironment => EnvironmentType.Ground;
     private readonly Position _territoryCenter;
-    private double _territoryRadius = 100.0;
 
     public Fox(
         IEntityLocator<Animal> entityLocator,
         IEntityLocator<Animal> preyLocator,
         IWorldService worldService,
+        ITimeManager timeManager,
         Position position,
         int healthPoints,
         int energy,
@@ -35,6 +35,7 @@ public class Fox : Carnivore
             entityLocator,
             preyLocator,
             worldService,
+            timeManager,
             position,
             healthPoints,
             energy,
@@ -47,9 +48,8 @@ public class Fox : Carnivore
         Color = new SolidColorBrush(Colors.Red);
         _territoryCenter = position;
         
-        AddBehavior(new TerritorialBehavior(worldService, position));
         AddBehavior(new HuntingBehavior(worldService, new GroundHuntingStrategy()));
-        AddBehavior(new RestBehavior());;
+        AddBehavior(new TerritorialBehavior(worldService, position));
         Console.WriteLine($"Created Fox with color {Color} at {Position.X}, {Position.Y}");
         
     }
@@ -60,6 +60,7 @@ public class Fox : Carnivore
             _entityLocator,
             _preyLocator,
             _worldService,
+            _timeManager,
             position,
             HealthPoints / 2,
             Energy / 2,

@@ -61,30 +61,36 @@ public class SimulationEngine : ISimulationEngine
         {
             Console.WriteLine("Creating initial entities...");
             
-            for (int i = 0; i < 1; i++)
-            {
-                var foxPosition = RandomHelper.GetRandomPosition(_worldService.Grid.Width, _worldService.Grid.Height);
-                var fox = _entityFactory.CreateAnimal<Fox>(100, 100, foxPosition, i % 2 == 0);
-                _worldService.AddEntity(fox);
-            }
-
-            for (int i = 0; i < 1; i++)
-            {
-                var rabbitPosition = RandomHelper.GetRandomPosition(_worldService.Grid.Width, _worldService.Grid.Height);
-                var rabbit = _entityFactory.CreateAnimal<Rabbit>(80, 80, rabbitPosition, i % 2 == 0);
-                _worldService.AddEntity(rabbit);
-            }
-
-            for (int i = 0; i < 1; i++)
-            {
-                var grassPosition = RandomHelper.GetRandomPosition(_worldService.Grid.Width, _worldService.Grid.Height);
-                var grass = _entityFactory.CreatePlant<Grass>(50, 50, grassPosition);
-                _worldService.AddEntity(grass);
-            }
+            CreateAnimal<Fox>(3, 100, 100);
+            
+            CreateAnimal<Rabbit>(5, 80, 80);
+            
+            CreatePlants<Grass>(10, 50, 50);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error creating entities: {ex}");
+            throw;
+        }
+    }
+
+    private void CreateAnimal<T>(int count, double health, double energy) where T : Animal
+    {
+        for (int i = 0; i < count; i++)
+        {
+            var position = RandomHelper.GetRandomPosition(_worldService.Grid.Width, _worldService.Grid.Height);
+            var animal = _entityFactory.CreateAnimal<T>(energy, health, position, i % 2 == 0);
+            _worldService.AddEntity(animal);
+        }
+    }
+
+    private void CreatePlants<T>(int count, double health, double energy) where T : Plant
+    {
+        for (int i = 0; i < count; i++)
+        {
+            var position = RandomHelper.GetRandomPosition(_worldService.Grid.Width, _worldService.Grid.Height);
+            var plant = _entityFactory.CreatePlant<T>(energy, health, position);
+            _worldService.AddEntity(plant);
         }
     }
 

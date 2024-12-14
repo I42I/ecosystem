@@ -23,7 +23,6 @@ public class Duck : Herbivore
     protected override double BaseReproductionEnergyCost => 30.0;
     protected override double SpeciesEnergyCostModifier => 0.7;
     public override EnvironmentType PreferredEnvironment => EnvironmentType.Ground | EnvironmentType.Water;
-    private readonly ITimeManager _timeManager;
 
     protected override int CalculateMovementEnergyCost(double deltaX, double deltaY)
     {
@@ -44,6 +43,7 @@ public class Duck : Herbivore
             entityLocator,
             plantLocator,
             worldService,
+            timeManager,
             position,
             healthPoints,
             energy,
@@ -52,7 +52,6 @@ public class Duck : Herbivore
             contactRadius: 1.5,
             basalMetabolicRate: 0.7)
     {
-        _timeManager = timeManager ?? throw new ArgumentNullException(nameof(timeManager));
         _environmentPreferences.AddRange(new[]
         {
             new EnvironmentPreference(EnvironmentType.Ground, 0.8, 1.2),

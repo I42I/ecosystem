@@ -9,6 +9,7 @@ using ecosystem.Services.World;
 using ecosystem.Models.Entities.Environment;
 using ecosystem.Models.Entities.Plants;
 using Avalonia.Media;
+using ecosystem.Services.Simulation;
 
 namespace ecosystem.Models.Entities.Animals.Herbivores;
 
@@ -24,6 +25,7 @@ public class Sheep : Herbivore
         IEntityLocator<Animal> entityLocator,
         IEntityLocator<Plant> plantLocator, 
         IWorldService worldService,
+        ITimeManager timeManager,
         Position position,
         int healthPoints,
         int energy,
@@ -32,6 +34,7 @@ public class Sheep : Herbivore
             entityLocator,
             plantLocator,
             worldService,
+            timeManager,
             position,
             healthPoints,
             energy,
@@ -56,6 +59,7 @@ public class Sheep : Herbivore
             _entityLocator,
             _plantLocator,
             _worldService,
+            _timeManager,
             position,
             healthPoints: HealthPoints / 2,
             energy: Energy / 2,

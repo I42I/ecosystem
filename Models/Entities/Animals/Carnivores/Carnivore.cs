@@ -10,6 +10,7 @@ using ecosystem.Models.Core;
 using ecosystem.Services.World;
 using System.Linq;
 using ecosystem.Models.Entities.Animals.Herbivores;
+using ecosystem.Services.Simulation;
 
 namespace ecosystem.Models.Entities.Animals.Carnivores;
 
@@ -28,7 +29,8 @@ public abstract class Carnivore : Animal, IPredator
     protected Carnivore(
         IEntityLocator<Animal> entityLocator,
         IEntityLocator<Animal> preyLocator,
-        IWorldService worldService, 
+        IWorldService worldService,
+        ITimeManager timeManager,
         Position position,
         int healthPoints,
         int energy,
@@ -36,7 +38,7 @@ public abstract class Carnivore : Animal, IPredator
         double visionRadius,
         double contactRadius,
         double basalMetabolicRate)
-        : base(entityLocator, worldService, position, healthPoints, energy, isMale, 
+        : base(entityLocator, worldService, timeManager, position, healthPoints, energy, isMale, 
                visionRadius, contactRadius, basalMetabolicRate, EnvironmentType.Ground)
     {
         _preyLocator = preyLocator ?? throw new ArgumentNullException(nameof(preyLocator));

@@ -8,8 +8,7 @@ using ecosystem.Models.Entities.Plants;
 using ecosystem.Models.Entities.Environment;
 using ecosystem.Models.Core;
 using ecosystem.Services.World;
-using ecosystem.Models.Entities.Animals.Carnivores;
-using ecosystem.Models.Behaviors.Survival;
+using ecosystem.Services.Simulation;
 
 namespace ecosystem.Models.Entities.Animals.Herbivores;
 
@@ -25,6 +24,7 @@ public abstract class Herbivore : Animal
         IEntityLocator<Animal> entityLocator,
         IEntityLocator<Plant> plantLocator,
         IWorldService worldService,
+        ITimeManager timeManager,
         Position position,
         int healthPoints,
         int energy,
@@ -32,7 +32,7 @@ public abstract class Herbivore : Animal
         double visionRadius,
         double contactRadius,
         double basalMetabolicRate)
-        : base(entityLocator, worldService, position, healthPoints, energy, isMale,
+        : base(entityLocator, worldService, timeManager, position, healthPoints, energy, isMale,
                visionRadius, contactRadius, basalMetabolicRate, EnvironmentType.Ground)
     {
         _plantLocator = plantLocator;

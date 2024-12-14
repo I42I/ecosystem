@@ -6,6 +6,7 @@ using System.Linq;
 using ecosystem.Models.Behaviors;
 using ecosystem.Models.Core;
 using ecosystem.Services.World;
+using ecosystem.Services.Simulation;
 
 namespace ecosystem.Models.Entities.Animals.Carnivores;
 
@@ -23,6 +24,7 @@ public class Shark : Carnivore
         IEntityLocator<Animal> entityLocator,
         IEntityLocator<Animal> preyLocator,
         IWorldService worldService,
+        ITimeManager timeManager,
         int healthPoints,
         int energy,
         Position position,
@@ -31,6 +33,7 @@ public class Shark : Carnivore
             entityLocator,
             preyLocator,
             worldService,
+            timeManager,
             position,
             healthPoints,
             energy,
@@ -48,6 +51,7 @@ public class Shark : Carnivore
             _entityLocator,
             _preyLocator,
             _worldService,
+            _timeManager,
             HealthPoints / 2,
             Energy / 2,
             position,

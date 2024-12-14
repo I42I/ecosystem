@@ -9,6 +9,7 @@ using ecosystem.Models.Behaviors.Survival;
 using ecosystem.Models.Behaviors.Reproduction;
 using ecosystem.Models.Behaviors.Movement;
 using ecosystem.Services.World;
+using ecosystem.Services.Simulation;
 using ecosystem.Helpers;
 
 namespace ecosystem.Models.Entities.Animals;
@@ -21,10 +22,12 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive
     protected readonly List<EnvironmentPreference> _environmentPreferences = new();
     public IReadOnlyList<EnvironmentPreference> PreferredEnvironments => _environmentPreferences;
     public abstract EnvironmentType PreferredEnvironment { get; }
+    protected readonly ITimeManager _timeManager;
 
     protected Animal(
         IEntityLocator<Animal> entityLocator,
         IWorldService worldService,
+        ITimeManager timeManager,
         Position position,
         int healthPoints,
         int energy,
@@ -37,10 +40,12 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive
     {
         _entityLocator = entityLocator;
         _worldService = worldService;
+        _timeManager = timeManager;
         IsMale = isMale;
         VisionRadius = visionRadius;
         ContactRadius = contactRadius;
         _behaviors = new List<IBehavior<Animal>>();
+        AddBaseBehaviors();
     }
 
     public bool IsMale { get; set; }
@@ -57,6 +62,12 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive
     public void AddBehavior(IBehavior<Animal> behavior)
     {
         _behaviors.Add(behavior);
+    }
+
+    private void AddBaseBehaviors()
+    {
+        AddBehavior(new MatingBehavior(_worldService, _timeManager));   // Priority 2
+        AddBehavior(new RestBehavior());                                // Priority 0
     }
 
     protected override void UpdateBehavior()
