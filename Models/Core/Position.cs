@@ -46,6 +46,16 @@ public class Position : INotifyPropertyChanged
     {
     }
 
+    public static Position operator -(Position a, Position b)
+    {
+        return new Position(a.X - b.X, a.Y - b.Y);
+    }
+
+    public static Position operator /(Position p, double scalar)
+    {
+        return new Position(p.X / scalar, p.Y / scalar);
+    }
+
     private void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

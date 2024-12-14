@@ -13,11 +13,14 @@ using ecosystem.Helpers;
 
 namespace ecosystem.Models.Entities.Animals;
 
-public abstract class Animal : MoveableEntity, IMating
+public abstract class Animal : MoveableEntity, IEnvironmentSensitive
 {
     protected readonly IEntityLocator<Animal> _entityLocator;
     protected readonly IWorldService _worldService;
     private readonly List<IBehavior<Animal>> _behaviors;
+    protected readonly List<EnvironmentPreference> _environmentPreferences = new();
+    public IReadOnlyList<EnvironmentPreference> PreferredEnvironments => _environmentPreferences;
+    public abstract EnvironmentType PreferredEnvironment { get; }
 
     protected Animal(
         IEntityLocator<Animal> entityLocator,
@@ -30,7 +33,7 @@ public abstract class Animal : MoveableEntity, IMating
         double contactRadius,
         double basalMetabolicRate,
         EnvironmentType environment) 
-        : base(healthPoints, energy, position, basalMetabolicRate, environment)
+        : base(position, healthPoints, energy, environment, basalMetabolicRate)
     {
         _entityLocator = entityLocator;
         _worldService = worldService;
@@ -51,40 +54,6 @@ public abstract class Animal : MoveableEntity, IMating
     public bool IsPregnant { get; set; }
     public IWorldService WorldService => _worldService;
 
-    public override double GetEnvironmentMovementModifier()
-    {
-        return Environment.HasFlag(PreferredEnvironment) ? 1.0 : 2.0;
-    }
-
-    // protected override abstract int CalculateMovementEnergyCost(double deltaX, double deltaY);
-
-    public bool CanReproduce()
-    {
-        return NeedsToReproduce();
-    }
-
-    public void Reproduce(IReproducible partner)
-    {
-        if (partner is Animal animalPartner)
-        {
-            Reproduce(animalPartner);
-        }
-    }
-
-    protected void Reproduce(Animal partner)
-    {
-        if (IsMale != partner.IsMale && IsInContactWith(partner))
-        {
-            GiveBirth();
-        }
-    }
-
-    protected bool IsInContactWith(LifeForm other)
-    {
-        double distance = GetDistanceTo(other.Position);
-        return distance <= ContactRadius;
-    }
-
     public void AddBehavior(IBehavior<Animal> behavior)
     {
         _behaviors.Add(behavior);
@@ -92,55 +61,25 @@ public abstract class Animal : MoveableEntity, IMating
 
     protected override void UpdateBehavior()
     {
-        var applicableBehavior = _behaviors
+        var currentEnv = _worldService.GetEnvironmentAt(Position);
+        var envPreference = GetBestEnvironmentPreference(currentEnv);
+        
+        if (envPreference.Type == EnvironmentType.None)
+        {
+            TakeDamage(1);
+        }
+        
+        ConsumeEnergy((int)(BasalMetabolicRate * envPreference.EnergyLossModifier));
+        
+        var behavior = _behaviors
             .Where(b => b.CanExecute(this))
             .OrderByDescending(b => b.Priority)
             .FirstOrDefault();
-
-        applicableBehavior?.Execute(this);
+            
+        behavior?.Execute(this);
     }
 
-    public abstract void SearchForFood();
-    
-    public virtual void Rest()
-    {
-        Console.WriteLine($"{GetType().Name} is resting");
-        if (_directionChangeTicks <= 0)
-        {
-            double angle = RandomHelper.Instance.NextDouble() * 2 * Math.PI;
-            _currentDirectionX = Math.Cos(angle);
-            _currentDirectionY = Math.Sin(angle);
-            _directionChangeTicks = RandomHelper.Instance.Next(60, 180);
-        }
-        
-        _directionChangeTicks--;
-        
-        double variation = (RandomHelper.Instance.NextDouble() - 0.5) * 0.2;
-        double dx = _currentDirectionX + variation;
-        double dy = _currentDirectionY + variation;
-
-        double length = Math.Sqrt(dx * dx + dy * dy);
-        if (length > 0)
-        {
-            dx /= length;
-            dy /= length;
-        }
-        
-        Move(dx, dy);
-    }
-
-    protected bool NeedsToEat()
-    {
-        Console.WriteLine($"{GetType().Name} - Energy: {Energy}, HungerThreshold: {HungerThreshold}, HealthPoints: {HealthPoints}");
-        return Energy <= HungerThreshold;
-    }
-
-    public bool NeedsToReproduce()
-    {
-        return IsAdult && ReproductionCooldown <= 0 && Energy >= ReproductionEnergyThreshold;
-    }
-
-    protected override void OnDeath()
+    protected override void Die()
     {
         CreateMeat();
     }
@@ -152,11 +91,13 @@ public abstract class Animal : MoveableEntity, IMating
         // Add meat to the ecosystem
     }
 
-    public override abstract EnvironmentType PreferredEnvironment { get; }
-
-    protected override double GetEnvironmentMovementModifier()
+    public EnvironmentPreference GetBestEnvironmentPreference(EnvironmentType currentEnv)
     {
-        return Environment.HasFlag(PreferredEnvironment) ? 1.0 : 2.0;
+        return PreferredEnvironments
+            .Where(p => (p.Type & currentEnv) != 0)
+            .OrderByDescending(p => p.MovementModifier)
+            .FirstOrDefault() 
+            ?? new EnvironmentPreference(EnvironmentType.None, 0.3, 3.0);
     }
 
     public abstract Animal CreateOffspring(Position position);

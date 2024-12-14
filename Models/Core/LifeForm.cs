@@ -10,12 +10,14 @@ public abstract class LifeForm : Entity
     public int HealthPoints { get; protected set; }
     public int Energy { get; protected set; }
     public bool IsDead => HealthPoints <= 0 || Energy <= 0;
+    protected EnvironmentType Environment { get; }
 
-    protected LifeForm(Position position, int healthPoints, int energy)
+    protected LifeForm(Position position, int healthPoints, int energy, EnvironmentType environment)
         : base(position)
     {
         HealthPoints = healthPoints;
         Energy = energy;
+        Environment = environment;
     }
 
     public override void Update()
@@ -23,6 +25,10 @@ public abstract class LifeForm : Entity
         if (!IsDead)
         {
             UpdateBehavior();
+        }
+        else
+        {
+            Die();
         }
     }
 

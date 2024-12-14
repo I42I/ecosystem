@@ -6,28 +6,37 @@ namespace ecosystem.Models.Behaviors.Movement;
 
 public abstract class MoveableEntity : LifeForm, IMoveable
 {
+    protected double BasalMetabolicRate { get; }
+    protected abstract double SpeciesEnergyCostModifier { get; }
+
     protected MoveableEntity(
+        Position position,
         int healthPoints,
         int energy,
-        Position position,
-        double basalMetabolicRate,
-        EnvironmentType environment)
-        : base(healthPoints, energy, position, basalMetabolicRate, environment)
+        EnvironmentType environment,
+        double basalMetabolicRate)
+        : base(position, healthPoints, energy, environment)
     {
+        BasalMetabolicRate = basalMetabolicRate;
     }
-
     public virtual double MovementSpeed { get; protected set; }
 
-    protected abstract int CalculateMovementEnergyCost(double deltaX, double deltaY);
+    protected virtual int CalculateMovementEnergyCost(double deltaX, double deltaY)
+    {
+        double distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+        double environmentModifier = GetEnvironmentMovementModifier();
+        
+        return (int)(distance * BasalMetabolicRate * environmentModifier * SpeciesEnergyCostModifier);
+    }
 
     protected double _currentDirectionX = 0;
     protected double _currentDirectionY = 0;
     protected int _directionChangeTicks = 0;
 
+    private double _accumulatedEnergyCost = 0;
+
     public virtual void Move(double deltaX, double deltaY)
     {
-        Console.WriteLine($"Moving from ({Position.X}, {Position.Y}) by ({deltaX}, {deltaY})");
-
         double frameAdjustedSpeed = MovementSpeed * (1.0/10.0);
         
         double scaledDeltaX = deltaX * frameAdjustedSpeed;
@@ -44,14 +53,21 @@ public abstract class MoveableEntity : LifeForm, IMoveable
             ConsumeEnergy(energyToConsume);
             _accumulatedEnergyCost -= energyToConsume;
         }
-        Console.WriteLine($"New position: ({Position.X}, {Position.Y})");
     }
-
-    private double _accumulatedEnergyCost = 0;
 
     protected virtual double GetEnvironmentMovementModifier()
     {
-        // Default implementation
-        return 1.0;
+        var preference = (this as IEnvironmentSensitive)?.GetBestEnvironmentPreference(Environment);
+        return preference?.MovementModifier ?? 1.0;
+    }
+
+    public void AddEnergy(int amount)
+    {
+        Energy += amount;
+    }
+    
+    public void RemoveEnergy(int amount)
+    {
+        Energy -= amount;
     }
 }

@@ -1,25 +1,15 @@
-﻿using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Threading;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ecosystem.Services.Factory;
 using ecosystem.Services.Simulation;
 using ecosystem.Services.World;
-using ecosystem.Models.Entities.Environment;
-using System.Collections.ObjectModel;
 using ecosystem.Models.Core;
-using ecosystem.Models.Entities.Animals.Carnivores;
-using ecosystem.Models.Entities.Animals.Herbivores;
-using ecosystem.Models.Entities.Plants;
-using System;
-using System.Threading.Tasks;
 
 namespace ecosystem.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly ISimulationEngine _simulationEngine;
+    private readonly ITimeManager _timeManager;
     private readonly IWorldService _worldService;
 
     [ObservableProperty]
@@ -28,59 +18,49 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private double _simulationSpeed = 1.0;
 
-    [ObservableProperty]
-    private GridWorld _world;
+    public System.Collections.ObjectModel.ObservableCollection<Entity> Entities => _worldService.Entities;
 
-    public ObservableCollection<Entity> Entities => _worldService.Entities;
-
-    public MainWindowViewModel(ISimulationEngine simulationEngine, IWorldService worldService)
+    public MainWindowViewModel(ISimulationEngine simulationEngine, ITimeManager timeManager, IWorldService worldService)
     {
-        Console.WriteLine("Initializing MainWindowViewModel...");
-        
         _simulationEngine = simulationEngine;
+        _timeManager = timeManager;
         _worldService = worldService;
 
-        _simulationEngine.SimulationUpdated += (s, e) => UpdateStatus();
-
-        _world = worldService.Grid;
+        _simulationEngine.InitializeSimulation();
+        Status = "Initialized";
     }
 
     public void InitializeAndStart()
     {
         _simulationEngine.InitializeSimulation();
-        _simulationEngine.Start();
+        _timeManager.Start();
         Status = "Running";
     }
 
     [RelayCommand]
     private void StartSimulation()
     {
-        _simulationEngine.Start();
+        _timeManager.Start();
         Status = "Running";
     }
 
     [RelayCommand]
     private void PauseSimulation()
     {
-        _simulationEngine.Pause();
+        _timeManager.Pause();
         Status = "Paused";
     }
 
     [RelayCommand]
     private void ResetSimulation()
     {
-        _simulationEngine.Reset();
+        _timeManager.Reset();
+        _simulationEngine.InitializeSimulation();
         Status = "Reset";
-    }
-
-    private void UpdateStatus()
-    {
-        Status = $"Running - Entities: {_worldService.Entities.Count}";
-        Console.WriteLine($"Status updated: {Status}");
     }
 
     partial void OnSimulationSpeedChanged(double value)
     {
-        _simulationEngine.SimulationSpeed = value;
+        _timeManager.SetSimulationSpeed(value);
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using ecosystem.Models.Core;
 
 namespace ecosystem.Helpers;
 
@@ -48,6 +49,13 @@ public static class RandomHelper
                 centerY + distance * Math.Sin(angle)
             );
         }
+    }
+
+    public static Position GetRandomPosition(double maxX, double maxY)
+    {
+        var x = Instance.NextDouble() * maxX;
+        var y = Instance.NextDouble() * maxY;
+        return new Position { X = x, Y = y };
     }
 
     public static double NextGaussian(double mean, double standardDeviation)

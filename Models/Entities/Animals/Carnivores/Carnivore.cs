@@ -8,18 +8,22 @@ using ecosystem.Models.Behaviors.Hunt;
 using ecosystem.Models.Entities.Animals;
 using ecosystem.Models.Core;
 using ecosystem.Services.World;
+using System.Linq;
+using ecosystem.Models.Entities.Animals.Herbivores;
 
 namespace ecosystem.Models.Entities.Animals.Carnivores;
 
 public abstract class Carnivore : Animal, IPredator
 {
-    private readonly IEntityLocator<Animal> _preyLocator;
-
-    protected abstract double BaseAttackPower { get; }
+    protected readonly IEntityLocator<Animal> _preyLocator;  // Changed to _preyLocator
+    
+    public abstract double BaseAttackPower { get; }
     protected abstract double BaseAttackRange { get; }
     protected abstract double BaseHungerThreshold { get; }
     protected abstract double BaseReproductionThreshold { get; }
     protected abstract double BaseReproductionEnergyCost { get; }
+    protected double AttackPower { get; set; }
+    protected double AttackRange { get; set; }
 
     protected Carnivore(
         IEntityLocator<Animal> entityLocator,
@@ -35,15 +39,12 @@ public abstract class Carnivore : Animal, IPredator
         : base(entityLocator, worldService, position, healthPoints, energy, isMale, 
                visionRadius, contactRadius, basalMetabolicRate, EnvironmentType.Ground)
     {
-        _preyLocator = preyLocator;
+        _preyLocator = preyLocator ?? throw new ArgumentNullException(nameof(preyLocator));
         AttackPower = BaseAttackPower;
         AttackRange = BaseAttackRange;
         HungerThreshold = BaseHungerThreshold;
         ReproductionEnergyThreshold = BaseReproductionThreshold;
     }
-
-    public double AttackPower { get; protected set; }
-    public double AttackRange { get; protected set; }
 
     public virtual Animal? FindNearestPrey()
     {
@@ -52,8 +53,6 @@ public abstract class Carnivore : Animal, IPredator
             VisionRadius
         );
     }
-
-    protected abstract IEnumerable<Animal> GetPotentialPrey();
 
     public virtual void MoveTowardsPrey(Animal prey)
     {
@@ -73,7 +72,7 @@ public abstract class Carnivore : Animal, IPredator
 
     public virtual bool CanAttack(Animal prey)
     {
-        return IsInContactWith(prey);
+        return MathHelper.IsInContactWith(this, prey);
     }
 
     public virtual void Attack(Animal prey)
@@ -92,24 +91,24 @@ public abstract class Carnivore : Animal, IPredator
         }
     }
 
-    protected abstract int CalculateAttackDamage();
-    protected abstract int CalculateEnergyGain();
-
-    public override void SearchForFood()
+    protected virtual int CalculateAttackDamage()
     {
-        var prey = FindNearestPrey();
-        if (prey != null)
-        {
-            MoveTowardsPrey(prey);
-            if (CanAttack(prey))
-            {
-                Attack(prey);
-            }
-        }
-        else
-        {
-            Rest();
-        }
+        // Comportement de base pour tous les carnivores
+        return (int)(BaseAttackPower * (0.8 + RandomHelper.Instance.NextDouble() * 0.4));
+    }
+
+    protected virtual int CalculateEnergyGain()
+    {
+        // Énergie gagnée proportionnelle à l'attaque pour tous les carnivores
+        return (int)(BaseAttackPower * 0.5);
+    }
+
+    protected virtual IEnumerable<Animal> GetPotentialPrey()
+    {
+        // Par défaut, tous les herbivores sont des proies potentielles
+        return _worldService.Entities
+            .OfType<Herbivore>()
+            .Where(h => !h.IsDead);
     }
 
     protected override int CalculateMovementEnergyCost(double deltaX, double deltaY)

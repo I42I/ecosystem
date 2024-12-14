@@ -13,6 +13,7 @@ public abstract class Plant : LifeForm
 {
     protected abstract double BaseAbsorptionRate { get; }
     protected readonly IWorldService _worldService;
+    public abstract EnvironmentType PreferredEnvironment { get; }
 
     protected Plant(
         int healthPoints,
@@ -21,7 +22,7 @@ public abstract class Plant : LifeForm
         double basalMetabolicRate,
         EnvironmentType environment,
         IWorldService worldService)
-        : base(healthPoints, energy, position, basalMetabolicRate, environment)
+        : base(position, healthPoints, energy, environment)
     {
         _worldService = worldService;
     }
@@ -71,7 +72,7 @@ public abstract class Plant : LifeForm
         var offspring = CreateOffspring(randomPosition);
     }
 
-    protected override void OnDeath()
+    protected override void Die()
     {
         var waste = new OrganicWaste(Position, Energy);
         _worldService.AddEntity(waste);

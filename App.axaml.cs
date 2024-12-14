@@ -41,6 +41,7 @@ public partial class App : Application
                 services.AddSingleton<ISimulationEngine, SimulationEngine>();
                 services.AddSingleton<IEntityLocator<Animal>, WorldEntityLocator<Animal>>();
                 services.AddSingleton<IEntityLocator<Plant>, WorldEntityLocator<Plant>>();
+                services.AddSingleton<ITimeManager, TimeManager>();
                 services.AddTransient<MainWindowViewModel>();
 
                 Services = services.BuildServiceProvider();

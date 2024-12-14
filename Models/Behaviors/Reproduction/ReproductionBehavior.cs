@@ -1,43 +1,44 @@
+using System.Linq;
 using ecosystem.Models.Behaviors.Base;
 using ecosystem.Models.Entities.Animals;
-using System.Collections.Generic;
+using ecosystem.Services.World;
+using ecosystem.Helpers;
 
 namespace ecosystem.Models.Behaviors.Reproduction;
 
 public class ReproductionBehavior : IBehavior<Animal>
 {
+    private readonly IWorldService _worldService;
+
+    public ReproductionBehavior(IWorldService worldService)
+    {
+        _worldService = worldService;
+    }
+
     public int Priority => 1;
 
     public bool CanExecute(Animal animal)
     {
-        return animal is IMating matingEntity &&
-               animal.Energy >= matingEntity.ReproductionEnergyThreshold;
+        return !animal.IsPregnant && animal.Energy >= animal.ReproductionEnergyThreshold;
     }
 
     public void Execute(Animal animal)
     {
-        if (animal is IMating matingEntity)
+        var potentialMates = _worldService.GetEntitiesInRange(animal.Position, animal.VisionRadius)
+            .OfType<Animal>()
+            .Where(a => a.GetType() == animal.GetType() 
+                       && a.IsMale != animal.IsMale
+                       && !a.IsPregnant
+                       && a.Energy >= a.ReproductionEnergyThreshold);
+
+        var mate = potentialMates.FirstOrDefault();
+        if (mate != null && MathHelper.IsInContactWith(animal, mate))
         {
-            var mate = FindMate(animal);
-            if (mate != null)
+            animal.RemoveEnergy((int)animal.ReproductionEnergyCost);
+            if (!animal.IsMale)
             {
-                var offspring = matingEntity.CreateOffspring(animal.Position);
-                animal.WorldService.AddEntity(offspring);
-                animal.Energy -= matingEntity.ReproductionEnergyThreshold;
+                animal.IsPregnant = true;
             }
         }
-    }
-    
-    protected Animal? FindNearestMate()
-    {
-        return _entityLocator.FindNearest(
-            GetPotentialMates(),
-            VisionRadius
-        );
-    }
-
-    private IEnumerable<Animal> GetPotentialMates()
-    {
-        return new List<Animal>();
     }
 }

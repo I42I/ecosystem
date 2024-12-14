@@ -3,7 +3,7 @@ using ecosystem.Models.Core;
 
 namespace ecosystem.Models.Entities.Environment;
 
-public class OrganicWaste : LifeForm
+public class OrganicWaste : Entity
 {
     private int _energyValue;
     public int EnergyValue 
@@ -13,25 +13,8 @@ public class OrganicWaste : LifeForm
     }
 
     public OrganicWaste(Position position, int energyValue)
-        : base(
-            healthPoints: 0, 
-            energy: 0, 
-            position, 
-            basalMetabolicRate: 0,
-            environment: EnvironmentType.Ground | EnvironmentType.Water)
+        : base(position)
     {
         EnergyValue = energyValue;
-    }
-
-    public override EnvironmentType PreferredEnvironment => EnvironmentType.Ground | EnvironmentType.Water;
-
-    protected override void UpdateBehavior()
-    {
-        // Les déchets organiques n'ont pas de comportement actif
-    }
-
-    protected override void OnDeath()
-    {
-        // Les déchets organiques ne meurent pas
     }
 }

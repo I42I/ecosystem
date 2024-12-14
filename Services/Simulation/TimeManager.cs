@@ -7,11 +7,12 @@ namespace ecosystem.Services.Simulation;
 public interface ITimeManager
 {
     double CurrentTime { get; }
+    double DeltaTime { get; }
     void RegisterTickAction(Action action);
     void Start();
     void Pause();
     void Reset();
-    void SetInterval(int milliseconds);
+    void SetSimulationSpeed(double speed);
 }
 
 public class TimeManager : ITimeManager
@@ -20,9 +21,11 @@ public class TimeManager : ITimeManager
     private Timer? _timer;
     private double _currentTime;
     private bool _isRunning;
-    private int _intervalMilliseconds = 1000;
-
+    private double _simulationSpeed = 1.0;
+    private int _baseIntervalMilliseconds = 1000;
     public double CurrentTime => _currentTime;
+    private readonly double _fixedDeltaTime = 1.0 / 60.0;
+    public double DeltaTime => _fixedDeltaTime * _simulationSpeed;
 
     public void RegisterTickAction(Action action)
     {
@@ -34,7 +37,7 @@ public class TimeManager : ITimeManager
         if (_isRunning)
             return;
 
-        _timer = new Timer(Tick, null, 0, _intervalMilliseconds);
+        _timer = new Timer(Tick, null, 0, GetInterval());
         _isRunning = true;
     }
 
@@ -53,18 +56,23 @@ public class TimeManager : ITimeManager
         _currentTime = 0;
     }
 
-    public void SetInterval(int milliseconds)
+    public void SetSimulationSpeed(double speed)
     {
-        _intervalMilliseconds = milliseconds;
+        _simulationSpeed = speed;
         if (_isRunning)
         {
-            _timer?.Change(0, _intervalMilliseconds);
+            _timer?.Change(0, GetInterval());
         }
+    }
+
+    private int GetInterval()
+    {
+        return (int)(_baseIntervalMilliseconds / _simulationSpeed);
     }
 
     private void Tick(object? state)
     {
-        _currentTime += _intervalMilliseconds / 1000.0;
+        _currentTime += _baseIntervalMilliseconds / 1000.0;
         foreach (var action in _tickActions)
         {
             action();
