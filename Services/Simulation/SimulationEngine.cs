@@ -78,7 +78,7 @@ public class SimulationEngine : ISimulationEngine
     {
         for (int i = 0; i < count; i++)
         {
-            var position = RandomHelper.GetRandomPosition(_worldService.Grid.Width, _worldService.Grid.Height);
+            var position = RandomHelper.GetRandomPosition();
             var animal = _entityFactory.CreateAnimal<T>(energy, health, position, i % 2 == 0);
             _worldService.AddEntity(animal);
         }
@@ -88,7 +88,7 @@ public class SimulationEngine : ISimulationEngine
     {
         for (int i = 0; i < count; i++)
         {
-            var position = RandomHelper.GetRandomPosition(_worldService.Grid.Width, _worldService.Grid.Height);
+            var position = RandomHelper.GetRandomPosition();
             var plant = _entityFactory.CreatePlant<T>(energy, health, position);
             _worldService.AddEntity(plant);
         }

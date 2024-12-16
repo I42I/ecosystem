@@ -1,61 +1,73 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:ecosystem.ViewModels"
+        xmlns:local="clr-namespace:ecosystem.Helpers"
         x:Class="ecosystem.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="Ecosystem"
-        Width="800" Height="450"
-        CanResize="False">
-    
-    <Grid Width="800" Height="450">
-        <!-- Background Grid -->
-        <Grid Width="800" Height="400">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="200"/>
-                <RowDefinition Height="200"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="400"/>
-                <ColumnDefinition Width="400"/>
-            </Grid.ColumnDefinitions>
+        MinWidth="800"
+        MinHeight="600">
 
-            <Rectangle Grid.Row="0" Grid.Column="0" Fill="SandyBrown"/>
-            <Rectangle Grid.Row="0" Grid.Column="1" Fill="LightBlue"/>
-            <Rectangle Grid.Row="1" Grid.Column="0" Fill="LightGreen"/>
-            <Rectangle Grid.Row="1" Grid.Column="1" Fill="SandyBrown"/>
-        </Grid>
-
-        <!-- Entity Layer -->
-        <ItemsControl ItemsSource="{Binding Entities}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Canvas Width="800" Height="400"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Canvas>
-                        <Ellipse Width="10" Height="10"
-                                Fill="{Binding Color}"
-                                Canvas.Left="{Binding Position.X}"
-                                Canvas.Top="{Binding Position.Y}"/>
-                    </Canvas>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-
-        <!-- Controls -->
-        <StackPanel Height="50" 
-                    VerticalAlignment="Bottom"
-                    HorizontalAlignment="Center"
+    <DockPanel LastChildFill="True">
+        <!-- Controls at bottom -->
+        <StackPanel DockPanel.Dock="Bottom"
+                    Height="50"
                     Orientation="Horizontal"
-                    Margin="10">
+                    HorizontalAlignment="Center">
             <Button Command="{Binding StartSimulationCommand}">Start</Button>
             <Button Command="{Binding PauseSimulationCommand}" Margin="5,0">Pause</Button>
             <Button Command="{Binding ResetSimulationCommand}">Reset</Button>
-            <TextBlock Text="{Binding Status}"
+            <TextBlock Text="{Binding Status}" 
                       VerticalAlignment="Center"
                       Margin="10,0"/>
         </StackPanel>
-    </Grid>
+
+        <!-- Main simulation area -->
+        <Grid>
+            <!-- Background -->
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Rectangle Grid.Row="0" Grid.Column="0" Fill="SandyBrown"/>
+                <Rectangle Grid.Row="0" Grid.Column="1" Fill="LightBlue"/>
+                <Rectangle Grid.Row="1" Grid.Column="0" Fill="LightGreen"/>
+                <Rectangle Grid.Row="1" Grid.Column="1" Fill="SandyBrown"/>
+            </Grid>
+
+            <!-- Entity Canvas -->
+            <ItemsControl ItemsSource="{Binding Entities}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Canvas x:Name="SimulationCanvas"
+                                local:SizeObserver.Observe="True">
+                            <Ellipse Width="10" Height="10" 
+                                    Fill="{Binding Color}">
+                                <Canvas.Left>
+                                    <MultiBinding Converter="{StaticResource MultiplyConverter}">
+                                        <Binding Path="Position.X"/>
+                                        <Binding Path="(local:SizeObserver.ObservedWidth)"
+                                                ElementName="SimulationCanvas"/>
+                                    </MultiBinding>
+                                </Canvas.Left>
+                                <Canvas.Top>
+                                    <MultiBinding Converter="{StaticResource MultiplyConverter}">
+                                        <Binding Path="Position.Y"/>
+                                        <Binding Path="(local:SizeObserver.ObservedHeight)"
+                                                ElementName="SimulationCanvas"/>
+                                    </MultiBinding>
+                                </Canvas.Top>
+                            </Ellipse>
+                        </Canvas>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+    </DockPanel>
 </Window>

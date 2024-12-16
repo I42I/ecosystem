@@ -21,7 +21,7 @@ public class Grass : Plant
     {
         RootRadius = 5.0;
         SeedRadius = 10.0;
-        Color = new SolidColorBrush(Colors.Green);
+        Color = Brushes.Green;
         Console.WriteLine($"Created Grass with color {Color} at {Position.X}, {Position.Y}");
     }
 

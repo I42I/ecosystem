@@ -43,7 +43,7 @@ public class Sheep : Herbivore
             contactRadius: 1.5,
             basalMetabolicRate: 0.7)
     {
-        Color = new SolidColorBrush(Colors.Gray);
+        Color = Brushes.White;;
         AddBehavior(new FleeingBehavior(_worldService));        // Priority 3
         AddBehavior(new HungerBehavior());                      // Priority 2
         AddBehavior(new ReproductionBehavior(_worldService));   // Priority 1

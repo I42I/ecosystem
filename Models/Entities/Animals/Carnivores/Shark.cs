@@ -42,7 +42,7 @@ public class Shark : Carnivore
             contactRadius: 3.0,
             basalMetabolicRate: 1.5)
     {
-        Color = new SolidColorBrush(Colors.Gray);
+        Color = Brushes.Gray;
     }
 
     public override Animal CreateOffspring(Position position)

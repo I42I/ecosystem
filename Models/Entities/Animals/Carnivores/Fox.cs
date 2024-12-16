@@ -45,7 +45,7 @@ public class Fox : Carnivore
             basalMetabolicRate: 1.2)
     {
         MovementSpeed = 2.0;
-        Color = new SolidColorBrush(Colors.Red);
+        Color = Brushes.Orange;
         _territoryCenter = position;
         
         AddBehavior(new HuntingBehavior(worldService, new GroundHuntingStrategy()));

@@ -47,7 +47,7 @@ public class Rabbit : Herbivore
             basalMetabolicRate: 0.8)
     {
         MovementSpeed = 1.5;
-        Color = new SolidColorBrush(Colors.Brown);
+        Color = Brushes.Brown;
         AddBehavior(new FleeingBehavior(_worldService));        // Priority 3
         AddBehavior(new HungerBehavior());                      // Priority 2
         AddBehavior(new ReproductionBehavior(_worldService));   // Priority 1

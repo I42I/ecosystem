@@ -8,6 +8,7 @@ namespace ecosystem.Models.Core;
 public abstract class Entity : INotifyPropertyChanged
 {
     private Position _position = null!;
+    private IBrush? _color;
     public Position Position
     {
         get => _position;
@@ -41,16 +42,16 @@ public abstract class Entity : INotifyPropertyChanged
         }
     }
 
-    private IBrush _color = new SolidColorBrush(Colors.Black);
-    public IBrush Color
+    public IBrush? Color
     {
         get => _color;
         protected set
         {
-            if (value is null)
-                throw new ArgumentNullException(nameof(value));
-            _color = value;
-            OnPropertyChanged(nameof(Color));
+            if (_color != value)
+            {
+                _color = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Color)));
+            }
         }
     }
 

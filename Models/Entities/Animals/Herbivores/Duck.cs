@@ -24,12 +24,6 @@ public class Duck : Herbivore
     protected override double SpeciesEnergyCostModifier => 0.7;
     public override EnvironmentType PreferredEnvironment => EnvironmentType.Ground | EnvironmentType.Water;
 
-    protected override int CalculateMovementEnergyCost(double deltaX, double deltaY)
-    {
-        double distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
-        return (int)(distance * BasalMetabolicRate);
-    }
-
     public Duck(
         IEntityLocator<Animal> entityLocator,
         IEntityLocator<Plant> plantLocator,
@@ -66,6 +60,7 @@ public class Duck : Herbivore
         AddBehavior(new RestBehavior());
         
         MovementSpeed = 1.4;
+        Color = Brushes.Yellow;
     }
 
     public override Animal CreateOffspring(Position position)

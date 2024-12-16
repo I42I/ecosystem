@@ -44,17 +44,17 @@ public static class RandomHelper
         {
             double angle = Instance.NextDouble() * 2 * Math.PI;
             double distance = Instance.NextDouble() * radius;
-            return (
-                centerX + distance * Math.Cos(angle),
-                centerY + distance * Math.Sin(angle)
-            );
+            double newX = Math.Clamp(centerX + distance * Math.Cos(angle), 0, 1);
+            double newY = Math.Clamp(centerY + distance * Math.Sin(angle), 0, 1);
+            
+            return (newX, newY);
         }
     }
 
-    public static Position GetRandomPosition(double maxX, double maxY)
+    public static Position GetRandomPosition()
     {
-        var x = Instance.NextDouble() * maxX;
-        var y = Instance.NextDouble() * maxY;
+        var x = Instance.NextDouble();
+        var y = Instance.NextDouble();
         return new Position { X = x, Y = y };
     }
 

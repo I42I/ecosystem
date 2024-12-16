@@ -1,4 +1,5 @@
 using System;
+using Avalonia.Media;
 using ecosystem.Models.Core;
 
 namespace ecosystem.Models.Entities.Environment;
@@ -16,5 +17,6 @@ public class OrganicWaste : Entity
         : base(position)
     {
         EnergyValue = energyValue;
+        Color = Brushes.Brown;
     }
 }

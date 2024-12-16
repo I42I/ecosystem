@@ -42,7 +42,9 @@ public class WorldService : IWorldService
 
     public EnvironmentType GetEnvironmentAt(Position position)
     {
-        return Grid.GetEnvironmentAt((int)position.X, (int)position.Y);
+        int x = (int)(position.X * Grid.Width);
+        int y = (int)(position.Y * Grid.Height);
+        return Grid.GetEnvironmentAt(x, y);
     }
 
     public IEnumerable<Entity> GetEntitiesInRange(Position position, double radius)

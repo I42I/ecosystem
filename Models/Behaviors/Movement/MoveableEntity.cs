@@ -42,8 +42,10 @@ public abstract class MoveableEntity : LifeForm, IMoveable
         double scaledDeltaX = deltaX * frameAdjustedSpeed;
         double scaledDeltaY = deltaY * frameAdjustedSpeed;
 
-        Position.X += scaledDeltaX;
-        Position.Y += scaledDeltaY;
+        Position = new Position(
+            Position.X + scaledDeltaX,
+            Position.Y + scaledDeltaY
+        );
 
         _accumulatedEnergyCost += CalculateMovementEnergyCost(scaledDeltaX, scaledDeltaY);
     

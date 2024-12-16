@@ -15,7 +15,7 @@ public class Position : INotifyPropertyChanged
         {
             if (_x != value)
             {
-                _x = value;
+                _x = Math.Clamp(value, 0, 1);
                 // Console.WriteLine($"Position X changed to {value}");
                 OnPropertyChanged(nameof(X));
             }
@@ -29,7 +29,7 @@ public class Position : INotifyPropertyChanged
         {
             if (_y != value)
             {
-                _y = value;
+                _y = Math.Clamp(value, 0, 1);
                 // Console.WriteLine($"Position Y changed to {value}");
                 OnPropertyChanged(nameof(Y));
             }
@@ -38,8 +38,8 @@ public class Position : INotifyPropertyChanged
 
     public Position(double x, double y)
     {
-        X = x;
-        Y = y;
+        X = Math.Clamp(x, 0, 1);
+        Y = Math.Clamp(y, 0, 1);
     }
 
     public Position() : this(0, 0) 
