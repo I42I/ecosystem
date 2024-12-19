@@ -8,6 +8,7 @@ using ecosystem.Services.Simulation;
 using ecosystem.Models.Behaviors;
 using ecosystem.Models.Entities.Animals.Carnivores;
 using ecosystem.Models.Entities.Animals.Herbivores;
+using ecosystem.Models.Entities.Environment;
 
 namespace ecosystem.Services.Factory;
 
@@ -71,11 +72,21 @@ public class EntityFactory : IEntityFactory
 
     public T CreatePlant<T>(double energy, double health, Position position) where T : Plant
     {
-        return ActivatorUtilities.CreateInstance<T>(
-            _serviceProvider,
-            _worldService,
-            (int)health,
-            (int)energy,
-            position);
+        if (typeof(T) == typeof(Grass))
+        {
+            return (T)(Plant)new Grass(
+                _worldService,
+                _timeManager,
+                (int)health,
+                (int)energy,
+                position);
+        }
+        
+        throw new ArgumentException($"Unsupported plant type: {typeof(T).Name}");
+    }
+
+    private Meat CreateMeat(Position position, int energyValue)
+    {
+        return new Meat(position, energyValue, _timeManager);
     }
 }

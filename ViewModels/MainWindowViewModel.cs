@@ -37,6 +37,17 @@ public partial class MainWindowViewModel : ViewModelBase
         _worldService = worldService;
         _entityViewModels = new ObservableCollection<EntityViewModel>();
 
+        if (timeManager is TimeManager tm)
+        {
+            tm.SimulationUpdated += (s, e) =>
+            {
+                foreach (var entityVM in _entityViewModels)
+                {
+                    entityVM.UpdateDisplaySize(WindowWidth, WindowHeight);
+                }
+            };
+        }
+
         _worldService.Entities.CollectionChanged += Entities_CollectionChanged;
     }
 

@@ -4,7 +4,11 @@
              xmlns:local="using:ecosystem"
              xmlns:helpers="using:ecosystem.Helpers"
              RequestedThemeVariant="Dark">
-             
+    
+    <Application.Resources>
+        <helpers:OffsetConverter x:Key="AddOffset"/>
+    </Application.Resources>
+
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>

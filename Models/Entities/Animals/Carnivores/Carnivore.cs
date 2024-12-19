@@ -87,7 +87,7 @@ public abstract class Carnivore : Animal, IPredator
             
             if (prey.IsDead)
             {
-                var meat = new Meat(prey.Position, prey.Energy);
+                var meat = new Meat(prey.Position, prey.Energy, _timeManager);
                 _worldService.AddEntity(meat);
             }
         }
@@ -111,11 +111,5 @@ public abstract class Carnivore : Animal, IPredator
         return _worldService.Entities
             .OfType<Herbivore>()
             .Where(h => !h.IsDead);
-    }
-
-    protected override int CalculateMovementEnergyCost(double deltaX, double deltaY)
-    {
-        double distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
-        return (int)(distance * GetEnvironmentMovementModifier() * 1.2);
     }
 }

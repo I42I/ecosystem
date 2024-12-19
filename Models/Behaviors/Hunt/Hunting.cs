@@ -2,6 +2,7 @@ using ecosystem.Models.Entities.Animals;
 using ecosystem.Models.Behaviors.Base;
 using ecosystem.Services.World;
 using System.Linq;
+using System;
 using ecosystem.Helpers;
 using ecosystem.Models.Entities.Animals.Carnivores;
 
@@ -24,8 +25,12 @@ public class HuntingBehavior : IBehavior<Animal>
     {
         if (!(animal is IPredator predator)) return false;
         
+        if (animal.Energy >= animal.HungerThreshold) return false;
+        
         var prey = FindNearestPrey(animal);
-        return animal.Energy < animal.HungerThreshold && prey != null;
+        Console.WriteLine($"{animal.GetType().Name} hunting check: Energy={animal.Energy}, Threshold={animal.HungerThreshold}, PreyFound={prey != null}");
+        
+        return prey != null;
     }
 
     public void Execute(Animal animal)

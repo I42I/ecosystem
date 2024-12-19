@@ -1,4 +1,5 @@
 using System.Linq;
+using System;
 using ecosystem.Models.Core;
 using ecosystem.Models.Entities.Animals;
 using ecosystem.Models.Entities.Animals.Carnivores;
@@ -24,7 +25,14 @@ public class FleeingBehavior : IBehavior<Animal>
     {
         var predators = _worldService.GetEntitiesInRange(animal.Position, animal.VisionRadius)
             .OfType<Carnivore>()
-            .Where(p => p != animal);
+            .Where(p => p != animal && 
+                        animal.GetDistanceTo(p.Position) <= animal.VisionRadius) // Double check distance
+            .ToList();
+
+        if (predators.Any())
+        {
+            Console.WriteLine($"{animal.GetType().Name} sees predator at distance {animal.GetDistanceTo(predators.First().Position)}");
+        }
 
         return predators.Any();
     }

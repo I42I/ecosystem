@@ -16,6 +16,8 @@ namespace ecosystem.Models.Entities.Animals;
 
 public abstract class Animal : MoveableEntity, IEnvironmentSensitive
 {
+    private double _behaviorUpdateAccumulator;
+    private double _reproductionCooldownAccumulator;
     protected readonly IEntityLocator<Animal> _entityLocator;
     protected readonly IWorldService _worldService;
     private readonly List<IBehavior<Animal>> _behaviors;
@@ -70,22 +72,33 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive
 
     protected override void UpdateBehavior()
     {
-        var currentEnv = _worldService.GetEnvironmentAt(Position);
-        var envPreference = GetBestEnvironmentPreference(currentEnv);
-        
-        if (envPreference.Type == EnvironmentType.None)
+        _behaviorUpdateAccumulator += _timeManager.DeltaTime;
+
+        if (_behaviorUpdateAccumulator >= SimulationConstants.BEHAVIOR_UPDATE_INTERVAL)
         {
-            TakeDamage(1);
-        }
-        
-        ConsumeEnergy((int)(BasalMetabolicRate * envPreference.EnergyLossModifier));
-        
-        var behavior = _behaviors
-            .Where(b => b.CanExecute(this))
-            .OrderByDescending(b => b.Priority)
-            .FirstOrDefault();
+            var currentEnv = _worldService.GetEnvironmentAt(Position);
+            var envPreference = GetBestEnvironmentPreference(currentEnv);
             
-        behavior?.Execute(this);
+            if (envPreference.Type == EnvironmentType.None)
+            {
+                TakeDamage(SimulationConstants.ENVIRONMENT_DAMAGE_RATE);
+            }
+            
+            var behavior = GetCurrentBehavior();
+            if (behavior != null)
+            {
+                Console.WriteLine($"{GetType().Name} executing behavior: {behavior.Name}");
+                Stats.CurrentBehavior = behavior.Name;
+                behavior.Execute(this);
+            }
+            else
+            {
+                Console.WriteLine($"{GetType().Name} has no behavior to execute");
+                Stats.CurrentBehavior = "None";
+            }
+
+            _behaviorUpdateAccumulator = 0;
+        }
     }
 
     protected override void Die()
@@ -113,9 +126,23 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive
 
     protected override IBehavior<LifeForm>? GetCurrentBehavior()
     {
-        return _behaviors
-            .Where(b => b.CanExecute(this))
+        var availableBehaviors = _behaviors
+            .Where(b => 
+            {
+                var canExecute = b.CanExecute(this);
+                Console.WriteLine($"Behavior {b.Name} can execute: {canExecute}");
+                return canExecute;
+            })
             .OrderByDescending(b => b.Priority)
-            .FirstOrDefault() as IBehavior<LifeForm>;
+            .ToList();
+
+        if (availableBehaviors.Any())
+        {
+            var selectedBehavior = availableBehaviors.First();
+            Console.WriteLine($"Selected behavior: {selectedBehavior.Name}");
+            return selectedBehavior as IBehavior<LifeForm>;
+        }
+
+        return null;
     }
 }

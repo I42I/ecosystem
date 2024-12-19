@@ -6,11 +6,14 @@ using ecosystem.Models.Core;
 using ecosystem.Models.Entities.Environment;
 using ecosystem.Models.Behaviors;
 using ecosystem.Services.World;
+using ecosystem.Services.Simulation;
 
 namespace ecosystem.Models.Entities.Plants;
 
 public abstract class Plant : LifeForm
 {
+    private double _growthAccumulator;
+    private double _reproductionAccumulator;
     protected abstract double BaseAbsorptionRate { get; }
     protected readonly IWorldService _worldService;
     public abstract EnvironmentType PreferredEnvironment { get; }
@@ -21,8 +24,9 @@ public abstract class Plant : LifeForm
         Position position,
         double basalMetabolicRate,
         EnvironmentType environment,
-        IWorldService worldService)
-        : base(position, healthPoints, energy, environment)
+        IWorldService worldService,
+        ITimeManager timeManager)
+        : base(position, healthPoints, energy, environment, timeManager)
     {
         _worldService = worldService;
     }
@@ -32,21 +36,32 @@ public abstract class Plant : LifeForm
 
     protected override void UpdateBehavior()
     {
-        ConsumeEnergy(1);
+        ConsumeEnergy(SimulationConstants.BASE_ENERGY_LOSS * _timeManager.DeltaTime);
 
-        var nearbyWaste = _worldService.Entities
-            .OfType<OrganicWaste>()
-            .Where(w => GetDistanceTo(w.Position) <= RootRadius)
-            .ToList();
+        _growthAccumulator += _timeManager.DeltaTime;
+        _reproductionAccumulator += _timeManager.DeltaTime;
 
-        foreach (var waste in nearbyWaste)
+        if (_growthAccumulator >= SimulationConstants.PLANT_GROWTH_INTERVAL)
         {
-            AbsorbWaste(waste);
+            ProcessGrowth();
+            _growthAccumulator = 0;
         }
 
-        if (CanSpreadSeeds())
+        if (_reproductionAccumulator >= SimulationConstants.PLANT_REPRODUCTION_INTERVAL)
         {
-            SpreadSeeds();
+            if (CanSpreadSeeds())
+            {
+                SpreadSeeds();
+            }
+            _reproductionAccumulator = 0;
+        }
+    }
+
+    protected virtual void ProcessGrowth()
+    {
+        if (Environment.HasFlag(PreferredEnvironment))
+        {
+            Energy += 1;
         }
     }
 

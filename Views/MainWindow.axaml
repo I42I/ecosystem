@@ -9,7 +9,8 @@
         MinHeight="600"
         Width="800"
         Height="600"
-        SizeChanged="Window_SizeChanged">
+        SizeChanged="Window_SizeChanged"
+        Loaded="Window_Loaded">
 
     <DockPanel LastChildFill="True">
         <!-- Controls at bottom -->
@@ -46,23 +47,48 @@
 
             <!-- Entity Canvas -->
             <ItemsControl ItemsSource="{Binding EntityViewModels}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Name="MainCanvas" 
+                                Width="{Binding WindowWidth}" 
+                                Height="{Binding WindowHeight}"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Canvas>
-                            <Ellipse Width="10" Height="10"
-                                    Fill="{Binding Color}"
-                                    Canvas.Left="{Binding DisplayX, Mode=OneWay}"
-                                    Canvas.Top="{Binding DisplayY, Mode=OneWay}"/>
-                            <!-- <TextBlock Text="{Binding DisplayName}" 
-                                    FontSize="10" 
+                            <!-- Entity Name -->
+                            <TextBlock Text="{Binding Entity.DisplayName}"
+                                    FontSize="10"
                                     Foreground="Black"
                                     Canvas.Left="{Binding DisplayX}"
-                                    Canvas.Top="{Binding DisplayY}"/> -->
-                            <TextBlock Text="{Binding StatsText}" 
-                                    FontSize="10" 
+                                    Canvas.Top="{Binding DisplayY}">
+                                <TextBlock.RenderTransform>
+                                    <TranslateTransform X="-20" Y="-17"/>
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+                                                    
+                            <!-- Entity Circle -->
+                            <Ellipse Width="10" Height="10"
+                                    Fill="{Binding Color}"
+                                    Canvas.Left="{Binding DisplayX}"
+                                    Canvas.Top="{Binding DisplayY}">
+                                <Ellipse.RenderTransform>
+                                    <TranslateTransform X="-5" Y="-5"/>
+                                </Ellipse.RenderTransform>
+                            </Ellipse>
+                                                    
+                            <!-- Stats Text -->
+                            <TextBlock Text="{Binding StatsText}"
+                                    FontSize="10"
                                     Foreground="Black"
-                                    Canvas.Left="{Binding DisplayX, Mode=OneWay}"
-                                    Canvas.Top="{Binding DisplayY, Mode=OneWay}"/>
+                                    TextAlignment="Center"
+                                    Canvas.Left="{Binding DisplayX}"
+                                    Canvas.Top="{Binding DisplayY}">
+                                <TextBlock.RenderTransform>
+                                    <TranslateTransform X="-25" Y="10"/>
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
                         </Canvas>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

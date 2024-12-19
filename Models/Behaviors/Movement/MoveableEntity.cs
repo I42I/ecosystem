@@ -7,7 +7,8 @@ namespace ecosystem.Models.Behaviors.Movement;
 
 public abstract class MoveableEntity : LifeForm, IMoveable
 {
-    protected readonly ITimeManager _timeManager;
+    private double _movementAccumulator;
+    private double _energyCostAccumulator;
     protected double BasalMetabolicRate { get; }
     protected abstract double SpeciesEnergyCostModifier { get; }
 
@@ -18,53 +19,55 @@ public abstract class MoveableEntity : LifeForm, IMoveable
         EnvironmentType environment,
         double basalMetabolicRate,
         ITimeManager timeManager)
-        : base(position, healthPoints, energy, environment)
+        : base(position, healthPoints, energy, environment, timeManager)
     {
-        _timeManager = timeManager;
         BasalMetabolicRate = basalMetabolicRate;
     }
-    public virtual double MovementSpeed { get; protected set; }
 
-    protected virtual int CalculateMovementEnergyCost(double deltaX, double deltaY)
-    {
-        double distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
-        double environmentModifier = GetEnvironmentMovementModifier();
-        
-        return (int)(distance * BasalMetabolicRate * environmentModifier * SpeciesEnergyCostModifier);
-    }
+    public virtual double MovementSpeed { get; protected set; }
 
     protected double _currentDirectionX = 0;
     protected double _currentDirectionY = 0;
     protected int _directionChangeTicks = 0;
 
-    private double _accumulatedEnergyCost = 0;
-
     public virtual void Move(double deltaX, double deltaY)
     {
-        double frameAdjustedSpeed = MovementSpeed * _timeManager.DeltaTime;
+        // Calculate frame-adjusted movement
+        double frameMovement = MovementSpeed * SimulationConstants.BASE_MOVEMENT_SPEED * _timeManager.DeltaTime;
+        _movementAccumulator += frameMovement;
+
+        if (_movementAccumulator >= SimulationConstants.MOVEMENT_THRESHOLD)
+        {
+            double length = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+            if (length > 0)
+            {
+                deltaX /= length;
+                deltaY /= length;
+            }
+
+            Position = new Position(
+                Math.Clamp(Position.X + deltaX * _movementAccumulator, 0, 1),
+                Math.Clamp(Position.Y + deltaY * _movementAccumulator, 0, 1)
+            );
+
+            // Calculate and accumulate movement energy cost
+            double energyCost = CalculateMovementEnergyCost(
+                deltaX * _movementAccumulator, 
+                deltaY * _movementAccumulator
+            );
+            
+            ConsumeEnergy(energyCost);
+            _movementAccumulator = 0;
+        }
+    }
+
+    protected virtual double CalculateMovementEnergyCost(double deltaX, double deltaY)
+    {
+        double distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+        double environmentModifier = GetEnvironmentMovementModifier();
         
-        double length = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
-        if (length > 0)
-        {
-            deltaX /= length;
-            deltaY /= length;
-        }
-
-        double newX = Position.X + deltaX * frameAdjustedSpeed;
-        double newY = Position.Y + deltaY * frameAdjustedSpeed;
-
-        Position = new Position(
-            Math.Clamp(newX, 0, 1),
-            Math.Clamp(newY, 0, 1)
-        );
-
-        _accumulatedEnergyCost += CalculateMovementEnergyCost(deltaX * frameAdjustedSpeed, deltaY * frameAdjustedSpeed);
-        if (_accumulatedEnergyCost >= 1)
-        {
-            int energyToConsume = (int)Math.Floor(_accumulatedEnergyCost);
-            ConsumeEnergy(energyToConsume);
-            _accumulatedEnergyCost -= energyToConsume;
-        }
+        return distance * BasalMetabolicRate * environmentModifier * 
+               SpeciesEnergyCostModifier * SimulationConstants.MOVEMENT_ENERGY_COST;
     }
 
     protected virtual double GetEnvironmentMovementModifier()

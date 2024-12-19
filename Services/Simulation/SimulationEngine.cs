@@ -30,6 +30,7 @@ public class SimulationEngine : ISimulationEngine
     private readonly IWorldService _worldService;
     private readonly IEntityFactory _entityFactory;
     private readonly ITimeManager _timeManager;
+    private readonly object _updateLock = new object();
 
     public SimulationEngine(
         IWorldService worldService,
@@ -99,7 +100,7 @@ public class SimulationEngine : ISimulationEngine
 
     public void UpdateSimulation()
     {
-        lock (_worldService)
+        lock (_updateLock)
         {
             var entities = _worldService.Entities.ToList();
             foreach (var entity in entities)
@@ -113,8 +114,13 @@ public class SimulationEngine : ISimulationEngine
                     Console.WriteLine($"Error updating entity: {ex.Message}");
                 }
             }
-            (_worldService as WorldService)?.ProcessEntityQueues();
-            SimulationUpdated?.Invoke(this, EventArgs.Empty);
+            
+            _worldService.ProcessEntityQueues();
+            
+            Dispatcher.UIThread.Post(() => 
+            {
+                SimulationUpdated?.Invoke(this, EventArgs.Empty);
+            });
         }
     }
 }

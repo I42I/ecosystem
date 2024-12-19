@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
+using Avalonia.Threading;
 
 namespace ecosystem.Services.Simulation;
 
@@ -18,21 +18,40 @@ public interface ITimeManager
 public class TimeManager : ITimeManager
 {
     private readonly List<Action> _tickActions = new();
-    private Timer? _timer;
-    private double _currentTime;
+    private const double FIXED_TIME_STEP = 1.0 / SimulationConstants.TICK_RATE;
+    private readonly GameLoop _gameLoop;
     private bool _isRunning;
+    private double _currentTime;
     private double _simulationSpeed = 1.0;
-    private int _baseIntervalMilliseconds = 1000;
+    
     public double CurrentTime => _currentTime;
-    private readonly int _targetFPS = 60;
-    private readonly double _fixedDeltaTime;
-    public double DeltaTime => _fixedDeltaTime * _simulationSpeed;
+    public double DeltaTime => FIXED_TIME_STEP * _simulationSpeed * SimulationConstants.SIMULATION_SPEED;
+    public event EventHandler? SimulationUpdated;
 
     public TimeManager()
     {
-        _fixedDeltaTime = 1.0 / _targetFPS;
-        _baseIntervalMilliseconds = (int)(1000.0 / _targetFPS);
-        _simulationSpeed = 0.05;
+        _gameLoop = new GameLoop(UpdateLogic, Render);
+    }
+
+    private void UpdateLogic()
+    {
+        if (!_isRunning) return;
+        
+        foreach (var action in _tickActions)
+        {
+            action();
+        }
+        _currentTime += DeltaTime;
+    }
+
+    private void Render()
+    {
+        if (!_isRunning) return;
+        
+        Dispatcher.UIThread.Post(() => 
+        {
+            SimulationUpdated?.Invoke(this, EventArgs.Empty);
+        });
     }
 
     public void RegisterTickAction(Action action)
@@ -42,19 +61,12 @@ public class TimeManager : ITimeManager
 
     public void Start()
     {
-        if (_isRunning)
-            return;
-
-        _timer = new Timer(Tick, null, 0, GetInterval());
         _isRunning = true;
+        _gameLoop.Start();
     }
 
     public void Pause()
     {
-        if (!_isRunning)
-            return;
-
-        _timer?.Change(Timeout.Infinite, Timeout.Infinite);
         _isRunning = false;
     }
 
@@ -62,28 +74,11 @@ public class TimeManager : ITimeManager
     {
         Pause();
         _currentTime = 0;
+        _gameLoop.Stop();
     }
 
     public void SetSimulationSpeed(double speed)
     {
         _simulationSpeed = speed;
-        if (_isRunning)
-        {
-            _timer?.Change(0, GetInterval());
-        }
-    }
-
-    private int GetInterval()
-    {
-        return (int)(_baseIntervalMilliseconds / _simulationSpeed);
-    }
-
-    private void Tick(object? state)
-    {
-        _currentTime += _baseIntervalMilliseconds / 1000.0;
-        foreach (var action in _tickActions)
-        {
-            action();
-        }
     }
 }

@@ -8,14 +8,28 @@ namespace ecosystem.Models.Stats;
 
 public class EntityStats : INotifyPropertyChanged
 {
-    private readonly LifeForm? _lifeForm;
     private string? _currentBehavior;
+    private readonly LifeForm? _lifeForm;
+    private string _displayStats = string.Empty;
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public EntityStats(LifeForm? lifeForm = null)
     {
         _lifeForm = lifeForm;
-        Console.WriteLine($"Created EntityStats with lifeform: {_lifeForm}");
+        if (_lifeForm != null)
+        {
+            _lifeForm.PropertyChanged += LifeForm_PropertyChanged;
+        }
+    }
+
+    private void LifeForm_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(LifeForm.HealthPoints) || 
+            e.PropertyName == nameof(LifeForm.Energy))
+        {
+            OnPropertyChanged(nameof(DisplayStats));
+        }
     }
 
     public string? CurrentBehavior 
@@ -23,7 +37,6 @@ public class EntityStats : INotifyPropertyChanged
         get => _currentBehavior;
         set 
         {
-            Console.WriteLine($"Setting behavior for {_lifeForm?.GetType().Name}: {value}");
             if (_currentBehavior != value)
             {
                 _currentBehavior = value;
@@ -43,16 +56,9 @@ public class EntityStats : INotifyPropertyChanged
             {
                 stats.Add($"HP:{_lifeForm.HealthPoints}");
                 stats.Add($"E:{_lifeForm.Energy}");
-                
-                if (!string.IsNullOrEmpty(CurrentBehavior))
-                {
-                    stats.Add($"B:{CurrentBehavior}");
-                }
             }
 
-            var result = string.Join(" | ", stats);
-            Console.WriteLine($"[{_lifeForm?.GetType().Name}] Stats: {result}");
-            return result;
+            return string.Join(" | ", stats);
         }
     }
 

@@ -1,12 +1,14 @@
 using Avalonia.Media;
 using ecosystem.Models.Core;
+using ecosystem.Services.Simulation;
 
 namespace ecosystem.Models.Entities.Environment;
 
 public class Meat : LifeForm
 {
-    public Meat(Position position, int energyValue)
-        : base(position, energyValue, energyValue, EnvironmentType.Ground)
+
+    public Meat(Position position, int energyValue, ITimeManager timeManager)
+        : base(position, energyValue, energyValue, EnvironmentType.Ground, timeManager)
     {
         Color = Brushes.Red;
     }
