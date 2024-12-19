@@ -16,7 +16,6 @@ public interface IWorldService
     void RemoveEntity(Entity entity);
     EnvironmentType GetEnvironmentAt(Position position);
     IEnumerable<Entity> GetEntitiesInRange(Position position, double radius);
-    void UpdateDisplaySize(double width, double height);
     void ProcessEntityQueues();
 }
 
@@ -77,16 +76,5 @@ public class WorldService : IWorldService
         var dx = pos1.X - pos2.X;
         var dy = pos1.Y - pos2.Y;
         return Math.Sqrt(dx * dx + dy * dy);
-    }
-
-    public void UpdateDisplaySize(double width, double height)
-    {
-        lock (_lock)
-        {
-            foreach (var entity in Entities.ToList())
-            {
-                entity.UpdateDisplaySize(width, height);
-            }
-        }
     }
 }

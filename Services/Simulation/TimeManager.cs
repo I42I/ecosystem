@@ -32,7 +32,7 @@ public class TimeManager : ITimeManager
     {
         _fixedDeltaTime = 1.0 / _targetFPS;
         _baseIntervalMilliseconds = (int)(1000.0 / _targetFPS);
-        _simulationSpeed = 0.01;
+        _simulationSpeed = 0.05;
     }
 
     public void RegisterTickAction(Action action)

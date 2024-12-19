@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Specialized;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ecosystem.Services.Simulation;
 using ecosystem.Services.World;
 using ecosystem.Models.Core;
+using System.Collections.ObjectModel;
 
 namespace ecosystem.ViewModels;
 
@@ -12,6 +15,9 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly ISimulationEngine _simulationEngine;
     private readonly ITimeManager _timeManager;
     private readonly IWorldService _worldService;
+
+    private readonly ObservableCollection<EntityViewModel> _entityViewModels;
+    public ObservableCollection<EntityViewModel> EntityViewModels => _entityViewModels;
 
     [ObservableProperty]
     private string _status = "Ready";
@@ -29,6 +35,9 @@ public partial class MainWindowViewModel : ViewModelBase
         _simulationEngine = simulationEngine;
         _timeManager = timeManager;
         _worldService = worldService;
+        _entityViewModels = new ObservableCollection<EntityViewModel>();
+
+        _worldService.Entities.CollectionChanged += Entities_CollectionChanged;
     }
 
     public void InitializeAndStart()
@@ -75,17 +84,37 @@ public partial class MainWindowViewModel : ViewModelBase
 
     partial void OnWindowWidthChanged(double value)
     {
-        Avalonia.Threading.Dispatcher.UIThread.Post(() => 
+        foreach (var entityVM in _entityViewModels)
         {
-            _worldService.UpdateDisplaySize(value, WindowHeight);
-        });
+            entityVM.UpdateDisplaySize(value, WindowHeight);
+        }
     }
 
     partial void OnWindowHeightChanged(double value)
     {
-        Avalonia.Threading.Dispatcher.UIThread.Post(() => 
+        foreach (var entityVM in _entityViewModels)
         {
-            _worldService.UpdateDisplaySize(WindowWidth, value);
-        });
+            entityVM.UpdateDisplaySize(WindowWidth, value);
+        }
+    }
+
+    private void Entities_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.NewItems != null)
+        {
+            foreach (Entity entity in e.NewItems)
+            {
+                _entityViewModels.Add(new EntityViewModel(entity));
+            }
+        }
+        if (e.OldItems != null)
+        {
+            foreach (Entity entity in e.OldItems)
+            {
+                var vm = _entityViewModels.FirstOrDefault(vm => vm.Entity == entity);
+                if (vm != null)
+                    _entityViewModels.Remove(vm);
+            }
+        }
     }
 }

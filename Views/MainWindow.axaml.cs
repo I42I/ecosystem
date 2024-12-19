@@ -9,7 +9,7 @@ public partial class MainWindow : Window
 {
     public MainWindow()
     {
-        InitializeComponent();
+        AvaloniaXamlLoader.Load(this);
     }
 
     private void Window_SizeChanged(object? sender, SizeChangedEventArgs e)

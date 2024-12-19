@@ -28,34 +28,14 @@ public abstract class Entity : INotifyPropertyChanged
         }
     }
 
+    private void Position_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        OnPropertyChanged($"Position.{e.PropertyName}");
+    }
+
     public double GetDistanceTo(Position otherPosition)
     {
         return MathHelper.CalculateDistance(Position, otherPosition);
-    }
-
-    private void Position_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        // Console.WriteLine($"Position property changed: {e.PropertyName}");
-        OnPropertyChanged($"Position.{e.PropertyName}");
-        
-        if (e.PropertyName == nameof(Position.X) || e.PropertyName == nameof(Position.Y))
-        {
-            OnPropertyChanged(nameof(Position));
-        }
-    }
-
-    private double _displayWidth = 800;
-    private double _displayHeight = 450;
-
-    public double DisplayX => Position.X * _displayWidth;
-    public double DisplayY => Position.Y * _displayHeight;
-
-    public void UpdateDisplaySize(double width, double height)
-    {
-        _displayWidth = width;
-        _displayHeight = height;
-        OnPropertyChanged(nameof(DisplayX));
-        OnPropertyChanged(nameof(DisplayY));
     }
 
     public IBrush? Color
@@ -73,7 +53,7 @@ public abstract class Entity : INotifyPropertyChanged
 
     private static readonly Dictionary<Type, int> _typeCounters = new();
     private readonly int _id;
-    protected EntityStats Stats { get; }
+    public EntityStats Stats { get; }
     
     public string DisplayName => $"{GetType().Name} {_id}";
     public int TypeId => _id;
@@ -106,6 +86,7 @@ public abstract class Entity : INotifyPropertyChanged
 
     protected virtual void OnPropertyChanged(string propertyName)
     {
+        Console.WriteLine($"Property changed: {propertyName} for {GetType().Name}");
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 

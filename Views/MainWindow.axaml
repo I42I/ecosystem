@@ -45,21 +45,14 @@
             </Grid>
 
             <!-- Entity Canvas -->
-            <ItemsControl ItemsSource="{Binding Entities}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas Name="MainCanvas" 
-                                Width="{Binding WindowWidth}" 
-                                Height="{Binding WindowHeight}"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
+            <ItemsControl ItemsSource="{Binding EntityViewModels}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Canvas>
                             <Ellipse Width="10" Height="10"
                                     Fill="{Binding Color}"
-                                    Canvas.Left="{Binding DisplayX}"
-                                    Canvas.Top="{Binding DisplayY}"/>
+                                    Canvas.Left="{Binding DisplayX, Mode=OneWay}"
+                                    Canvas.Top="{Binding DisplayY, Mode=OneWay}"/>
                             <!-- <TextBlock Text="{Binding DisplayName}" 
                                     FontSize="10" 
                                     Foreground="Black"
@@ -68,8 +61,8 @@
                             <TextBlock Text="{Binding StatsText}" 
                                     FontSize="10" 
                                     Foreground="Black"
-                                    Canvas.Left="{Binding DisplayX}"
-                                    Canvas.Top="{Binding DisplayY}"/>
+                                    Canvas.Left="{Binding DisplayX, Mode=OneWay}"
+                                    Canvas.Top="{Binding DisplayY, Mode=OneWay}"/>
                         </Canvas>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
