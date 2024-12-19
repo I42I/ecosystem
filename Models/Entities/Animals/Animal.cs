@@ -22,7 +22,6 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive
     protected readonly List<EnvironmentPreference> _environmentPreferences = new();
     public IReadOnlyList<EnvironmentPreference> PreferredEnvironments => _environmentPreferences;
     public abstract EnvironmentType PreferredEnvironment { get; }
-    protected readonly ITimeManager _timeManager;
 
     protected Animal(
         IEntityLocator<Animal> entityLocator,
@@ -36,11 +35,10 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive
         double contactRadius,
         double basalMetabolicRate,
         EnvironmentType environment) 
-        : base(position, healthPoints, energy, environment, basalMetabolicRate)
+        : base(position, healthPoints, energy, environment, basalMetabolicRate, timeManager)
     {
         _entityLocator = entityLocator;
         _worldService = worldService;
-        _timeManager = timeManager;
         IsMale = isMale;
         VisionRadius = visionRadius;
         ContactRadius = contactRadius;
@@ -112,4 +110,12 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive
     }
 
     public abstract Animal CreateOffspring(Position position);
+
+    protected override IBehavior<LifeForm>? GetCurrentBehavior()
+    {
+        return _behaviors
+            .Where(b => b.CanExecute(this))
+            .OrderByDescending(b => b.Priority)
+            .FirstOrDefault() as IBehavior<LifeForm>;
+    }
 }

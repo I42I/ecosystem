@@ -11,6 +11,8 @@ public class MatingBehavior : IBehavior<Animal>
 {
     private readonly IWorldService _worldService;
     private readonly ITimeManager _timeManager;
+
+    public string Name => "Mating";
     public int Priority => 2; // Lower than fleeing, higher than eating
     
     private const double MATING_DURATION = 3.0; // seconds

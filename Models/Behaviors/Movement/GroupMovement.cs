@@ -18,6 +18,7 @@ public class GroupMovementBehavior : IBehavior<Animal>
         _separationDistance = separationDistance;
     }
 
+    public string Name => "GroupMovement";
     public int Priority => 1;
 
     public bool CanExecute(Animal animal)

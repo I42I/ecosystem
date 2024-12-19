@@ -7,6 +7,7 @@ namespace ecosystem.Models.Behaviors.Base;
 
 public class RestBehavior : IBehavior<Animal>
 {
+    public string Name => "Rest";
     public int Priority => 0;
 
     private int _directionChangeTicks;

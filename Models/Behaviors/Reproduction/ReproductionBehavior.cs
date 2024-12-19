@@ -15,6 +15,7 @@ public class ReproductionBehavior : IBehavior<Animal>
         _worldService = worldService;
     }
 
+    public string Name => "Reproduction";
     public int Priority => 1;
 
     public bool CanExecute(Animal animal)

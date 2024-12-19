@@ -13,7 +13,7 @@ public class EnvironmentSeekingBehavior : IBehavior<Animal>
     {
         _worldService = worldService;
     }
-
+    public string Name => "EnvironmentSeeking";
     public int Priority => 3;
 
     public bool CanExecute(Animal animal)

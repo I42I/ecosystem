@@ -1,7 +1,6 @@
 using System;
 using ecosystem.Models.Entities.Environment;
-using ecosystem.Models.Behaviors;
-using ecosystem.Models.Behaviors.Survival;
+using ecosystem.Models.Behaviors.Base;
 
 namespace ecosystem.Models.Core;
 
@@ -32,7 +31,35 @@ public abstract class LifeForm : Entity
         }
     }
 
-    protected abstract void UpdateBehavior();
+    protected virtual IBehavior<LifeForm>? GetCurrentBehavior()
+    {
+        return null;
+    }
+
+    protected virtual void UpdateBehavior()
+    {
+        if (!IsDead)
+        {
+            var behavior = GetCurrentBehavior();
+            Console.WriteLine($"[{GetType().Name}] Current behavior: {behavior?.Name ?? "None"}");
+            
+            if (behavior != null)
+            {
+                Console.WriteLine($"Executing behavior {behavior.Name} for {GetType().Name}");
+                Stats.CurrentBehavior = behavior.Name;
+                behavior.Execute(this as dynamic);
+            }
+            else
+            {
+                Console.WriteLine($"No behavior found for {GetType().Name}");
+            }
+        }
+        else
+        {
+            Stats.CurrentBehavior = "Dead";
+            Die();
+        }
+    }
 
     public void TakeDamage(int amount)
     {

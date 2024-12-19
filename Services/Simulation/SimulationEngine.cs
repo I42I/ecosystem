@@ -61,11 +61,14 @@ public class SimulationEngine : ISimulationEngine
         {
             Console.WriteLine("Creating initial entities...");
             
+            _worldService.Entities.Clear();
+            
             CreateAnimal<Fox>(3, 100, 100);
-            
             CreateAnimal<Rabbit>(5, 80, 80);
-            
             CreatePlants<Grass>(10, 50, 50);
+            
+            Console.WriteLine($"Entities created: {_worldService.Entities.Count}");
+            _worldService.ProcessEntityQueues();
         }
         catch (Exception ex)
         {
@@ -96,10 +99,22 @@ public class SimulationEngine : ISimulationEngine
 
     public void UpdateSimulation()
     {
-        foreach (var entity in _worldService.Entities.ToList())
+        lock (_worldService)
         {
-            entity.Update();
+            var entities = _worldService.Entities.ToList();
+            foreach (var entity in entities)
+            {
+                try
+                {
+                    entity.Update();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error updating entity: {ex.Message}");
+                }
+            }
+            (_worldService as WorldService)?.ProcessEntityQueues();
+            SimulationUpdated?.Invoke(this, EventArgs.Empty);
         }
-        SimulationUpdated?.Invoke(this, EventArgs.Empty);
     }
 }

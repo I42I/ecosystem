@@ -24,8 +24,16 @@ public class TimeManager : ITimeManager
     private double _simulationSpeed = 1.0;
     private int _baseIntervalMilliseconds = 1000;
     public double CurrentTime => _currentTime;
-    private readonly double _fixedDeltaTime = 1.0 / 60.0;
+    private readonly int _targetFPS = 60;
+    private readonly double _fixedDeltaTime;
     public double DeltaTime => _fixedDeltaTime * _simulationSpeed;
+
+    public TimeManager()
+    {
+        _fixedDeltaTime = 1.0 / _targetFPS;
+        _baseIntervalMilliseconds = (int)(1000.0 / _targetFPS);
+        _simulationSpeed = 0.01;
+    }
 
     public void RegisterTickAction(Action action)
     {

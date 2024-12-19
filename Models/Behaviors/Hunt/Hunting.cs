@@ -17,7 +17,7 @@ public class HuntingBehavior : IBehavior<Animal>
         _worldService = worldService;
         _huntingStrategy = huntingStrategy;
     }
-
+    public string Name => "Hunt";
     public int Priority => 3;
 
     public bool CanExecute(Animal animal)

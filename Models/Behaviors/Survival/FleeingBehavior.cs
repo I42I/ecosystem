@@ -17,6 +17,7 @@ public class FleeingBehavior : IBehavior<Animal>
         _worldService = worldService;
     }
 
+    public string Name => "Fleeing";
     public int Priority => 3;
 
     public bool CanExecute(Animal animal)

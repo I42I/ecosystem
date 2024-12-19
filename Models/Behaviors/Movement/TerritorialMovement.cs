@@ -27,6 +27,7 @@ public class TerritorialBehavior : IBehavior<Animal>
         _territoryOverlapThreshold = territoryOverlapThreshold;
     }
 
+    public string Name => "Territorial";
     public int Priority => 2;
 
     public bool CanExecute(Animal animal)

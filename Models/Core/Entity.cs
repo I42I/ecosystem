@@ -2,6 +2,8 @@ using System;
 using System.ComponentModel;
 using Avalonia.Media;
 using ecosystem.Helpers;
+using System.Collections.Generic;
+using ecosystem.Models.Stats;
 
 namespace ecosystem.Models.Core;
 
@@ -42,6 +44,20 @@ public abstract class Entity : INotifyPropertyChanged
         }
     }
 
+    private double _displayWidth = 800;
+    private double _displayHeight = 450;
+
+    public double DisplayX => Position.X * _displayWidth;
+    public double DisplayY => Position.Y * _displayHeight;
+
+    public void UpdateDisplaySize(double width, double height)
+    {
+        _displayWidth = width;
+        _displayHeight = height;
+        OnPropertyChanged(nameof(DisplayX));
+        OnPropertyChanged(nameof(DisplayY));
+    }
+
     public IBrush? Color
     {
         get => _color;
@@ -55,14 +71,34 @@ public abstract class Entity : INotifyPropertyChanged
         }
     }
 
+    private static readonly Dictionary<Type, int> _typeCounters = new();
+    private readonly int _id;
+    protected EntityStats Stats { get; }
+    
+    public string DisplayName => $"{GetType().Name} {_id}";
+    public int TypeId => _id;
+
+    public string StatsText => Stats?.DisplayStats ?? string.Empty;
+
     protected Entity(Position position)
     {
+        lock (_typeCounters)
+        {
+            var type = GetType();
+            if (!_typeCounters.ContainsKey(type))
+            {
+                _typeCounters[type] = 0;
+            }
+            _id = ++_typeCounters[type];
+        }
+
         if (position is null)
             throw new ArgumentNullException(nameof(position));
         if (position.X < 0 || position.Y < 0)
             throw new ArgumentException("Position must be non-negative", nameof(position));
             
         Position = position;
+        Stats = new EntityStats(this as LifeForm);
         // Console.WriteLine($"Created entity at position {Position.X}, {Position.Y}");
     }
 

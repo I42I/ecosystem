@@ -7,6 +7,7 @@ namespace ecosystem.Models.Behaviors.Reproduction;
 
 public class BirthBehavior : IBehavior<Animal>
 {
+    public string Name => "Birth";
     public int Priority => 4;
     
     public bool CanExecute(Animal animal)

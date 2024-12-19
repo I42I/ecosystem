@@ -5,6 +5,7 @@ namespace ecosystem.Models.Behaviors.Survival;
 
 public class HungerBehavior : IBehavior<Animal>
 {
+    public string Name => "Hunger";
     public int Priority => 2;
 
     public bool CanExecute(Animal animal)
