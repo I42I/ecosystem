@@ -1,0 +1,7 @@
+@startuml
+interface IMating {
+    IsMale : bool <<get>>
+    ReproductionEnergyThreshold : double <<get>>
+    CreateOffspring(position:Position) : Animal
+}
+@enduml

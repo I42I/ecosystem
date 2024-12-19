@@ -1,7 +1,8 @@
 @startuml
-interface IBehavior {
+interface "IBehavior`1"<T> {
+    Name : string <<get>>
     Priority : int <<get>>
-    CanExecute(entity:LifeForm) : bool
-    Execute(entity:LifeForm) : void
+    CanExecute(entity:T) : bool
+    Execute(entity:T) : void
 }
 @enduml

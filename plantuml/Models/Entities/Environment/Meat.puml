@@ -2,8 +2,7 @@
 class Meat {
     + Meat(position:Position, energyValue:int)
     # <<override>> UpdateBehavior() : void
-    # <<override>> OnDeath() : void
+    # <<override>> Die() : void
 }
 LifeForm <|-- Meat
-Meat --> "PreferredEnvironment" EnvironmentType
 @enduml

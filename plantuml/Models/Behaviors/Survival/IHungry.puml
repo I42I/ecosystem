@@ -1,0 +1,6 @@
+@startuml
+interface IHungry {
+    HungerThreshold : double <<get>>
+    SearchForFood() : void
+}
+@enduml

@@ -9,8 +9,9 @@ abstract class Plant {
     # {abstract} CanSpreadSeeds() : bool
     # {abstract} CreateOffspring(position:Position) : Plant
     - SpreadSeeds() : void
-    # <<override>> OnDeath() : void
+    # <<override>> Die() : void
 }
 LifeForm <|-- Plant
 Plant --> "_worldService" IWorldService
+Plant --> "PreferredEnvironment" EnvironmentType
 @enduml

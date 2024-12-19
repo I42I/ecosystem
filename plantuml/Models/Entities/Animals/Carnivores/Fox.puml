@@ -1,21 +1,13 @@
 @startuml
 class Fox {
-    # <<override>> BaseAttackPower : double <<get>>
+    + <<override>> BaseAttackPower : double <<get>>
     # <<override>> BaseAttackRange : double <<get>>
     # <<override>> BaseHungerThreshold : double <<get>>
     # <<override>> BaseReproductionThreshold : double <<get>>
     # <<override>> BaseReproductionEnergyCost : double <<get>>
-    - _territoryRadius : double = 100.0
-    + Fox(entityLocator:IEntityLocator<Animal>, preyLocator:IEntityLocator<Animal>, worldService:IWorldService, healthPoints:int, energy:int, position:Position, isMale:bool)
-    + <<override>> FindNearestPrey() : Animal?
-    + <<override>> MoveTowardsPrey(prey:Animal) : void
-    # <<override>> GiveBirth() : void
-    + <<override>> SearchForMate() : void
-    # <<override>> CalculateAttackDamage() : int
-    # <<override>> CalculateEnergyGain() : int
-    # <<override>> GetPotentialPrey() : IEnumerable<Animal>
-    + <<override>> Rest() : void
-    # <<virtual>> PatrolTerritory() : void
+    # <<override>> SpeciesEnergyCostModifier : double <<get>>
+    + Fox(entityLocator:IEntityLocator<Animal>, preyLocator:IEntityLocator<Animal>, worldService:IWorldService, timeManager:ITimeManager, position:Position, healthPoints:int, energy:int, isMale:bool)
+    + <<override>> CreateOffspring(position:Position) : Animal
 }
 Carnivore <|-- Fox
 Fox --> "PreferredEnvironment" EnvironmentType

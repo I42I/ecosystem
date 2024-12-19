@@ -1,2 +1,19 @@
 @startuml
+class TerritorialBehavior {
+    - <<readonly>> _territoryRadius : double
+    - <<readonly>> _territoryOverlapThreshold : double
+    + TerritorialBehavior(worldService:IWorldService, spawnPosition:Position, territoryRadius:double, territoryOverlapThreshold:double)
+    + Name : string <<get>>
+    + Priority : int <<get>>
+    + CanExecute(animal:Animal) : bool
+    + Execute(animal:Animal) : void
+    - CheckForNearbyPredators(animal:Animal) : bool
+    - MoveAwayFromPredator(animal:Animal, predator:Animal) : void
+    - MoveTowardTerritory(animal:Animal) : void
+}
+class "IBehavior`1"<T> {
+}
+"IBehavior`1" "<Animal>" <|-- TerritorialBehavior
+TerritorialBehavior --> "_worldService" IWorldService
+TerritorialBehavior --> "_territoryCenter" Position
 @enduml

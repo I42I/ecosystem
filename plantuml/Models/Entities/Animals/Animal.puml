@@ -1,6 +1,6 @@
 @startuml
 abstract class Animal {
-    # Animal(entityLocator:IEntityLocator<Animal>, worldService:IWorldService, position:Position, healthPoints:int, energy:int, isMale:bool, visionRadius:double, contactRadius:double, basalMetabolicRate:double, environment:EnvironmentType)
+    # Animal(entityLocator:IEntityLocator<Animal>, worldService:IWorldService, timeManager:ITimeManager, position:Position, healthPoints:int, energy:int, isMale:bool, visionRadius:double, contactRadius:double, basalMetabolicRate:double, environment:EnvironmentType)
     + IsMale : bool <<get>> <<set>>
     + VisionRadius : double <<get>> <<set>>
     + ContactRadius : double <<get>> <<set>>
@@ -9,33 +9,29 @@ abstract class Animal {
     + HungerThreshold : double <<get>> <<set>>
     + ReproductionEnergyThreshold : double <<get>> <<set>>
     + ReproductionEnergyCost : double <<get>> <<set>>
-    + <<override>> GetEnvironmentMovementModifier() : double
-    # <<override>> {abstract} CalculateMovementEnergyCost(deltaX:double, deltaY:double) : int
-    + CanReproduce() : bool
-    + Reproduce(partner:IReproducible) : void
-    # Reproduce(partner:Animal) : void
-    # {abstract} GiveBirth() : void
-    # IsInContactWith(other:LifeForm) : bool
+    + IsPregnant : bool <<get>> <<set>>
+    + AddBehavior(behavior:IBehavior<Animal>) : void
+    - AddBaseBehaviors() : void
     # <<override>> UpdateBehavior() : void
-    + {abstract} SearchForFood() : void
-    + {abstract} SearchForMate() : void
-    + <<virtual>> Rest() : void
-    # NeedsToEat() : bool
-    + NeedsToReproduce() : bool
-    # <<override>> OnDeath() : void
+    # <<override>> Die() : void
     - CreateMeat() : void
-    # FindNearestMate() : Animal?
-    - GetPotentialMates() : IEnumerable<Animal>
+    + GetBestEnvironmentPreference(currentEnv:EnvironmentType) : EnvironmentPreference
+    + {abstract} CreateOffspring(position:Position) : Animal
+    # <<override>> GetCurrentBehavior() : IBehavior<LifeForm>?
 }
 class "IEntityLocator`1"<T> {
 }
 class "List`1"<T> {
 }
+class "IReadOnlyList`1"<T> {
+}
 MoveableEntity <|-- Animal
-IReproducible <|-- Animal
+IEnvironmentSensitive <|-- Animal
 Animal --> "_entityLocator<Animal>" "IEntityLocator`1"
 Animal --> "_worldService" IWorldService
-Animal --> "_behaviors<IBehavior>" "List`1"
-Animal --> "WorldService" IWorldService
+Animal --> "_behaviors<IBehavior<Animal>>" "List`1"
+Animal o-> "_environmentPreferences<EnvironmentPreference>" "List`1"
+Animal --> "PreferredEnvironments<EnvironmentPreference>" "IReadOnlyList`1"
 Animal --> "PreferredEnvironment" EnvironmentType
+Animal --> "WorldService" IWorldService
 @enduml

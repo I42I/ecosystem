@@ -1,27 +1,21 @@
 @startuml
+interface ISimulationEngine {
+     <<event>> SimulationUpdated : EventHandler? 
+    InitializeSimulation() : void
+    CreateInitialEntities() : void
+    UpdateSimulation() : void
+}
 class SimulationEngine {
     +  <<event>> SimulationUpdated : EventHandler? 
-    - _isRunning : bool
-    - _timer : Timer?
-    - _simulationSpeed : double = 1.0
-    + SimulationEngine(worldService:IWorldService, entityFactory:IEntityFactory, animalLocator:IEntityLocator<Animal>, preyLocator:IEntityLocator<Animal>)
-    + SimulationSpeed : double <<get>> <<set>>
-    + Start() : void
-    + Pause() : void
-    + Reset() : void
-    - UpdateTimer() : void
+    + SimulationEngine(worldService:IWorldService, entityFactory:IEntityFactory, timeManager:ITimeManager)
     + InitializeSimulation() : void
-    - GetRandomPosition() : Position
+    + CreateInitialEntities() : void
+    - CreateAnimal(count:int, health:double, energy:double) : void
+    - CreatePlants(count:int, health:double, energy:double) : void
     + UpdateSimulation() : void
-    - HandleAnimalBehavior(animal:Animal) : void
-    - CleanupDeadEntities() : void
-}
-class "IEntityLocator`1"<T> {
 }
 ISimulationEngine <|-- SimulationEngine
 SimulationEngine --> "_worldService" IWorldService
 SimulationEngine --> "_entityFactory" IEntityFactory
-SimulationEngine --> "_random" Random
-SimulationEngine --> "_animalLocator<Animal>" "IEntityLocator`1"
-SimulationEngine --> "_preyLocator<Animal>" "IEntityLocator`1"
+SimulationEngine --> "_timeManager" ITimeManager
 @enduml

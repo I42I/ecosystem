@@ -1,0 +1,6 @@
+@startuml
+class MathHelper <<static>> {
+    + {static} CalculateDistance(pos1:Position, pos2:Position) : double
+    + {static} IsInContactWith(animal:Animal, other:Animal) : bool
+}
+@enduml

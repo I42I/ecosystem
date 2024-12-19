@@ -1,0 +1,15 @@
+@startuml
+class EnvironmentPreference {
+    + MovementModifier : double <<get>>
+    + EnergyLossModifier : double <<get>>
+    + EnvironmentPreference(type:EnvironmentType, movementMod:double, energyLossMod:double)
+}
+interface IEnvironmentSensitive {
+    GetBestEnvironmentPreference(currentEnv:EnvironmentType) : EnvironmentPreference
+}
+class "IReadOnlyList`1"<T> {
+}
+EnvironmentPreference --> "Type" EnvironmentType
+IEnvironmentSensitive --> "PreferredEnvironments<EnvironmentPreference>" "IReadOnlyList`1"
+IEnvironmentSensitive --> "PreferredEnvironment" EnvironmentType
+@enduml

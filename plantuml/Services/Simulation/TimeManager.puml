@@ -1,2 +1,34 @@
 @startuml
+interface ITimeManager {
+    CurrentTime : double <<get>>
+    DeltaTime : double <<get>>
+    RegisterTickAction(action:Action) : void
+    Start() : void
+    Pause() : void
+    Reset() : void
+    SetSimulationSpeed(speed:double) : void
+}
+class TimeManager {
+    - _timer : Timer?
+    - _currentTime : double
+    - _isRunning : bool
+    - _simulationSpeed : double = 1.0
+    - _baseIntervalMilliseconds : int = 1000
+    + CurrentTime : double <<get>>
+    - <<readonly>> _targetFPS : int = 60
+    - <<readonly>> _fixedDeltaTime : double
+    + DeltaTime : double <<get>>
+    + TimeManager()
+    + RegisterTickAction(action:Action) : void
+    + Start() : void
+    + Pause() : void
+    + Reset() : void
+    + SetSimulationSpeed(speed:double) : void
+    - GetInterval() : int
+    - Tick(state:object?) : void
+}
+class "List`1"<T> {
+}
+ITimeManager <|-- TimeManager
+TimeManager o-> "_tickActions<Action>" "List`1"
 @enduml

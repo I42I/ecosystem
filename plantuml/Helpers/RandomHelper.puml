@@ -6,6 +6,7 @@ class RandomHelper <<static>> {
     + {static} Initialize(seedValue:int) : void
     + {static} NextDouble() : double
     + {static} GetRandomPositionInRadius(centerX:double, centerY:double, radius:double) : (double X, double Y)
+    + {static} GetRandomPosition() : Position
     + {static} NextGaussian(mean:double, standardDeviation:double) : double
     + {static} GetRandomDirection() : (double X, double Y)
 }

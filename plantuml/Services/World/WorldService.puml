@@ -1,15 +1,32 @@
 @startuml
+interface IWorldService {
+    AddEntity(entity:Entity) : void
+    RemoveEntity(entity:Entity) : void
+    GetEnvironmentAt(position:Position) : EnvironmentType
+    GetEntitiesInRange(position:Position, radius:double) : IEnumerable<Entity>
+    UpdateDisplaySize(width:double, height:double) : void
+    ProcessEntityQueues() : void
+}
 class WorldService {
+    - <<readonly>> _lock : object
     + WorldService()
     + AddEntity(entity:Entity) : void
     + RemoveEntity(entity:Entity) : void
+    + ProcessEntityQueues() : void
     + GetEnvironmentAt(position:Position) : EnvironmentType
     + GetEntitiesInRange(position:Position, radius:double) : IEnumerable<Entity>
     - GetDistance(pos1:Position, pos2:Position) : double
+    + UpdateDisplaySize(width:double, height:double) : void
 }
 class "ObservableCollection`1"<T> {
 }
+class "ConcurrentQueue`1"<T> {
+}
+IWorldService --> "Entities<Entity>" "ObservableCollection`1"
+IWorldService --> "Grid" GridWorld
 IWorldService <|-- WorldService
 WorldService o-> "Entities<Entity>" "ObservableCollection`1"
+WorldService o-> "_entitiesToAdd<Entity>" "ConcurrentQueue`1"
+WorldService o-> "_entitiesToRemove<Entity>" "ConcurrentQueue`1"
 WorldService --> "Grid" GridWorld
 @enduml

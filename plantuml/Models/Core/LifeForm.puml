@@ -2,25 +2,15 @@
 abstract class LifeForm {
     + HealthPoints : int <<get>> <<protected set>>
     + Energy : int <<get>> <<protected set>>
-    + BasalMetabolicRate : double <<get>> <<protected set>>
-    + IsDead : bool <<get>> <<protected set>>
-    + MaxHealthPoints : int <<get>>
-    + MaxEnergy : int <<get>>
-    + <<virtual>> GetEnvironmentMovementModifier() : double
-    # LifeForm(healthPoints:int, energy:int, position:Position, basalMetabolicRate:double, environment:EnvironmentType)
-    - _accumulatedBasalCost : double = 0
+    + IsDead : bool <<get>>
+    # LifeForm(position:Position, healthPoints:int, energy:int, environment:EnvironmentType)
     + <<override>> Update() : void
-    # {abstract} UpdateBehavior() : void
+    # <<virtual>> GetCurrentBehavior() : IBehavior<LifeForm>?
+    # <<virtual>> UpdateBehavior() : void
     + TakeDamage(amount:int) : void
-    + ConsumeEnergy(amount:int) : void
-    # InternalConsumeEnergy(amount:int) : void
-    # ConvertHealthToEnergy() : void
-    # <<virtual>> Die() : void
-    # {abstract} OnDeath() : void
+    # ConsumeEnergy(amount:int) : void
+    # {abstract} Die() : void
 }
 Entity <|-- LifeForm
-IVital <|-- LifeForm
-IEnvironmentSensitive <|-- LifeForm
 LifeForm --> "Environment" EnvironmentType
-LifeForm --> "PreferredEnvironment" EnvironmentType
 @enduml

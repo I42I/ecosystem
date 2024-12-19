@@ -1,0 +1,6 @@
+@startuml
+interface INameable {
+    DisplayName : string <<get>>
+    TypeId : int <<get>>
+}
+@enduml

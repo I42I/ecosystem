@@ -1,0 +1,17 @@
+@startuml
+class HuntingBehavior {
+    + HuntingBehavior(worldService:IWorldService, huntingStrategy:IHuntingStrategy)
+    + Name : string <<get>>
+    + Priority : int <<get>>
+    + CanExecute(animal:Animal) : bool
+    + Execute(animal:Animal) : void
+    - FindNearestPrey(predator:Animal) : Animal?
+    - Attack(animal:Animal, prey:Animal) : void
+    - MoveTowardsPrey(predator:Animal, prey:Animal) : void
+}
+class "IBehavior`1"<T> {
+}
+"IBehavior`1" "<Animal>" <|-- HuntingBehavior
+HuntingBehavior --> "_worldService" IWorldService
+HuntingBehavior --> "_huntingStrategy" IHuntingStrategy
+@enduml

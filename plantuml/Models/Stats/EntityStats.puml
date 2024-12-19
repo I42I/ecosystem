@@ -1,0 +1,12 @@
+@startuml
+class EntityStats {
+    - <<readonly>> _lifeForm : LifeForm?
+    - _currentBehavior : string?
+    +  <<event>> PropertyChanged : PropertyChangedEventHandler? 
+    + EntityStats(lifeForm:LifeForm?)
+    + CurrentBehavior : string? <<get>> <<set>>
+    + DisplayStats : string <<get>>
+    # <<virtual>> OnPropertyChanged(propertyName:string?) : void
+}
+INotifyPropertyChanged <|-- EntityStats
+@enduml

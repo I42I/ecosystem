@@ -1,6 +1,7 @@
 @startuml
 class MainWindow <<partial>> {
     + MainWindow()
+    - Window_SizeChanged(sender:object?, e:SizeChangedEventArgs) : void
 }
 Window <|-- MainWindow
 @enduml

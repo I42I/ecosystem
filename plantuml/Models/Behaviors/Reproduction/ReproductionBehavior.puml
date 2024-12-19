@@ -1,8 +1,13 @@
 @startuml
 class ReproductionBehavior {
+    + ReproductionBehavior(worldService:IWorldService)
+    + Name : string <<get>>
     + Priority : int <<get>>
-    + CanExecute(entity:LifeForm) : bool
-    + Execute(entity:LifeForm) : void
+    + CanExecute(animal:Animal) : bool
+    + Execute(animal:Animal) : void
 }
-IBehavior <|-- ReproductionBehavior
+class "IBehavior`1"<T> {
+}
+"IBehavior`1" "<Animal>" <|-- ReproductionBehavior
+ReproductionBehavior --> "_worldService" IWorldService
 @enduml

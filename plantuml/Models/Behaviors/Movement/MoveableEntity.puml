@@ -1,14 +1,20 @@
 @startuml
 abstract class MoveableEntity {
-    # MoveableEntity(healthPoints:int, energy:int, position:Position, basalMetabolicRate:double, environment:EnvironmentType)
+    # BasalMetabolicRate : double <<get>>
+    # {abstract} SpeciesEnergyCostModifier : double <<get>>
+    # MoveableEntity(position:Position, healthPoints:int, energy:int, environment:EnvironmentType, basalMetabolicRate:double, timeManager:ITimeManager)
     + <<virtual>> MovementSpeed : double <<get>> <<protected set>>
-    # {abstract} CalculateMovementEnergyCost(deltaX:double, deltaY:double) : int
+    # <<virtual>> CalculateMovementEnergyCost(deltaX:double, deltaY:double) : int
     # _currentDirectionX : double = 0
     # _currentDirectionY : double = 0
     # _directionChangeTicks : int = 0
-    + <<virtual>> Move(deltaX:double, deltaY:double) : void
     - _accumulatedEnergyCost : double = 0
+    + <<virtual>> Move(deltaX:double, deltaY:double) : void
+    # <<virtual>> GetEnvironmentMovementModifier() : double
+    + AddEnergy(amount:int) : void
+    + RemoveEnergy(amount:int) : void
 }
 LifeForm <|-- MoveableEntity
 IMoveable <|-- MoveableEntity
+MoveableEntity --> "_timeManager" ITimeManager
 @enduml

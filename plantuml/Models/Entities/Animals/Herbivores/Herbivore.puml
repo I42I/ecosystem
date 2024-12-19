@@ -4,19 +4,12 @@ abstract class Herbivore {
     # {abstract} BaseReproductionThreshold : double <<get>>
     # {abstract} BaseReproductionEnergyCost : double <<get>>
     # {abstract} BaseBiteSize : int <<get>>
-    # Herbivore(entityLocator:IEntityLocator<Animal>, plantLocator:IEntityLocator<Plant>, worldService:IWorldService, position:Position, healthPoints:int, energy:int, isMale:bool, visionRadius:double, contactRadius:double, basalMetabolicRate:double)
+    # Herbivore(entityLocator:IEntityLocator<Animal>, plantLocator:IEntityLocator<Plant>, worldService:IWorldService, timeManager:ITimeManager, position:Position, healthPoints:int, energy:int, isMale:bool, visionRadius:double, contactRadius:double, basalMetabolicRate:double)
     # FindNearestPlant() : Plant?
-    + <<override>> SearchForFood() : void
-    # IsInContactWith(plant:Plant) : bool
     # <<virtual>> Eat(plant:Plant) : void
-    # <<override>> CalculateMovementEnergyCost(deltaX:double, deltaY:double) : int
-    # <<override>> UpdateBehavior() : void
-    + GetNearbyEntities(radius:double) : IEnumerable<Entity>
-    + FleeFromPredator(predator:Animal) : void
 }
 class "IEntityLocator`1"<T> {
 }
 Animal <|-- Herbivore
-IFleeingEntity <|-- Herbivore
 Herbivore --> "_plantLocator<Plant>" "IEntityLocator`1"
 @enduml

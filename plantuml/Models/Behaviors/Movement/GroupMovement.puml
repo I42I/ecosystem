@@ -1,2 +1,15 @@
 @startuml
+class GroupMovementBehavior {
+    - <<readonly>> _groupRadius : double
+    - <<readonly>> _separationDistance : double
+    + GroupMovementBehavior(worldService:IWorldService, groupRadius:double, separationDistance:double)
+    + Name : string <<get>>
+    + Priority : int <<get>>
+    + CanExecute(animal:Animal) : bool
+    + Execute(animal:Animal) : void
+}
+class "IBehavior`1"<T> {
+}
+"IBehavior`1" "<Animal>" <|-- GroupMovementBehavior
+GroupMovementBehavior --> "_worldService" IWorldService
 @enduml

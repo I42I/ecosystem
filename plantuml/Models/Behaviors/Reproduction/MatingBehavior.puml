@@ -1,0 +1,20 @@
+@startuml
+class MatingBehavior {
+    + Name : string <<get>>
+    + Priority : int <<get>>
+    - <<const>> MATING_DURATION : double = 3.0
+    - _matingTimer : double = 0
+    - _currentMate : Animal? = null
+    + MatingBehavior(worldService:IWorldService, timeManager:ITimeManager)
+    + CanExecute(animal:Animal) : bool
+    + Execute(animal:Animal) : void
+    - FindMate(animal:Animal) : Animal?
+    - StartMating(animal:Animal, mate:Animal) : void
+    - FinishMating(animal:Animal) : void
+}
+class "IBehavior`1"<T> {
+}
+"IBehavior`1" "<Animal>" <|-- MatingBehavior
+MatingBehavior --> "_worldService" IWorldService
+MatingBehavior --> "_timeManager" ITimeManager
+@enduml

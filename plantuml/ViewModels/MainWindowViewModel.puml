@@ -2,22 +2,20 @@
 class MainWindowViewModel <<partial>> {
     - _status : string = "Ready"
     - _simulationSpeed : double = 1.0
-    + MainWindowViewModel(simulationEngine:ISimulationEngine, worldService:IWorldService, entityFactory:IEntityFactory)
+    - _debug : bool = true
+    + MainWindowViewModel(simulationEngine:ISimulationEngine, timeManager:ITimeManager, worldService:IWorldService)
     + InitializeAndStart() : void
-    - InitializeSimulation() : void
-    - CreateInitialEntities() : void
     - StartSimulation() : void
     - PauseSimulation() : void
     - ResetSimulation() : void
-    - UpdateStatus() : void
     <<partial>> - OnSimulationSpeedChanged(value:double) : void
-}
-class "ObservableCollection`1"<T> {
+    - _windowWidth : double = 800
+    - _windowHeight : double = 450
+    <<partial>> - OnWindowWidthChanged(value:double) : void
+    <<partial>> - OnWindowHeightChanged(value:double) : void
 }
 ViewModelBase <|-- MainWindowViewModel
 MainWindowViewModel --> "_simulationEngine" ISimulationEngine
+MainWindowViewModel --> "_timeManager" ITimeManager
 MainWindowViewModel --> "_worldService" IWorldService
-MainWindowViewModel --> "_entityFactory" IEntityFactory
-MainWindowViewModel --> "_world" GridWorld
-MainWindowViewModel --> "Entities<Entity>" "ObservableCollection`1"
 @enduml

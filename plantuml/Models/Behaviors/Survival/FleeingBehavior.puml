@@ -1,8 +1,13 @@
 @startuml
 class FleeingBehavior {
+    + FleeingBehavior(worldService:IWorldService)
+    + Name : string <<get>>
     + Priority : int <<get>>
-    + CanExecute(entity:LifeForm) : bool
-    + Execute(entity:LifeForm) : void
+    + CanExecute(animal:Animal) : bool
+    + Execute(animal:Animal) : void
 }
-IBehavior <|-- FleeingBehavior
+class "IBehavior`1"<T> {
+}
+"IBehavior`1" "<Animal>" <|-- FleeingBehavior
+FleeingBehavior --> "_worldService" IWorldService
 @enduml

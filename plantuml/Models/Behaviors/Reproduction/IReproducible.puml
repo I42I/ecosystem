@@ -1,8 +1,10 @@
 @startuml
 interface IReproducible {
-    CanReproduce() : bool
-    Reproduce(partner:IReproducible) : void
     IsMale : bool <<get>>
     ReproductionEnergyCost : double <<get>>
+    FindNearestMate() : Animal?
+    Reproduce(partner:Animal) : void
+    ContactRadius : double <<get>>
 }
+IReproducible --> "Position" Position
 @enduml

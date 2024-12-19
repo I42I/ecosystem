@@ -1,8 +1,14 @@
 @startuml
 class RestBehavior {
+    + Name : string <<get>>
     + Priority : int <<get>>
-    + CanExecute(entity:LifeForm) : bool
-    + Execute(entity:LifeForm) : void
+    - _directionChangeTicks : int
+    - _currentDirectionX : double
+    - _currentDirectionY : double
+    + CanExecute(animal:Animal) : bool
+    + Execute(animal:Animal) : void
 }
-IBehavior <|-- RestBehavior
+class "IBehavior`1"<T> {
+}
+"IBehavior`1" "<Animal>" <|-- RestBehavior
 @enduml

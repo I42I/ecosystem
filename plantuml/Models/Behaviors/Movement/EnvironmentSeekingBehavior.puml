@@ -1,0 +1,13 @@
+@startuml
+class EnvironmentSeekingBehavior {
+    + EnvironmentSeekingBehavior(worldService:IWorldService)
+    + Name : string <<get>>
+    + Priority : int <<get>>
+    + CanExecute(animal:Animal) : bool
+    + Execute(animal:Animal) : void
+}
+class "IBehavior`1"<T> {
+}
+"IBehavior`1" "<Animal>" <|-- EnvironmentSeekingBehavior
+EnvironmentSeekingBehavior --> "_worldService" IWorldService
+@enduml
