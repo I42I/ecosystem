@@ -78,11 +78,11 @@ public abstract class LifeForm : Entity
         if (!IsDead)
         {
             var behavior = GetCurrentBehavior();
-            Console.WriteLine($"[{GetType().Name}] Current behavior: {behavior?.Name ?? "None"}");
+            // Console.WriteLine($"[{GetType().Name}] Current behavior: {behavior?.Name ?? "None"}");
             
             if (behavior != null)
             {
-                Console.WriteLine($"Executing behavior {behavior.Name} for {GetType().Name}");
+                // Console.WriteLine($"Executing behavior {behavior.Name} for {GetType().Name}");
                 Stats.CurrentBehavior = behavior.Name;
                 behavior.Execute(this as dynamic);
             }

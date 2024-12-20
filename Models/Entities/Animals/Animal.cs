@@ -75,21 +75,24 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive
 
         if (_behaviorUpdateAccumulator >= SimulationConstants.BEHAVIOR_UPDATE_INTERVAL)
         {
-            Console.WriteLine($"{GetType().Name} updating behavior !!!!!!!!!!!!!");
+            // Console.WriteLine($"{GetType().Name} updating behavior !!!!!!!!!!!!!");
 
             var currentEnv = _worldService.GetEnvironmentAt(Position);
             var envPreference = GetBestEnvironmentPreference(currentEnv);
+
+            Console.WriteLine($"{GetType().Name} at ({Position.X:F2}, {Position.Y:F2}) in environment {currentEnv}, preference: {envPreference.Type}");
             
             if (envPreference.Type == EnvironmentType.None)
             {
+                Console.WriteLine($"{GetType().Name} taking damage in incompatible environment: {currentEnv}");
                 TakeDamage(SimulationConstants.ENVIRONMENT_DAMAGE_RATE);
             }
             
             var behavior = GetCurrentBehavior();
-            Console.WriteLine($"Current behavior: {behavior}");
+            // Console.WriteLine($"Current behavior: {behavior}");
             if (behavior != null)
             {
-                Console.WriteLine($"Executing behavior: {behavior.Name} !!!!!!!!!!!!!!!!!!!");
+                // Console.WriteLine($"Executing behavior: {behavior.Name} !!!!!!!!!!!!!!!!!!!");
                 behavior.Execute(this);
             }
 
@@ -126,7 +129,7 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive
             .Where(b => 
             {
                 var canExecute = b.CanExecute(this);
-                Console.WriteLine($"Behavior {b.Name} can execute: {canExecute}");
+                // Console.WriteLine($"Behavior {b.Name} can execute: {canExecute}");
                 return canExecute;
             })
             .OrderByDescending(b => b.Priority)
@@ -134,15 +137,12 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive
 
         if (behavior != null)
         {
+            // Console.WriteLine($"Selected behavior: {behavior.GetType().Name}");
             Stats.CurrentBehavior = behavior.Name;
-            Console.WriteLine($"Selected behavior: {behavior}");
-            return behavior as IBehavior<LifeForm>;
+            return new BehaviorWrapper<Animal, LifeForm>(behavior, this);
         }
-        else
-        {
-            Stats.CurrentBehavior = "None";
-            Console.WriteLine($"No behavior available for {GetType().Name}");
-            return null;
-        }
+        
+        Stats.CurrentBehavior = "None";
+        return null;
     }
 }

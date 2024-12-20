@@ -12,6 +12,7 @@ namespace ecosystem.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
+    private readonly object _lock = new object();
     private readonly ISimulationEngine _simulationEngine;
     private readonly ITimeManager _timeManager;
     private readonly IWorldService _worldService;
@@ -41,9 +42,13 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             tm.SimulationUpdated += (s, e) =>
             {
-                foreach (var entityVM in _entityViewModels)
+                lock (_lock)
                 {
-                    entityVM.UpdateDisplaySize(WindowWidth, WindowHeight);
+                    var positions = _entityViewModels.ToList();
+                    foreach (var entityVM in positions)
+                    {
+                        entityVM.UpdateDisplaySize(WindowWidth, WindowHeight);
+                    }
                 }
             };
         }
@@ -111,20 +116,23 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private void Entities_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (e.NewItems != null)
+        lock (_lock)
         {
-            foreach (Entity entity in e.NewItems)
+            if (e.NewItems != null)
             {
-                _entityViewModels.Add(new EntityViewModel(entity));
+                foreach (Entity entity in e.NewItems)
+                {
+                    _entityViewModels.Add(new EntityViewModel(entity));
+                }
             }
-        }
-        if (e.OldItems != null)
-        {
-            foreach (Entity entity in e.OldItems)
+            if (e.OldItems != null)
             {
-                var vm = _entityViewModels.FirstOrDefault(vm => vm.Entity == entity);
-                if (vm != null)
-                    _entityViewModels.Remove(vm);
+                foreach (Entity entity in e.OldItems)
+                {
+                    var vm = _entityViewModels.FirstOrDefault(vm => vm.Entity == entity);
+                    if (vm != null)
+                        _entityViewModels.Remove(vm);
+                }
             }
         }
     }

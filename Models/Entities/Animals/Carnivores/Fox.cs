@@ -47,6 +47,9 @@ public class Fox : Carnivore
         MovementSpeed = 2.0;
         Color = Brushes.Orange;
         _territoryCenter = position;
+
+        _environmentPreferences.Clear();
+        _environmentPreferences.Add(new EnvironmentPreference(EnvironmentType.Ground, 1.0, 1.0));
         
         AddBehavior(new HuntingBehavior(worldService, new GroundHuntingStrategy()));
         AddBehavior(new TerritorialBehavior(worldService, position));

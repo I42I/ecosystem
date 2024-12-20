@@ -63,12 +63,18 @@ public class WorldService : IWorldService
     {
         int x = (int)(position.X * Grid.Width);
         int y = (int)(position.Y * Grid.Height);
-        return Grid.GetEnvironmentAt(x, y);
+        var environment = Grid.GetEnvironmentAt(x, y);
+        
+        Console.WriteLine($"Getting environment at ({position.X},{position.Y}) -> ({x},{y}): {environment}");
+        return environment;
     }
 
     public IEnumerable<Entity> GetEntitiesInRange(Position position, double radius)
     {
-        return Entities.Where(e => GetDistance(position, e.Position) <= radius);
+        lock (_lock)
+        {
+            return Entities.Where(e => GetDistance(position, e.Position) <= radius).ToList();
+        }
     }
 
     private double GetDistance(Position pos1, Position pos2)
