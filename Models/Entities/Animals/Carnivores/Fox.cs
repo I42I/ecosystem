@@ -49,7 +49,7 @@ public class Fox : Carnivore
         _territoryCenter = position;
 
         _environmentPreferences.Clear();
-        _environmentPreferences.Add(new EnvironmentPreference(EnvironmentType.Ground, 1.0, 1.0));
+        _environmentPreferences.Add(new EnvironmentPreference(PreferredEnvironment, 1.0, 1.0));
         
         AddBehavior(new HuntingBehavior(worldService, new GroundHuntingStrategy()));
         AddBehavior(new TerritorialBehavior(worldService, position));

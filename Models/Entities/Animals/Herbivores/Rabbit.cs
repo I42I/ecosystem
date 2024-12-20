@@ -50,7 +50,7 @@ public class Rabbit : Herbivore
         Color = Brushes.Brown;
 
         _environmentPreferences.Clear();
-        _environmentPreferences.Add(new EnvironmentPreference(EnvironmentType.Ground, 1.0, 1.0));
+        _environmentPreferences.Add(new EnvironmentPreference(PreferredEnvironment, 1.0, 1.0));
 
         AddBehavior(new FleeingBehavior(_worldService));        // Priority 3
         AddBehavior(new HungerBehavior());                      // Priority 2
