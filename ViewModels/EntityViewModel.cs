@@ -27,7 +27,7 @@ public class EntityViewModel : ViewModelBase
     {
         get
         {
-            var stats = $"HP:{_entity.Stats.DisplayStats}";
+            var stats = $"{_entity.Stats.DisplayStats}";
             var behavior = _entity.Stats.CurrentBehavior;
             return $"{stats}\n{behavior ?? "None"}";
         }
