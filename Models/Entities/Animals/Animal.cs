@@ -75,6 +75,8 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive
 
         if (_behaviorUpdateAccumulator >= SimulationConstants.BEHAVIOR_UPDATE_INTERVAL)
         {
+            Console.WriteLine($"{GetType().Name} updating behavior !!!!!!!!!!!!!");
+
             var currentEnv = _worldService.GetEnvironmentAt(Position);
             var envPreference = GetBestEnvironmentPreference(currentEnv);
             
@@ -84,16 +86,11 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive
             }
             
             var behavior = GetCurrentBehavior();
+            Console.WriteLine($"Current behavior: {behavior}");
             if (behavior != null)
             {
-                Console.WriteLine($"{GetType().Name} executing behavior: {behavior.Name}");
-                Stats.CurrentBehavior = behavior.Name;
+                Console.WriteLine($"Executing behavior: {behavior.Name} !!!!!!!!!!!!!!!!!!!");
                 behavior.Execute(this);
-            }
-            else
-            {
-                Console.WriteLine($"{GetType().Name} has no behavior to execute");
-                Stats.CurrentBehavior = "None";
             }
 
             _behaviorUpdateAccumulator = 0;
@@ -125,7 +122,7 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive
 
     protected override IBehavior<LifeForm>? GetCurrentBehavior()
     {
-        var availableBehaviors = _behaviors
+        var behavior = _behaviors
             .Where(b => 
             {
                 var canExecute = b.CanExecute(this);
@@ -133,15 +130,19 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive
                 return canExecute;
             })
             .OrderByDescending(b => b.Priority)
-            .ToList();
+            .FirstOrDefault();
 
-        if (availableBehaviors.Any())
+        if (behavior != null)
         {
-            var selectedBehavior = availableBehaviors.First();
-            Console.WriteLine($"Selected behavior: {selectedBehavior.Name}");
-            return selectedBehavior as IBehavior<LifeForm>;
+            Stats.CurrentBehavior = behavior.Name;
+            Console.WriteLine($"Selected behavior: {behavior}");
+            return behavior as IBehavior<LifeForm>;
         }
-
-        return null;
+        else
+        {
+            Stats.CurrentBehavior = "None";
+            Console.WriteLine($"No behavior available for {GetType().Name}");
+            return null;
+        }
     }
 }

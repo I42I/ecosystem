@@ -31,9 +31,14 @@ public abstract class MoveableEntity : LifeForm, IMoveable
 
     public virtual void Move(double deltaX, double deltaY)
     {
+        // Debug logs
+        Console.WriteLine($"[{GetType().Name}] Move called: dx={deltaX:F3}, dy={deltaY:F3}");
+        
         // Calculate frame-adjusted movement
         double frameMovement = MovementSpeed * SimulationConstants.BASE_MOVEMENT_SPEED * _timeManager.DeltaTime;
         _movementAccumulator += frameMovement;
+
+        Console.WriteLine($"[{GetType().Name}] Movement accumulator: {_movementAccumulator:F3}");
 
         if (_movementAccumulator >= SimulationConstants.MOVEMENT_THRESHOLD)
         {
@@ -44,10 +49,12 @@ public abstract class MoveableEntity : LifeForm, IMoveable
                 deltaY /= length;
             }
 
-            Position = new Position(
-                Math.Clamp(Position.X + deltaX * _movementAccumulator, 0, 1),
-                Math.Clamp(Position.Y + deltaY * _movementAccumulator, 0, 1)
-            );
+            double newX = Math.Clamp(Position.X + deltaX * _movementAccumulator, 0, 1);
+            double newY = Math.Clamp(Position.Y + deltaY * _movementAccumulator, 0, 1);
+
+            Console.WriteLine($"[{GetType().Name}] Position update: ({Position.X:F3}, {Position.Y:F3}) -> ({newX:F3}, {newY:F3})");
+
+            Position = new Position(newX, newY);
 
             // Calculate and accumulate movement energy cost
             double energyCost = CalculateMovementEnergyCost(

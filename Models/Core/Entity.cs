@@ -86,7 +86,7 @@ public abstract class Entity : INotifyPropertyChanged
 
     protected virtual void OnPropertyChanged(string propertyName)
     {
-        Console.WriteLine($"Property changed: {propertyName} for {GetType().Name}");
+        // Console.WriteLine($"Property changed: {propertyName} for {GetType().Name}");
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 

@@ -13,7 +13,7 @@ public static class SimulationConstants
     public const double PLANT_REPRODUCTION_INTERVAL = 5.0;
     
     // Rates and costs
-    public const double BASE_MOVEMENT_SPEED = 0.0005;
+    public const double BASE_MOVEMENT_SPEED = 0.005;
     public const double BASE_ENERGY_LOSS = 0.05;
     public const double ENVIRONMENT_DAMAGE_RATE = 0.1;
     
