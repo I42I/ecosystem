@@ -1,7 +1,8 @@
+using System;
+using ecosystem.Helpers;
 using ecosystem.Models.Entities.Animals;
 using ecosystem.Models.Behaviors.Base;
 using ecosystem.Models.Entities.Animals.Herbivores;
-using ecosystem.Helpers;
 
 namespace ecosystem.Models.Behaviors.Survival;
 
@@ -15,7 +16,12 @@ public class HungerBehavior : IBehavior<Animal>
         if (!(animal is Herbivore herbivore))
             return false;
 
-        return animal.Energy < animal.HungerThreshold;
+        var plant = herbivore.FindNearestPlant();
+        
+        var hasLowEnergy = animal.Energy < herbivore.BaseHungerThreshold;
+        Console.WriteLine($"[{animal.GetType().Name}#{animal.TypeId}] hunger check: Energy={animal.Energy}, Threshold={herbivore.BaseHungerThreshold}, Plant found={plant != null}");
+        
+        return hasLowEnergy && plant != null;
     }
 
     public void Execute(Animal animal)

@@ -17,7 +17,7 @@ public class Sheep : Herbivore
 {
     protected override int BaseBiteSize => 10;
     protected override double BiteCooldownDuration => 3.0;
-    protected override double BaseHungerThreshold => 45.0;
+    public override double BaseHungerThreshold => 45.0;
     protected override double BaseReproductionThreshold => 75.0;
     protected override double BaseReproductionEnergyCost => 40.0;
     protected override double SpeciesEnergyCostModifier => 1.0;

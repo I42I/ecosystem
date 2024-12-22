@@ -15,7 +15,7 @@ namespace ecosystem.Models.Entities.Animals.Herbivores;
 public abstract class Herbivore : Animal
 {
     protected readonly IEntityLocator<Plant> _plantLocator;
-    protected abstract double BaseHungerThreshold { get; }
+    public abstract double BaseHungerThreshold { get; }
     protected abstract double BaseReproductionThreshold { get; }
     protected abstract double BaseReproductionEnergyCost { get; }
     private double _biteCooldown = 0;
@@ -42,10 +42,24 @@ public abstract class Herbivore : Animal
 
     public Plant? FindNearestPlant()
     {
-        return _plantLocator.FindNearest(
-            _worldService.Entities.OfType<Plant>(),
-            VisionRadius
-        );
+        var plants = _worldService.Entities.OfType<Plant>().ToList();
+        Console.WriteLine($"[{GetType().Name}#{TypeId}] Found {plants.Count} plants in world");
+        
+        foreach (var plant in plants)
+        {
+            var distance = GetDistanceTo(plant.Position);
+            Console.WriteLine($"[{GetType().Name}#{TypeId}] Distance to plant: {distance:F3}, Vision radius: {VisionRadius:F3}");
+        }
+        
+        var nearestPlant = _plantLocator.FindNearest(plants, VisionRadius, Position);
+        
+        if (nearestPlant != null)
+        {
+            var distance = GetDistanceTo(nearestPlant.Position);
+            Console.WriteLine($"[{GetType().Name}#{TypeId}] Found nearest plant at distance {distance:F3}");
+        }
+        
+        return nearestPlant;
     }
 
     protected override void UpdateBehavior()
