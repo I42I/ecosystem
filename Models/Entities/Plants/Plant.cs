@@ -7,16 +7,19 @@ using ecosystem.Models.Entities.Environment;
 using ecosystem.Models.Behaviors;
 using ecosystem.Services.World;
 using ecosystem.Services.Simulation;
+using ecosystem.Models.Radius;
 
 namespace ecosystem.Models.Entities.Plants;
 
-public abstract class Plant : LifeForm
+public abstract class Plant : LifeForm, IHasRootSystem
 {
     private double _growthAccumulator;
     private double _reproductionAccumulator;
     protected abstract double BaseAbsorptionRate { get; }
     protected readonly IWorldService _worldService;
     public abstract EnvironmentType PreferredEnvironment { get; }
+    public double RootRadius { get; protected set; }
+    public double SeedRadius { get; protected set; }
 
     protected Plant(
         int healthPoints,
@@ -24,15 +27,18 @@ public abstract class Plant : LifeForm
         Position position,
         double basalMetabolicRate,
         EnvironmentType environment,
+        double rootRadius,
+        double seedRadius,
+        double contactRadius,
         IWorldService worldService,
         ITimeManager timeManager)
         : base(position, healthPoints, energy, environment, timeManager)
     {
         _worldService = worldService;
+        RootRadius = rootRadius;
+        SeedRadius = seedRadius;
+        ContactRadius = contactRadius;
     }
-
-    public double RootRadius { get; protected set; }
-    public double SeedRadius { get; protected set; }
 
     protected override void UpdateBehavior()
     {
@@ -91,5 +97,6 @@ public abstract class Plant : LifeForm
     {
         var waste = new OrganicWaste(Position, Energy);
         _worldService.AddEntity(waste);
+        _worldService.RemoveEntity(this);
     }
 }

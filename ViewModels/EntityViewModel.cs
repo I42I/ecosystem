@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using Avalonia.Media;
 using ecosystem.Models.Core;
+using ecosystem.Models.Radius;
 
 namespace ecosystem.ViewModels;
 
@@ -33,12 +34,33 @@ public class EntityViewModel : ViewModelBase
         }
     }
 
+    public double ScaledVisionRadius => Entity is IHasVisionRange e ? e.VisionRadius * _displayWidth : 0;
+    public double ScaledContactRadius => Entity is IHasContactRange e ? e.ContactRadius * _displayWidth : 0;
+    public double ScaledRootRadius => Entity is IHasRootSystem e ? e.RootRadius * _displayWidth : 0;
+    public double CenteredX => DisplayX - ScaledVisionRadius / 2;
+    public double CenteredY => DisplayY - ScaledVisionRadius / 2;
+    
+    public double CenteredContactX => DisplayX - ScaledContactRadius / 2;
+    public double CenteredContactY => DisplayY - ScaledContactRadius / 2;
+    
+    public double CenteredRootX => DisplayX - ScaledRootRadius / 2;
+    public double CenteredRootY => DisplayY - ScaledRootRadius / 2;
+
     public void UpdateDisplaySize(double width, double height)
     {
         _displayWidth = width;
         _displayHeight = height;
         OnPropertyChanged(nameof(DisplayX));
         OnPropertyChanged(nameof(DisplayY));
+        OnPropertyChanged(nameof(ScaledVisionRadius));
+        OnPropertyChanged(nameof(ScaledContactRadius));
+        OnPropertyChanged(nameof(ScaledRootRadius));
+        OnPropertyChanged(nameof(CenteredX));
+        OnPropertyChanged(nameof(CenteredY));
+        OnPropertyChanged(nameof(CenteredContactX));
+        OnPropertyChanged(nameof(CenteredContactY));
+        OnPropertyChanged(nameof(CenteredRootX));
+        OnPropertyChanged(nameof(CenteredRootY));
     }
 
     private void Entity_PropertyChanged(object? sender, PropertyChangedEventArgs e)

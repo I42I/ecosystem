@@ -11,7 +11,7 @@ public class GroupMovementBehavior : IBehavior<Animal>
     private readonly double _groupRadius;
     private readonly double _separationDistance;
 
-    public GroupMovementBehavior(IWorldService worldService, double groupRadius = 10.0, double separationDistance = 2.0)
+    public GroupMovementBehavior(IWorldService worldService, double groupRadius = 0.2, double separationDistance = 0.04)
     {
         _worldService = worldService;
         _groupRadius = groupRadius;

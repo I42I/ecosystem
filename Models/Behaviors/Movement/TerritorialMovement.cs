@@ -19,8 +19,8 @@ public class TerritorialBehavior : IBehavior<Animal>
     public TerritorialBehavior(
         IWorldService worldService, 
         Position spawnPosition,
-        double territoryRadius = 100.0,
-        double territoryOverlapThreshold = 50.0)
+        double territoryRadius = 0.3,
+        double territoryOverlapThreshold = 0.15)
     {
         _worldService = worldService;
         _territoryCenter = spawnPosition;

@@ -40,8 +40,8 @@ public class Fox : Carnivore
             healthPoints,
             energy,
             isMale,
-            visionRadius: 10.0,
-            contactRadius: 2.0,
+            visionRadius: 0.15,
+            contactRadius: 0.01,
             basalMetabolicRate: 1.2)
     {
         MovementSpeed = 2.0;

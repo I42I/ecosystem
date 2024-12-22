@@ -23,11 +23,12 @@ public class Grass : Plant
             position,
             basalMetabolicRate: 0.5,
             environment: EnvironmentType.Ground,
+            rootRadius: 0.1,
+            seedRadius: 0.2,
+            contactRadius: 0.02,
             worldService: worldService,
             timeManager: timeManager)
     {
-        RootRadius = 5.0;
-        SeedRadius = 10.0;
         Color = Brushes.Green;
     }
 
@@ -45,7 +46,7 @@ public class Grass : Plant
             timeManager: _timeManager,
             healthPoints: HealthPoints / 2,
             energy: Energy / 2,
-            position: new Position(position.X, position.Y)
+            position: position
         );
     }
 }

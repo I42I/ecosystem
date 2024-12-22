@@ -21,4 +21,10 @@ public static class SimulationConstants
     public const double ENVIRONMENT_DAMAGE_RATE = 0.1;
     public const double ATTACK_ENERGY_COST = 0.1;
     public const double REPRODUCTION_ENERGY_COST = 0.5;
+
+    // Health costs
+    public const double BASE_HEALTH_LOSS = 0.01;
+    public const double HEALTH_LOSS_WHEN_STARVING = 0.02;
+    public const double MIN_HEALTH_FOR_CONVERSION = 10;
+    public const double ENERGY_HEALTH_CONVERSION_RATE = 10;
 }

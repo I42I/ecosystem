@@ -11,10 +11,11 @@ using ecosystem.Models.Behaviors.Movement;
 using ecosystem.Services.World;
 using ecosystem.Services.Simulation;
 using ecosystem.Helpers;
+using ecosystem.Models.Radius;
 
 namespace ecosystem.Models.Entities.Animals;
 
-public abstract class Animal : MoveableEntity, IEnvironmentSensitive
+public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVisionRange
 {
     private double _behaviorUpdateAccumulator;
     protected readonly IEntityLocator<Animal> _entityLocator;
@@ -48,8 +49,7 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive
     }
 
     public bool IsMale { get; set; }
-    public double VisionRadius { get; set; }
-    public double ContactRadius { get; set; }
+    public double VisionRadius { get; protected set; }
     public bool IsAdult { get; set; }
     public double ReproductionCooldown { get; set; }
     public double HungerThreshold { get; set; }

@@ -42,8 +42,8 @@ public class Rabbit : Herbivore
             healthPoints,
             energy,
             isMale,
-            visionRadius: 8.0,
-            contactRadius: 1.0,
+            visionRadius: 0.1,
+            contactRadius: 0.01,
             basalMetabolicRate: 0.8)
     {
         MovementSpeed = 1.5;
