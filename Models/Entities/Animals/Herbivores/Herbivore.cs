@@ -18,6 +18,8 @@ public abstract class Herbivore : Animal
     protected abstract double BaseHungerThreshold { get; }
     protected abstract double BaseReproductionThreshold { get; }
     protected abstract double BaseReproductionEnergyCost { get; }
+    private double _biteCooldown = 0;
+    protected abstract double BiteCooldownDuration { get; }
     protected abstract int BaseBiteSize { get; }
 
     protected Herbivore(
@@ -38,7 +40,7 @@ public abstract class Herbivore : Animal
         _plantLocator = plantLocator;
     }
 
-    protected Plant? FindNearestPlant()
+    public Plant? FindNearestPlant()
     {
         return _plantLocator.FindNearest(
             _worldService.Entities.OfType<Plant>(),
@@ -46,13 +48,29 @@ public abstract class Herbivore : Animal
         );
     }
 
-    protected virtual void Eat(Plant plant)
+    protected override void UpdateBehavior()
     {
-        if (!plant.IsDead)
+        base.UpdateBehavior();
+        
+        if (_biteCooldown > 0)
         {
-            int energyGained = BaseBiteSize / 2;
-            plant.TakeDamage(BaseBiteSize);
+            _biteCooldown -= _timeManager.DeltaTime;
+        }
+    }
+
+    public virtual void Eat(Plant plant)
+    {
+        if (!plant.IsDead && _biteCooldown <= 0)
+        {
+            int damageDealt = BaseBiteSize;
+            plant.TakeDamage(damageDealt);
+            
+            int energyGained = (int)(damageDealt * 0.5);
             Energy += energyGained;
+            
+            _biteCooldown = BiteCooldownDuration;
+            
+            Console.WriteLine($"{GetType().Name} bit {plant.GetType().Name} for {damageDealt} damage, gained {energyGained} energy");
         }
     }
 }

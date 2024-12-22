@@ -13,7 +13,7 @@ public static class MathHelper
         return Math.Sqrt(dx * dx + dy * dy);
     }
 
-    public static bool IsInContactWith(this Animal animal, Animal other)
+    public static bool IsInContactWith(this Animal animal, Entity other)
     {
         return CalculateDistance(animal.Position, other.Position) <= animal.ContactRadius;
     }

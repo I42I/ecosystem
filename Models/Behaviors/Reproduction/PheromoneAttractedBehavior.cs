@@ -4,6 +4,7 @@ using ecosystem.Models.Behaviors.Base;
 using ecosystem.Models.Entities.Animals;
 using ecosystem.Services.World;
 using ecosystem.Helpers;
+using ecosystem.Services.Simulation;
 
 namespace ecosystem.Models.Behaviors.Reproduction;
 
@@ -22,7 +23,9 @@ public class PheromoneAttractedBehavior : IBehavior<Animal>
 
     public bool CanExecute(Animal animal)
     {
-        if (!animal.IsMale || animal.Energy < animal.ReproductionEnergyThreshold)
+        if (!animal.IsMale || 
+            animal.Energy < animal.ReproductionEnergyThreshold ||
+            animal.ReproductionCooldown > 0)
             return false;
 
         var potentialMates = _worldService.GetEntitiesInRange(animal.Position, animal.VisionRadius)
@@ -30,6 +33,7 @@ public class PheromoneAttractedBehavior : IBehavior<Animal>
             .Where(a => !a.IsMale 
                        && a.GetType() == animal.GetType() 
                        && !a.IsPregnant
+                       && a.ReproductionCooldown <= 0
                        && a.Energy >= a.ReproductionEnergyThreshold);
 
         return potentialMates.Any();
@@ -45,6 +49,8 @@ public class PheromoneAttractedBehavior : IBehavior<Animal>
                 // Initiate reproduction
                 animal.RemoveEnergy((int)animal.ReproductionEnergyCost);
                 mate.IsPregnant = true;
+                animal.ReproductionCooldown = SimulationConstants.MALE_REPRODUCTION_COOLDOWN;
+                mate.ReproductionCooldown = SimulationConstants.GESTATION_PERIOD;
                 Console.WriteLine($"Male {animal.GetType().Name} successfully mated");
             }
             else

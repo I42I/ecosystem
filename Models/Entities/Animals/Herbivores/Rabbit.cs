@@ -18,6 +18,7 @@ namespace ecosystem.Models.Entities.Animals.Herbivores;
 public class Rabbit : Herbivore
 {
     protected override int BaseBiteSize => 4;
+    protected override double BiteCooldownDuration => 1.0;
     protected override double BaseHungerThreshold => 55.0;
     protected override double BaseReproductionThreshold => 70.0;
     protected override double BaseReproductionEnergyCost => 20.0;
