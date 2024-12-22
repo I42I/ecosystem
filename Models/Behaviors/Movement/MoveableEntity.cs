@@ -23,7 +23,7 @@ public abstract class MoveableEntity : LifeForm, IMoveable
         BasalMetabolicRate = basalMetabolicRate;
     }
 
-    public virtual double MovementSpeed { get; protected set; }
+    public virtual double MovementSpeed { get; set; }
 
     protected double _currentDirectionX = 0;
     protected double _currentDirectionY = 0;

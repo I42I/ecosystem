@@ -27,4 +27,9 @@ public static class SimulationConstants
     public const double HEALTH_LOSS_WHEN_STARVING = 0.02;
     public const double MIN_HEALTH_FOR_CONVERSION = 10;
     public const double ENERGY_HEALTH_CONVERSION_RATE = 10;
+
+    // Reproduction timings
+    public const double MALE_REPRODUCTION_COOLDOWN = 30.0;
+    public const double GESTATION_PERIOD = 60.0;
+    public const double FEMALE_REPRODUCTION_COOLDOWN = 40.0;
 }

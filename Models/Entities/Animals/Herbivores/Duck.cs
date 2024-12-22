@@ -55,7 +55,6 @@ public class Duck : Herbivore
         AddBehavior(new FleeingBehavior(worldService));
         AddBehavior(new BirthBehavior());
         AddBehavior(new EnvironmentSeekingBehavior(worldService));
-        AddBehavior(new MatingBehavior(_worldService, _timeManager));
         AddBehavior(new HungerBehavior());
         AddBehavior(new RestBehavior());
         

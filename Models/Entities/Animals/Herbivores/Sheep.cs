@@ -46,7 +46,6 @@ public class Sheep : Herbivore
         Color = Brushes.White;;
         AddBehavior(new FleeingBehavior(_worldService));        // Priority 3
         AddBehavior(new HungerBehavior());                      // Priority 2
-        AddBehavior(new ReproductionBehavior(_worldService));   // Priority 1
         AddBehavior(new GroupMovementBehavior(_worldService));  // Priority 1
         AddBehavior(new RestBehavior());                        // Priority 0
 

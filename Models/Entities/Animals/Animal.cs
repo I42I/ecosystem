@@ -65,7 +65,16 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
 
     private void AddBaseBehaviors()
     {
-        AddBehavior(new MatingBehavior(_worldService, _timeManager));   // Priority 2
+        if (!IsMale)
+        {
+            AddBehavior(new PheromoneEmittingBehavior(_worldService));  // Priority 1
+            AddBehavior(new BirthBehavior());                           // Priority 4
+        }
+        else
+        {
+            AddBehavior(new PheromoneAttractedBehavior(_worldService)); // Priority 2
+        }
+        
         AddBehavior(new RestBehavior());                                // Priority 0
     }
 

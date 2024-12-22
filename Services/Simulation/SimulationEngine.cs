@@ -48,6 +48,7 @@ public class SimulationEngine : ISimulationEngine
     {
         try
         {
+            RandomHelper.Initialize(42);
             CreateInitialEntities();
         }
         catch (Exception ex)

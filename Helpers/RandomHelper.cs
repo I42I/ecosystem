@@ -7,6 +7,7 @@ public static class RandomHelper
 {
     private static readonly object lockObject = new object();
     private static Random? instance;
+    private static int seed = 42;
 
     public static Random Instance
     {
@@ -19,14 +20,13 @@ public static class RandomHelper
         }
     }
 
-    private static int seed;
-
     public static void Initialize(int seedValue)
     {
         lock (lockObject)
         {
             seed = seedValue;
             instance = new Random(seed);
+            Console.WriteLine($"Initialized RandomHelper with seed: {seed}");
         }
     }
 
