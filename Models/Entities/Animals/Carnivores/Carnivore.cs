@@ -16,8 +16,7 @@ namespace ecosystem.Models.Entities.Animals.Carnivores;
 
 public abstract class Carnivore : Animal, IPredator
 {
-    protected readonly IEntityLocator<Animal> _preyLocator;  // Changed to _preyLocator
-    
+    protected readonly IEntityLocator<Animal> _preyLocator;
     public abstract double BaseAttackPower { get; }
     protected abstract double BaseAttackRange { get; }
     protected abstract double BaseHungerThreshold { get; }
@@ -79,11 +78,13 @@ public abstract class Carnivore : Animal, IPredator
 
     public virtual void Attack(Animal prey)
     {
-        if (CanAttack(prey))
+        if (CanAttack(prey) && CanBiteBasedOnCooldown())
         {
             int damage = CalculateAttackDamage();
             prey.TakeDamage(damage);
             Energy += damage / 4;
+
+            SetBiteCooldown();
             
             if (prey.IsDead)
             {

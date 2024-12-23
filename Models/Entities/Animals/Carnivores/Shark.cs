@@ -14,6 +14,7 @@ public class Shark : Carnivore
 {
     public override double BaseAttackPower => 25.0;
     protected override double BaseAttackRange => 2.0;
+    protected override double BaseBiteCooldownDuration => 1.0;
     protected override double BaseHungerThreshold => 50.0;
     protected override double BaseReproductionThreshold => 70.0;
     protected override double BaseReproductionEnergyCost => 40.0;

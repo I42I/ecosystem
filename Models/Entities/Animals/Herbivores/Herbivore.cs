@@ -18,8 +18,6 @@ public abstract class Herbivore : Animal
     public abstract double BaseHungerThreshold { get; }
     protected abstract double BaseReproductionThreshold { get; }
     protected abstract double BaseReproductionEnergyCost { get; }
-    private double _biteCooldown = 0;
-    protected abstract double BiteCooldownDuration { get; }
     protected abstract int BaseBiteSize { get; }
 
     protected Herbivore(
@@ -62,29 +60,19 @@ public abstract class Herbivore : Animal
         return nearestPlant;
     }
 
-    protected override void UpdateBehavior()
-    {
-        base.UpdateBehavior();
-        
-        if (_biteCooldown > 0)
-        {
-            _biteCooldown -= _timeManager.DeltaTime;
-        }
-    }
-
     public virtual void Eat(Plant plant)
     {
-        if (!plant.IsDead && _biteCooldown <= 0)
+        if (!plant.IsDead && CanBiteBasedOnCooldown())
         {
             int damageDealt = BaseBiteSize;
             plant.TakeDamage(damageDealt);
             
-            int energyGained = (int)(damageDealt * 0.5);
+            int energyGained = (int)(damageDealt * 5);
             Energy += energyGained;
             
-            _biteCooldown = BiteCooldownDuration;
+            SetBiteCooldown();
             
-            Console.WriteLine($"{GetType().Name} bit {plant.GetType().Name} for {damageDealt} damage, gained {energyGained} energy");
+            Console.WriteLine($"[{GetType().Name}#{TypeId}] bit {plant.GetType().Name} for {damageDealt} damage, gained {energyGained} energy");
         }
     }
 }

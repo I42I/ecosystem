@@ -24,6 +24,8 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
     protected readonly List<EnvironmentPreference> _environmentPreferences = new();
     public IReadOnlyList<EnvironmentPreference> PreferredEnvironments => _environmentPreferences;
     public abstract EnvironmentType PreferredEnvironment { get; }
+    private double _biteCooldown = 0;
+    protected abstract double BaseBiteCooldownDuration { get; }
 
     protected Animal(
         IEntityLocator<Animal> entityLocator,
@@ -86,6 +88,11 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
         {
             // Console.WriteLine($"{GetType().Name} updating behavior !!!!!!!!!!!!!");
 
+            if (_biteCooldown > 0)
+            {
+                _biteCooldown -= _timeManager.DeltaTime;
+            }
+
             var currentEnv = _worldService.GetEnvironmentAt(Position);
             var envPreference = GetBestEnvironmentPreference(currentEnv);
 
@@ -107,6 +114,16 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
 
             _behaviorUpdateAccumulator = 0;
         }
+    }
+
+    protected bool CanBiteBasedOnCooldown()
+    {
+        return _biteCooldown <= 0;
+    }
+
+    protected void SetBiteCooldown()
+    {
+        _biteCooldown = BaseBiteCooldownDuration;
     }
 
     protected override void Die()

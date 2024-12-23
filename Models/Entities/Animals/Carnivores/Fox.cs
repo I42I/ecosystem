@@ -15,6 +15,7 @@ public class Fox : Carnivore
 {
     public override double BaseAttackPower => 15.0;
     protected override double BaseAttackRange => 1.5;
+    protected override double BaseBiteCooldownDuration => 1.0;
     protected override double BaseHungerThreshold => 40.0;
     protected override double BaseReproductionThreshold => 60.0;
     protected override double BaseReproductionEnergyCost => 30.0;

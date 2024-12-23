@@ -18,7 +18,7 @@ namespace ecosystem.Models.Entities.Animals.Herbivores;
 public class Duck : Herbivore
 {
     protected override int BaseBiteSize => 5;
-    protected override double BiteCooldownDuration => 1.5;
+    protected override double BaseBiteCooldownDuration => 1.5;
     public override double BaseHungerThreshold => 50.0;
     protected override double BaseReproductionThreshold => 65.0;
     protected override double BaseReproductionEnergyCost => 30.0;

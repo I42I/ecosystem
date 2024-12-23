@@ -33,14 +33,24 @@ public class HungerBehavior : IBehavior<Animal>
             {
                 if (MathHelper.IsInContactWith(herbivore, plant))
                 {
+                    Console.WriteLine($"[{herbivore.GetType().Name}#{herbivore.TypeId}] Distance to plant: {herbivore.GetDistanceTo(plant.Position):F3}");
                     herbivore.Eat(plant);
                 }
                 else
                 {
+                    Console.WriteLine($"[{herbivore.GetType().Name}#{herbivore.TypeId}] Moving towards plant. Distance: {herbivore.GetDistanceTo(plant.Position):F3}");
+
                     var direction = plant.Position - herbivore.Position;
                     var distance = herbivore.GetDistanceTo(plant.Position);
+
+                    // Debug output
+                    Console.WriteLine($"[{herbivore.GetType().Name}#{herbivore.TypeId}] Plant position: ({plant.Position.X:F3}, {plant.Position.Y:F3})");
+                    Console.WriteLine($"[{herbivore.GetType().Name}#{herbivore.TypeId}] Rabbit position: ({herbivore.Position.X:F3}, {herbivore.Position.Y:F3})");
+                    Console.WriteLine($"[{herbivore.GetType().Name}#{herbivore.TypeId}] Direction vector: ({direction.X:F3}, {direction.Y:F3})");
+                    
                     if (distance > 0)
                     {
+                        Console.WriteLine($"[{herbivore.GetType().Name}#{herbivore.TypeId}] Moving towards plant: direction.X : {direction.X}, dx={direction.X / distance:F3} / direction.Y : {direction.Y}, dy={direction.Y / distance:F3}");
                         herbivore.Move(direction.X / distance, direction.Y / distance);
                     }
                 }
