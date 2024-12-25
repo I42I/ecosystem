@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 using Avalonia.Threading;
 using ecosystem.Helpers;
 using ecosystem.Models.Core;
@@ -19,6 +18,7 @@ public interface ISimulationEngine
 {
     event EventHandler? SimulationUpdated;
     void InitializeSimulation();
+    void ResetSimulation();
     void CreateInitialEntities();
     void UpdateSimulation();
 }
@@ -57,45 +57,84 @@ public class SimulationEngine : ISimulationEngine
         }
     }
 
+    public void ResetSimulation()
+    {
+        try
+        {
+            lock (_updateLock)
+            {
+                _timeManager.Pause();
+                _timeManager.WaitForStop(); 
+
+                foreach (var entity in _worldService.Entities.ToList())
+                {
+                    _worldService.RemoveEntity(entity);
+                }
+                _worldService.ProcessEntityQueues();
+
+                RandomHelper.Initialize(42);
+
+                CreateInitialEntities();
+
+                _timeManager.Reset();
+                _timeManager.Start();
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("Failed to reset simulation", ex);
+        }
+    }
+
     public void CreateInitialEntities()
     {
         try
         {
             Console.WriteLine("Creating initial entities...");
             
-            _worldService.Entities.Clear();
-            
-            CreateAnimal<Fox>(3, 100, 100);
-            CreateAnimal<Rabbit>(5, 80, 80);
-            CreatePlants<Grass>(10, 50, 50);
-            
-            Console.WriteLine($"Entities created: {_worldService.Entities.Count}");
+            foreach (var entity in _worldService.Entities.ToList())
+            {
+                _worldService.RemoveEntity(entity);
+            }
             _worldService.ProcessEntityQueues();
+            
+            var entities = new List<Entity>();
+            
+            for (int i = 0; i < 3; i++)
+            {
+                var position = RandomHelper.GetRandomPosition();
+                var fox = _entityFactory.CreateAnimal<Fox>(100, 100, position, i % 2 == 0);
+                entities.Add(fox);
+            }
+            
+            for (int i = 0; i < 5; i++)
+            {
+                var position = RandomHelper.GetRandomPosition();
+                var rabbit = _entityFactory.CreateAnimal<Rabbit>(80, 80, position, i % 2 == 0);
+                entities.Add(rabbit);
+            }
+            
+            for (int i = 0; i < 10; i++)
+            {
+                var position = RandomHelper.GetRandomPosition();
+                var grass = _entityFactory.CreatePlant<Grass>(50, 50, position);
+                entities.Add(grass);
+            }
+
+            foreach (var entity in entities)
+            {
+                _worldService.AddEntity(entity);
+            }
+            
+            _worldService.ProcessEntityQueues();
+            
+            Console.WriteLine($"Created entities: {entities.Count}");
+            Console.WriteLine($"World entities count: {_worldService.Entities.Count}");
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error creating entities: {ex}");
             throw;
-        }
-    }
-
-    private void CreateAnimal<T>(int count, double health, double energy) where T : Animal
-    {
-        for (int i = 0; i < count; i++)
-        {
-            var position = RandomHelper.GetRandomPosition();
-            var animal = _entityFactory.CreateAnimal<T>(energy, health, position, i % 2 == 0);
-            _worldService.AddEntity(animal);
-        }
-    }
-
-    private void CreatePlants<T>(int count, double health, double energy) where T : Plant
-    {
-        for (int i = 0; i < count; i++)
-        {
-            var position = RandomHelper.GetRandomPosition();
-            var plant = _entityFactory.CreatePlant<T>(energy, health, position);
-            _worldService.AddEntity(plant);
         }
     }
 

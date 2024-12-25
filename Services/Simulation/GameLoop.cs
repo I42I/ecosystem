@@ -39,7 +39,18 @@ public class GameLoop
     {
         _isRunning = false;
         _cancellationSource.Cancel();
-        _loopTask?.Wait();
+    }
+
+    public void WaitForStop()
+    {
+        try 
+        {
+            _loopTask?.Wait();
+        }
+        catch (AggregateException)
+        {
+            // Ignore
+        }
     }
 
     private void RunLoop()

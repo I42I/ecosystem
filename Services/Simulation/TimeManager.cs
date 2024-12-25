@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Avalonia.Threading;
+using System.Threading;
 
 namespace ecosystem.Services.Simulation;
 
@@ -11,6 +12,7 @@ public interface ITimeManager
     void RegisterTickAction(Action action);
     void Start();
     void Pause();
+    void WaitForStop();
     void Reset();
     void SetSimulationSpeed(double speed);
 }
@@ -19,10 +21,11 @@ public class TimeManager : ITimeManager
 {
     private readonly List<Action> _tickActions = new();
     private const double FIXED_TIME_STEP = 1.0 / SimulationConstants.TICK_RATE;
-    private readonly GameLoop _gameLoop;
+    private GameLoop _gameLoop;
     private bool _isRunning;
     private double _currentTime;
     private double _simulationSpeed = 1.0;
+    private bool _isResetting;
     
     public double CurrentTime => _currentTime;
     public double DeltaTime => FIXED_TIME_STEP * _simulationSpeed * SimulationConstants.SIMULATION_SPEED;
@@ -35,7 +38,7 @@ public class TimeManager : ITimeManager
 
     private void UpdateLogic()
     {
-        if (!_isRunning) return;
+        if (!_isRunning || _isResetting) return;
         
         foreach (var action in _tickActions)
         {
@@ -70,11 +73,30 @@ public class TimeManager : ITimeManager
         _isRunning = false;
     }
 
+    public void WaitForStop()
+    {
+        _isResetting = true;
+        while (_isRunning)
+        {
+            Thread.Sleep(10);
+        }
+        _isResetting = false;
+    }
+
     public void Reset()
     {
+        _isResetting = true;
         Pause();
+        if (_gameLoop != null)
+        {
+            _gameLoop.Stop();
+            _gameLoop.WaitForStop();
+        }
         _currentTime = 0;
-        _gameLoop.Stop();
+        _simulationSpeed = 1.0;
+        _gameLoop = new GameLoop(UpdateLogic, Render);
+        _isResetting = false;
+        Start();
     }
 
     public void SetSimulationSpeed(double speed)

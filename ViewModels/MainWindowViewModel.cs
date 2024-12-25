@@ -83,7 +83,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private void ResetSimulation()
     {
         _timeManager.Reset();
-        _simulationEngine.InitializeSimulation();
+        _simulationEngine.ResetSimulation();
         Status = "Reset";
     }
 

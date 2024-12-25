@@ -15,8 +15,7 @@ public class Position : INotifyPropertyChanged
         {
             if (_x != value)
             {
-                _x = Math.Clamp(value, 0, 1);
-                // Console.WriteLine($"Position X changed to {value}");
+                _x = value;
                 OnPropertyChanged(nameof(X));
             }
         }
@@ -29,21 +28,16 @@ public class Position : INotifyPropertyChanged
         {
             if (_y != value)
             {
-                _y = Math.Clamp(value, 0, 1);
-                // Console.WriteLine($"Position Y changed to {value}");
+                _y = value;
                 OnPropertyChanged(nameof(Y));
             }
         }
     }
 
-    public Position(double x, double y)
+    public Position(double x = 0, double y = 0)
     {
-        X = Math.Clamp(x, 0, 1);
-        Y = Math.Clamp(y, 0, 1);
-    }
-
-    public Position() : this(0, 0) 
-    {
+        _x = x;
+        _y = y;
     }
 
     public static Position operator -(Position a, Position b)

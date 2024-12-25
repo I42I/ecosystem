@@ -47,14 +47,27 @@ public class WorldService : IWorldService
     {
         lock (_lock)
         {
-            while (_entitiesToAdd.TryDequeue(out var entityToAdd))
-            {
-                Entities.Add(entityToAdd); 
-            }
-
+            bool changes = false;
+            
             while (_entitiesToRemove.TryDequeue(out var entityToRemove))
             {
-                Entities.Remove(entityToRemove);
+                if (Entities.Remove(entityToRemove))
+                {
+                    changes = true;
+                    Console.WriteLine($"Removed entity: {entityToRemove.GetType().Name}");
+                }
+            }
+
+            while (_entitiesToAdd.TryDequeue(out var entityToAdd))
+            {
+                Entities.Add(entityToAdd);
+                changes = true;
+                Console.WriteLine($"Added entity: {entityToAdd.GetType().Name}");
+            }
+
+            if (changes)
+            {
+                Console.WriteLine($"Current entity count: {Entities.Count}");
             }
         }
     }
