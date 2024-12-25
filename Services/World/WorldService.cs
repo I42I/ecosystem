@@ -29,7 +29,7 @@ public class WorldService : IWorldService
 
     public WorldService()
     {
-        Grid = new GridWorld(800, 450);
+        Grid = new GridWorld(800, 520);
     }
 
     public void AddEntity(Entity entity)

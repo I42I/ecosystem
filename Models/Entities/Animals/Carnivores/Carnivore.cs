@@ -15,12 +15,12 @@ using ecosystem.Services.Factory;
 
 namespace ecosystem.Models.Entities.Animals.Carnivores;
 
-public abstract class Carnivore : Animal, IPredator
+public abstract class Carnivore : Animal
 {
     protected readonly IEntityLocator<Animal> _preyLocator;
     public abstract double BaseAttackPower { get; }
     protected abstract double BaseAttackRange { get; }
-    protected abstract double BaseHungerThreshold { get; }
+    public abstract double BaseHungerThreshold { get; }
     protected abstract double BaseReproductionThreshold { get; }
     protected abstract double BaseReproductionEnergyCost { get; }
     protected double AttackPower { get; set; }
@@ -49,30 +49,6 @@ public abstract class Carnivore : Animal, IPredator
         ReproductionEnergyThreshold = BaseReproductionThreshold;
     }
 
-    public virtual Animal? FindNearestPrey()
-    {
-        return _preyLocator.FindNearest(
-            GetPotentialPrey(),
-            VisionRadius
-        );
-    }
-
-    public virtual void MoveTowardsPrey(Animal prey)
-    {
-        _directionChangeTicks = 0;
-        
-        double dx = prey.Position.X - Position.X;
-        double dy = prey.Position.Y - Position.Y;
-        double distance = Math.Sqrt(dx * dx + dy * dy);
-
-        if (distance > 0)
-        {
-            _currentDirectionX = dx / distance;
-            _currentDirectionY = dy / distance;
-            Move(_currentDirectionX, _currentDirectionY);
-        }
-    }
-
     public virtual bool CanAttack(Animal prey)
     {
         return MathHelper.IsInContactWith(this, prey);
@@ -84,22 +60,27 @@ public abstract class Carnivore : Animal, IPredator
         {
             int damage = CalculateAttackDamage();
             prey.TakeDamage(damage);
-            Energy += damage / 4;
-
-            SetBiteCooldown();
+            
+            int energyGained = damage;
+            energyGained = Math.Min(energyGained, MaxEnergy - Energy);
+            
+            if (energyGained > 0)
+            {
+                Energy += energyGained;
+                SetBiteCooldown();
+                
+                if (Energy >= SimulationConstants.HEALING_ENERGY_THRESHOLD && 
+                    HealthPoints < MaxHealth)
+                {
+                    ConvertEnergyToHealth(Energy - SimulationConstants.HEALING_ENERGY_THRESHOLD);
+                }
+            }
         }
     }
 
     protected virtual int CalculateAttackDamage()
     {
         return (int)(BaseAttackPower * (0.8 + RandomHelper.Instance.NextDouble() * 0.4));
-    }
-
-    protected virtual IEnumerable<Animal> GetPotentialPrey()
-    {
-        return _worldService.Entities
-            .OfType<Herbivore>()
-            .Where(h => !h.IsDead);
     }
 
     public virtual void Eat(Meat meat)

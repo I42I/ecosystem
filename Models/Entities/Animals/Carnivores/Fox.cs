@@ -21,7 +21,7 @@ public class Fox : Carnivore
     public override double BaseAttackPower => 15.0;
     protected override double BaseAttackRange => 1.5;
     protected override double BaseBiteCooldownDuration => 0.03;
-    protected override double BaseHungerThreshold => 40.0;
+    public override double BaseHungerThreshold => 40.0;
     protected override double BaseReproductionThreshold => 60.0;
     protected override double BaseReproductionEnergyCost => 30.0;
     protected override double SpeciesEnergyCostModifier => 1.2;
@@ -61,8 +61,8 @@ public class Fox : Carnivore
         _environmentPreferences.Clear();
         _environmentPreferences.Add(new EnvironmentPreference(PreferredEnvironment, 1.0, 1.0));
         
-        AddBehavior(new HuntingBehavior(worldService, new GroundHuntingStrategy()));
-        AddBehavior(new TerritorialBehavior(worldService, position));
+        AddBehavior(new HuntingBehavior(worldService, new GroundHuntingStrategy(worldService)));
+        // AddBehavior(new TerritorialBehavior(worldService, position));
         Console.WriteLine($"Created Fox with color {Color} at {Position.X}, {Position.Y}");
         
     }

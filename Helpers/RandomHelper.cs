@@ -7,6 +7,7 @@ public static class RandomHelper
 {
     private static readonly object lockObject = new object();
     private static Random? instance;
+    private const double BORDER_MARGIN = 0.05;
     private static int seed = 42;
 
     public static Random Instance
@@ -53,8 +54,8 @@ public static class RandomHelper
 
     public static Position GetRandomPosition()
     {
-        var x = Instance.NextDouble();
-        var y = Instance.NextDouble();
+        var x = BORDER_MARGIN + Instance.NextDouble() * (1 - 2 * BORDER_MARGIN);
+        var y = BORDER_MARGIN + Instance.NextDouble() * (1 - 2 * BORDER_MARGIN);
         return new Position { X = x, Y = y };
     }
 

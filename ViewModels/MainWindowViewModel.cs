@@ -96,7 +96,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private double _windowWidth = 800;
 
     [ObservableProperty]
-    private double _windowHeight = 450;
+    private double _windowHeight = 520;
 
     partial void OnWindowWidthChanged(double value)
     {

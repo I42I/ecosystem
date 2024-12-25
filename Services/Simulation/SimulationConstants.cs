@@ -30,7 +30,7 @@ public static class SimulationConstants
 
     // Reproduction timings
     public const double MALE_REPRODUCTION_COOLDOWN = 30.0;
-    public const double GESTATION_PERIOD = 60.0;
+    public const double GESTATION_PERIOD = 0.5;
     public const double FEMALE_REPRODUCTION_COOLDOWN = 40.0;
 
     // Energy thresholds
