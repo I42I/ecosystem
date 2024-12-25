@@ -92,19 +92,11 @@ public abstract class Carnivore : Animal, IPredator
 
     protected virtual int CalculateAttackDamage()
     {
-        // Comportement de base pour tous les carnivores
         return (int)(BaseAttackPower * (0.8 + RandomHelper.Instance.NextDouble() * 0.4));
-    }
-
-    protected virtual int CalculateEnergyGain()
-    {
-        // Énergie gagnée proportionnelle à l'attaque pour tous les carnivores
-        return (int)(BaseAttackPower * 0.5);
     }
 
     protected virtual IEnumerable<Animal> GetPotentialPrey()
     {
-        // Par défaut, tous les herbivores sont des proies potentielles
         return _worldService.Entities
             .OfType<Herbivore>()
             .Where(h => !h.IsDead);
@@ -117,7 +109,7 @@ public abstract class Carnivore : Animal, IPredator
         int damageDealt = CalculateAttackDamage();
         meat.TakeDamage(damageDealt);
         
-        int energyGained = damageDealt * 5;
+        int energyGained = damageDealt * 4;
         energyGained = Math.Min(energyGained, MaxEnergy - Energy);
         
         if (energyGained > 0)

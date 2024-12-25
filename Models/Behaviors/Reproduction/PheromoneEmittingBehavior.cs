@@ -8,6 +8,7 @@ namespace ecosystem.Models.Behaviors.Reproduction;
 public class PheromoneEmittingBehavior : IBehavior<Animal>
 {
     private readonly IWorldService _worldService;
+    private readonly RestBehavior _restBehavior;
     
     public string Name => "EmittingPheromones";
     public int Priority => 1;
@@ -15,6 +16,7 @@ public class PheromoneEmittingBehavior : IBehavior<Animal>
     public PheromoneEmittingBehavior(IWorldService worldService)
     {
         _worldService = worldService;
+        _restBehavior = new RestBehavior();
     }
 
     public bool CanExecute(Animal animal)
@@ -26,8 +28,6 @@ public class PheromoneEmittingBehavior : IBehavior<Animal>
 
     public void Execute(Animal animal)
     {
-        // Female just continues her normal behavior
-        // Other behaviors will still execute as normal
-        Console.WriteLine($"Female {animal.GetType().Name} is emitting pheromones");
+        _restBehavior.Execute(animal);
     }
 }

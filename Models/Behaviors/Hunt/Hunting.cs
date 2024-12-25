@@ -94,11 +94,7 @@ public class HuntingBehavior : IBehavior<Animal>
         var predator = animal as Carnivore;
         if (predator == null) return;
         
-        int damage = _huntingStrategy.CalculateAttackDamage(predator.BaseAttackPower);
-        int energyGain = _huntingStrategy.CalculateEnergyGain(predator.BaseAttackPower);
-        
-        prey.TakeDamage(damage);
-        predator.AddEnergy(energyGain);
+        predator.Attack(prey);
     }
 
     private void MoveTowardsPrey(Animal predator, Animal prey)
