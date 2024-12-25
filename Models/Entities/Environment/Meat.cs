@@ -1,28 +1,30 @@
 using Avalonia.Media;
 using ecosystem.Models.Core;
 using ecosystem.Services.Simulation;
+using ecosystem.Services.World;
 
 namespace ecosystem.Models.Entities.Environment;
 
 public class Meat : LifeForm
 {
     public static int DefaultMaxHealth => 20;
-    public static int DefaultMaxEnergy => 200;
+    public static int DefaultMaxEnergy => 100;
     public override int MaxHealth => DefaultMaxHealth;
     public override int MaxEnergy => DefaultMaxEnergy;
-    public Meat(Position position, int energyValue, ITimeManager timeManager)
-        : base(position, energyValue, energyValue, EnvironmentType.Ground, timeManager)
-    {
-        Color = Brushes.Red;
-    }
+    private readonly IWorldService _worldService;
 
-    protected override void UpdateBehavior()
+    public Meat(Position position, int healthValue, int energyValue, ITimeManager timeManager, IWorldService worldService)
+        : base(position, healthValue, energyValue, EnvironmentType.Ground, timeManager)
     {
-        TakeDamage(1);
+        _worldService = worldService;
+        Color = Brushes.Red;
+        ContactRadius = 0.005;
     }
 
     protected override void Die()
     {
         var waste = new OrganicWaste(Position, Energy);
+        _worldService.AddEntity(waste);
+        _worldService.RemoveEntity(this);
     }
 }

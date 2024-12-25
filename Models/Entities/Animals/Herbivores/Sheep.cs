@@ -10,6 +10,7 @@ using ecosystem.Models.Entities.Environment;
 using ecosystem.Models.Entities.Plants;
 using Avalonia.Media;
 using ecosystem.Services.Simulation;
+using ecosystem.Services.Factory;
 
 namespace ecosystem.Models.Entities.Animals.Herbivores;
 
@@ -26,11 +27,14 @@ public class Sheep : Herbivore
     protected override double BaseReproductionEnergyCost => 40.0;
     protected override double SpeciesEnergyCostModifier => 1.0;
     public override EnvironmentType PreferredEnvironment => EnvironmentType.Ground;
+    private readonly IEntityFactory _entityFactory;
+
     public Sheep(
         IEntityLocator<Animal> entityLocator,
         IEntityLocator<Plant> plantLocator, 
         IWorldService worldService,
         ITimeManager timeManager,
+        IEntityFactory entityFactory,
         Position position,
         int healthPoints,
         int energy,
@@ -40,6 +44,7 @@ public class Sheep : Herbivore
             plantLocator,
             worldService,
             timeManager,
+            entityFactory,
             position,
             healthPoints,
             energy,
@@ -48,6 +53,7 @@ public class Sheep : Herbivore
             contactRadius: 1.5,
             basalMetabolicRate: 0.7)
     {
+        _entityFactory = entityFactory;
         Color = Brushes.White;;
         AddBehavior(new FleeingBehavior(_worldService));        // Priority 3
         AddBehavior(new HungerBehavior());                      // Priority 2
@@ -64,6 +70,7 @@ public class Sheep : Herbivore
             _plantLocator,
             _worldService,
             _timeManager,
+            _entityFactory,
             position,
             healthPoints: HealthPoints / 2,
             energy: Energy / 2,

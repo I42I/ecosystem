@@ -82,17 +82,11 @@ public abstract class LifeForm : Entity, IHasContactRange
         if (!IsDead)
         {
             var behavior = GetCurrentBehavior();
-            // Console.WriteLine($"[{GetType().Name}] Current behavior: {behavior?.Name ?? "None"}");
             
             if (behavior != null)
             {
-                // Console.WriteLine($"Executing behavior {behavior.Name} for {GetType().Name}");
                 Stats.CurrentBehavior = behavior.Name;
                 behavior.Execute(this as dynamic);
-            }
-            else
-            {
-                Console.WriteLine($"No behavior found for {GetType().Name}");
             }
         }
         else

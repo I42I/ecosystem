@@ -81,7 +81,6 @@ public class EntityViewModel : ViewModelBase
         if (e.PropertyName == nameof(Entity.Stats.DisplayStats) ||
             e.PropertyName == nameof(Entity.Stats.CurrentBehavior))
         {
-            // Console.WriteLine($"Stats changed for {Entity.DisplayName}: {StatsText}");
             OnPropertyChanged(nameof(StatsText));
         }
     }

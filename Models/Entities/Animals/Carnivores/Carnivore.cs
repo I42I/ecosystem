@@ -11,6 +11,7 @@ using ecosystem.Services.World;
 using System.Linq;
 using ecosystem.Models.Entities.Animals.Herbivores;
 using ecosystem.Services.Simulation;
+using ecosystem.Services.Factory;
 
 namespace ecosystem.Models.Entities.Animals.Carnivores;
 
@@ -30,6 +31,7 @@ public abstract class Carnivore : Animal, IPredator
         IEntityLocator<Animal> preyLocator,
         IWorldService worldService,
         ITimeManager timeManager,
+        IEntityFactory entityFactory,
         Position position,
         int healthPoints,
         int energy,
@@ -37,7 +39,7 @@ public abstract class Carnivore : Animal, IPredator
         double visionRadius,
         double contactRadius,
         double basalMetabolicRate)
-        : base(entityLocator, worldService, timeManager, position, healthPoints, energy, isMale, 
+        : base(entityLocator, worldService, timeManager, entityFactory, position, healthPoints, energy, isMale, 
                visionRadius, contactRadius, basalMetabolicRate, EnvironmentType.Ground)
     {
         _preyLocator = preyLocator ?? throw new ArgumentNullException(nameof(preyLocator));
@@ -85,12 +87,6 @@ public abstract class Carnivore : Animal, IPredator
             Energy += damage / 4;
 
             SetBiteCooldown();
-            
-            if (prey.IsDead)
-            {
-                var meat = new Meat(prey.Position, prey.Energy, _timeManager);
-                _worldService.AddEntity(meat);
-            }
         }
     }
 
@@ -112,5 +108,35 @@ public abstract class Carnivore : Animal, IPredator
         return _worldService.Entities
             .OfType<Herbivore>()
             .Where(h => !h.IsDead);
+    }
+
+    public virtual void Eat(Meat meat)
+    {
+        if (meat.IsDead || !CanBiteBasedOnCooldown()) return;
+
+        int damageDealt = CalculateAttackDamage();
+        meat.TakeDamage(damageDealt);
+        
+        int energyGained = damageDealt * 5;
+        energyGained = Math.Min(energyGained, MaxEnergy - Energy);
+        
+        if (energyGained > 0)
+        {
+            Energy += energyGained;
+            SetBiteCooldown();
+            
+            if (Energy >= SimulationConstants.HEALING_ENERGY_THRESHOLD && 
+                HealthPoints < MaxHealth)
+            {
+                var excessEnergy = Energy - SimulationConstants.HEALING_ENERGY_THRESHOLD;
+                var healingAmount = (int)(excessEnergy * SimulationConstants.HEALING_CONVERSION_RATE);
+                
+                if (healingAmount > 0)
+                {
+                    Energy -= healingAmount;
+                    HealthPoints = Math.Min(MaxHealth, HealthPoints + healingAmount);
+                }
+            }
+        }
     }
 }

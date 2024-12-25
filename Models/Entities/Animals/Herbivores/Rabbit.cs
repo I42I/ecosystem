@@ -23,7 +23,7 @@ public class Rabbit : Herbivore
     public override int MaxHealth => DefaultMaxHealth;
     public override int MaxEnergy => DefaultMaxEnergy;
     protected override int BaseBiteSize => 4;
-   protected override double BaseBiteCooldownDuration => 0.1;
+   protected override double BaseBiteCooldownDuration => 0.02;
     public override double BaseHungerThreshold => 55.0;
     protected override double BaseReproductionThreshold => 70.0;
     protected override double BaseReproductionEnergyCost => 20.0;
@@ -47,6 +47,7 @@ public class Rabbit : Herbivore
             plantLocator,
             worldService,
             timeManager,
+            entityFactory,
             position,
             healthPoints,
             energy,

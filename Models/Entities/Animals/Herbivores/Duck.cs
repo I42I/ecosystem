@@ -12,6 +12,7 @@ using ecosystem.Models.Behaviors.Movement;
 using ecosystem.Models.Behaviors.Reproduction;
 using ecosystem.Models.Behaviors.Base;
 using ecosystem.Services.Simulation;
+using ecosystem.Services.Factory;
 
 namespace ecosystem.Models.Entities.Animals.Herbivores;
 
@@ -28,12 +29,14 @@ public class Duck : Herbivore
     protected override double BaseReproductionEnergyCost => 30.0;
     protected override double SpeciesEnergyCostModifier => 0.7;
     public override EnvironmentType PreferredEnvironment => EnvironmentType.Ground | EnvironmentType.Water;
+    private readonly IEntityFactory _entityFactory;
 
     public Duck(
         IEntityLocator<Animal> entityLocator,
         IEntityLocator<Plant> plantLocator,
         IWorldService worldService,
         ITimeManager timeManager,
+        IEntityFactory entityFactory,
         Position position,
         int healthPoints,
         int energy,
@@ -43,6 +46,7 @@ public class Duck : Herbivore
             plantLocator,
             worldService,
             timeManager,
+            entityFactory,
             position,
             healthPoints,
             energy,
@@ -51,6 +55,7 @@ public class Duck : Herbivore
             contactRadius: 1.5,
             basalMetabolicRate: 0.7)
     {
+        _entityFactory = entityFactory;
         _environmentPreferences.AddRange(new[]
         {
             new EnvironmentPreference(EnvironmentType.Ground, 0.8, 1.2),
@@ -74,6 +79,7 @@ public class Duck : Herbivore
             _plantLocator,
             _worldService,
             _timeManager,
+            _entityFactory,
             position,
             healthPoints: HealthPoints / 2,
             energy: Energy / 2,

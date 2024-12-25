@@ -12,6 +12,7 @@ using ecosystem.Services.World;
 using ecosystem.Services.Simulation;
 using ecosystem.Helpers;
 using ecosystem.Models.Radius;
+using ecosystem.Services.Factory;
 
 namespace ecosystem.Models.Entities.Animals;
 
@@ -21,16 +22,19 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
     protected readonly IEntityLocator<Animal> _entityLocator;
     protected readonly IWorldService _worldService;
     private readonly List<IBehavior<Animal>> _behaviors;
+    private readonly IEntityFactory _entityFactory;
     protected readonly List<EnvironmentPreference> _environmentPreferences = new();
     public IReadOnlyList<EnvironmentPreference> PreferredEnvironments => _environmentPreferences;
     public abstract EnvironmentType PreferredEnvironment { get; }
     private double _biteCooldown = 0;
     protected abstract double BaseBiteCooldownDuration { get; }
+    private bool _hasDied = false;
 
     protected Animal(
         IEntityLocator<Animal> entityLocator,
         IWorldService worldService,
         ITimeManager timeManager,
+        IEntityFactory entityFactory,
         Position position,
         int healthPoints,
         int energy,
@@ -43,6 +47,7 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
     {
         _entityLocator = entityLocator;
         _worldService = worldService;
+        _entityFactory = entityFactory;
         IsMale = isMale;
         VisionRadius = visionRadius;
         ContactRadius = contactRadius;
@@ -86,8 +91,6 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
 
         if (_behaviorUpdateAccumulator >= SimulationConstants.BEHAVIOR_UPDATE_INTERVAL)
         {
-            // Console.WriteLine($"{GetType().Name} updating behavior !!!!!!!!!!!!!");
-
             if (_biteCooldown > 0)
             {
                 _biteCooldown -= _timeManager.DeltaTime;
@@ -95,20 +98,15 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
 
             var currentEnv = _worldService.GetEnvironmentAt(Position);
             var envPreference = GetBestEnvironmentPreference(currentEnv);
-
-            Console.WriteLine($"{GetType().Name} at ({Position.X:F2}, {Position.Y:F2}) in environment {currentEnv}, preference: {envPreference.Type}");
             
             if (envPreference.Type == EnvironmentType.None)
             {
-                Console.WriteLine($"{GetType().Name} taking damage in incompatible environment: {currentEnv}");
                 TakeDamage(SimulationConstants.ENVIRONMENT_DAMAGE_RATE);
             }
             
             var behavior = GetCurrentBehavior();
-            // Console.WriteLine($"Current behavior: {behavior}");
             if (behavior != null)
             {
-                // Console.WriteLine($"Executing behavior: {behavior.Name} !!!!!!!!!!!!!!!!!!!");
                 behavior.Execute(this);
             }
 
@@ -128,14 +126,32 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
 
     protected override void Die()
     {
-        CreateMeat();
+        if (_hasDied) return;
+        _hasDied = true;
+
+        int meatCount = (int)Math.Floor(MaxHealth * 0.5 / 20.0);
+        Console.WriteLine($"[{GetType().Name}#{TypeId}] died, creating {meatCount} meat pieces");
+        
+        CreateMeat(meatCount);
+        _worldService.RemoveEntity(this);
     }
 
-    private void CreateMeat()
+    private void CreateMeat(int count)
     {
-        // Instantiate a Meat object at the animal's position
-        // Meat meat = new Meat(Position);
-        // Add meat to the ecosystem
+        for (int i = 0; i < count; i++)
+        {
+            var (x, y) = RandomHelper.GetRandomPositionInRadius(
+                Position.X, 
+                Position.Y, 
+                ContactRadius * 2);
+                
+            x = Math.Clamp(x, 0, 1);
+            y = Math.Clamp(y, 0, 1);
+            
+            var meatPosition = new Position(x, y);
+            var meat = _entityFactory.CreateMeat(meatPosition);
+            _worldService.AddEntity(meat);
+        }
     }
 
     public EnvironmentPreference GetBestEnvironmentPreference(EnvironmentType currentEnv)
@@ -155,7 +171,6 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
             .Where(b => 
             {
                 var canExecute = b.CanExecute(this);
-                // Console.WriteLine($"Behavior {b.Name} can execute: {canExecute}");
                 return canExecute;
             })
             .OrderByDescending(b => b.Priority)
@@ -163,12 +178,33 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
 
         if (behavior != null)
         {
-            // Console.WriteLine($"Selected behavior: {behavior.GetType().Name}");
             Stats.CurrentBehavior = behavior.Name;
             return new BehaviorWrapper<Animal, LifeForm>(behavior, this);
         }
         
         Stats.CurrentBehavior = "None";
         return null;
+    }
+
+    public void ConvertEnergyToHealth(double amount)
+    {
+        if (Energy >= SimulationConstants.HEALING_ENERGY_THRESHOLD &&
+            HealthPoints < MaxHealth)
+        {
+            var excessEnergy = Math.Min(amount, Energy - SimulationConstants.HEALING_ENERGY_THRESHOLD);
+            var healingAmount = (int)(excessEnergy * SimulationConstants.HEALING_CONVERSION_RATE);
+            
+            if (healingAmount > 0)
+            {
+                RemoveEnergy(healingAmount);
+                Heal(healingAmount);
+                Console.WriteLine($"[{GetType().Name}#{TypeId}] converted {healingAmount} energy to health");
+            }
+        }
+    }
+
+    public void Heal(int amount)
+    {
+        HealthPoints = Math.Min(MaxHealth, HealthPoints + amount);
     }
 }

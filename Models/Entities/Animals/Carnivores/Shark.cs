@@ -43,6 +43,7 @@ public class Shark : Carnivore
             preyLocator,
             worldService,
             timeManager,
+            entityFactory,
             position,
             healthPoints,
             energy,

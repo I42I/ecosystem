@@ -44,6 +44,7 @@ public class Fox : Carnivore
             preyLocator,
             worldService,
             timeManager,
+            entityFactory,
             position,
             healthPoints,
             energy,

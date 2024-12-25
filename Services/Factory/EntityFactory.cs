@@ -16,6 +16,7 @@ public interface IEntityFactory
 {
     T CreateAnimal<T>(double initialHealthPercent, double initialEnergyPercent, Position position, bool isMale) where T : Animal;
     T CreatePlant<T>(double initialHealthPercent, double initialEnergyPercent, Position position) where T : Plant;
+    Meat CreateMeat(Position position);
 }
 
 public class EntityFactory : IEntityFactory
@@ -97,8 +98,14 @@ public class EntityFactory : IEntityFactory
         throw new ArgumentException($"Unsupported plant type: {typeof(T).Name}");
     }
 
-    private Meat CreateMeat(Position position, int energyValue)
+    public Meat CreateMeat(Position position)
     {
-        return new Meat(position, energyValue, _timeManager);
+        return new Meat(
+            position,
+            healthValue: 20,
+            energyValue: 100,
+            _timeManager,
+            _worldService
+        );
     }
 }

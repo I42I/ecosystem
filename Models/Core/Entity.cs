@@ -79,14 +79,12 @@ public abstract class Entity : INotifyPropertyChanged
             
         Position = position;
         Stats = new EntityStats(this as LifeForm);
-        // Console.WriteLine($"Created entity at position {Position.X}, {Position.Y}");
     }
 
     public virtual void Update() { }
 
     protected virtual void OnPropertyChanged(string propertyName)
     {
-        // Console.WriteLine($"Property changed: {propertyName} for {GetType().Name}");
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 

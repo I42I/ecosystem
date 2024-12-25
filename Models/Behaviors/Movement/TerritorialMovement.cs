@@ -42,8 +42,6 @@ public class TerritorialBehavior : IBehavior<Animal>
 
     public void Execute(Animal animal)
     {
-        Console.WriteLine($"Territorial behavior for {animal.GetType().Name} at {animal.Position.X}, {animal.Position.Y}");
-
         var nearbyPredators = _worldService.GetEntitiesInRange(animal.Position, _territoryOverlapThreshold)
             .OfType<Carnivore>()
             .Where(p => p != animal && p.GetType() == animal.GetType());

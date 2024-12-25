@@ -32,4 +32,12 @@ public static class SimulationConstants
     public const double MALE_REPRODUCTION_COOLDOWN = 30.0;
     public const double GESTATION_PERIOD = 60.0;
     public const double FEMALE_REPRODUCTION_COOLDOWN = 40.0;
+
+    // Energy thresholds
+    public const double MAX_ENERGY_PERCENT = 100.0;
+    public const double HEALING_ENERGY_THRESHOLD = 90.0;
+    public const double HEALING_CONVERSION_RATE = 0.2;
+    
+    // Health thresholds
+    public const double MAX_HEALTH_PERCENT = 100.0;
 }
