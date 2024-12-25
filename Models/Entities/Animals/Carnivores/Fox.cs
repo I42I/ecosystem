@@ -8,11 +8,16 @@ using ecosystem.Services.World;
 using ecosystem.Models.Core;
 using ecosystem.Models.Behaviors.Movement;
 using ecosystem.Services.Simulation;
+using ecosystem.Services.Factory;
 
 namespace ecosystem.Models.Entities.Animals.Carnivores;
 
 public class Fox : Carnivore
 {
+    public static int DefaultMaxHealth => 100;
+    public static int DefaultMaxEnergy => 100;
+    public override int MaxHealth => DefaultMaxHealth;
+    public override int MaxEnergy => DefaultMaxEnergy;
     public override double BaseAttackPower => 15.0;
     protected override double BaseAttackRange => 1.5;
     protected override double BaseBiteCooldownDuration => 1.0;
@@ -22,12 +27,14 @@ public class Fox : Carnivore
     protected override double SpeciesEnergyCostModifier => 1.2;
     public override EnvironmentType PreferredEnvironment => EnvironmentType.Ground;
     private readonly Position _territoryCenter;
+    private readonly IEntityFactory _entityFactory;
 
     public Fox(
         IEntityLocator<Animal> entityLocator,
         IEntityLocator<Animal> preyLocator,
         IWorldService worldService,
         ITimeManager timeManager,
+        IEntityFactory entityFactory,
         Position position,
         int healthPoints,
         int energy,
@@ -45,6 +52,7 @@ public class Fox : Carnivore
             contactRadius: 0.01,
             basalMetabolicRate: 1.2)
     {
+        _entityFactory = entityFactory;
         MovementSpeed = 2.0;
         Color = Brushes.Orange;
         _territoryCenter = position;
@@ -60,15 +68,7 @@ public class Fox : Carnivore
 
     public override Animal CreateOffspring(Position position)
     {
-        return new Fox(
-            _entityLocator,
-            _preyLocator,
-            _worldService,
-            _timeManager,
-            position,
-            HealthPoints / 2,
-            Energy / 2,
-            RandomHelper.Instance.NextDouble() > 0.5);
+        return _entityFactory.CreateAnimal<Fox>(30, 50, position, RandomHelper.Instance.NextDouble() > 0.5);
     }
 }
 

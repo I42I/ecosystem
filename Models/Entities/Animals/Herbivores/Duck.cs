@@ -17,6 +17,10 @@ namespace ecosystem.Models.Entities.Animals.Herbivores;
 
 public class Duck : Herbivore
 {
+    public static int DefaultMaxHealth => 60;
+    public static int DefaultMaxEnergy => 100;
+    public override int MaxHealth => DefaultMaxHealth;
+    public override int MaxEnergy => DefaultMaxEnergy;
     protected override int BaseBiteSize => 5;
     protected override double BaseBiteCooldownDuration => 1.5;
     public override double BaseHungerThreshold => 50.0;

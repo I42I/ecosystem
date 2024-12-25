@@ -15,6 +15,10 @@ namespace ecosystem.Models.Entities.Animals.Herbivores;
 
 public class Sheep : Herbivore
 {
+    public static int DefaultMaxHealth => 150;
+    public static int DefaultMaxEnergy => 100;
+    public override int MaxHealth => DefaultMaxHealth;
+    public override int MaxEnergy => DefaultMaxEnergy;
     protected override int BaseBiteSize => 10;
     protected override double BaseBiteCooldownDuration => 3.0;
     public override double BaseHungerThreshold => 45.0;

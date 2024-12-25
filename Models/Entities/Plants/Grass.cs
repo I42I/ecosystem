@@ -4,16 +4,24 @@ using ecosystem.Models.Entities.Environment;
 using ecosystem.Models.Core;
 using ecosystem.Services.World;
 using ecosystem.Services.Simulation;
+using ecosystem.Services.Factory;
 
 namespace ecosystem.Models.Entities.Plants;
 
 public class Grass : Plant
 {
+    public static int DefaultMaxHealth => 50;
+    public static int DefaultMaxEnergy => 200;
+    public override int MaxHealth => DefaultMaxHealth;
+    public override int MaxEnergy => DefaultMaxEnergy;
     protected override double BaseAbsorptionRate => 0.2;
+    private readonly IEntityFactory _entityFactory;
+
 
     public Grass(
         IWorldService worldService, 
         ITimeManager timeManager,
+        IEntityFactory entityFactory,
         int healthPoints, 
         int energy, 
         Position position)
@@ -29,6 +37,7 @@ public class Grass : Plant
             worldService: worldService,
             timeManager: timeManager)
     {
+        _entityFactory = entityFactory;
         Color = Brushes.Green;
     }
 
@@ -41,12 +50,6 @@ public class Grass : Plant
 
     protected override Plant CreateOffspring(Position position)
     {
-        return new Grass(
-            worldService: _worldService,
-            timeManager: _timeManager,
-            healthPoints: HealthPoints / 2,
-            energy: Energy / 2,
-            position: position
-        );
+        return _entityFactory.CreatePlant<Grass>(30, 50, position);
     }
 }

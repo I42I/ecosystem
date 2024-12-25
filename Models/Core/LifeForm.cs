@@ -13,6 +13,8 @@ public abstract class LifeForm : Entity, IHasContactRange
     private double _healthAccumulator;
     private int _healthPoints;
     private int _energy;
+    public abstract int MaxHealth { get; }
+    public abstract int MaxEnergy { get; }
     public bool IsDead => HealthPoints <= 0 || Energy <= 0;
     protected EnvironmentType Environment { get; }
     public double ContactRadius { get; protected set; }

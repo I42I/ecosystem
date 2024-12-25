@@ -6,7 +6,10 @@ namespace ecosystem.Models.Entities.Environment;
 
 public class Meat : LifeForm
 {
-
+    public static int DefaultMaxHealth => 20;
+    public static int DefaultMaxEnergy => 200;
+    public override int MaxHealth => DefaultMaxHealth;
+    public override int MaxEnergy => DefaultMaxEnergy;
     public Meat(Position position, int energyValue, ITimeManager timeManager)
         : base(position, energyValue, energyValue, EnvironmentType.Ground, timeManager)
     {
