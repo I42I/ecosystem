@@ -8,7 +8,6 @@ namespace ecosystem.Models.Behaviors.Movement;
 public abstract class MoveableEntity : LifeForm, IMoveable
 {
     private double _movementAccumulator;
-    private double _energyCostAccumulator;
     protected double BasalMetabolicRate { get; }
     protected abstract double SpeciesEnergyCostModifier { get; }
 
