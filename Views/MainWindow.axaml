@@ -1,12 +1,10 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:ecosystem.ViewModels"
-        xmlns:local="clr-namespace:ecosystem.Helpers"
+        xmlns:helpers="using:ecosystem.Helpers"
         x:Class="ecosystem.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="Ecosystem"
-        MinWidth="800"
-        MinHeight="600"
         Width="800"
         Height="600"
         SizeChanged="Window_SizeChanged"
@@ -45,6 +43,13 @@
                 <Rectangle Grid.Row="1" Grid.Column="1" Fill="SandyBrown"/>
             </Grid>
 
+            <!-- Safe Movement Area Border -->
+            <Border BorderBrush="Red" 
+                    BorderThickness="2" 
+                    Width="{Binding WindowWidth, Converter={StaticResource SafeAreaConverter}}"
+                    Height="{Binding WindowHeight, Converter={StaticResource SafeAreaConverter}, ConverterParameter=height}"
+                    Margin="{Binding WindowWidth, Converter={StaticResource SafeAreaMarginConverter}}"/>
+
             <!-- Entity Canvas -->
             <ItemsControl ItemsSource="{Binding EntityViewModels}">
                 <ItemsControl.ItemsPanel>
@@ -57,28 +62,41 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Canvas>
-                            <!-- Entity Name -->
+                            <!-- Vision Circle for Animals -->
+                            <Ellipse Width="{Binding ScaledVisionRadius}"
+                                    Height="{Binding ScaledVisionRadius}"
+                                    Fill="{Binding Color}"
+                                    Opacity="0.2"
+                                    IsVisible="{Binding Entity, Converter={x:Static helpers:TypeConverters.IsAnimal}}"
+                                    Canvas.Left="{Binding CenteredX}"
+                                    Canvas.Top="{Binding CenteredY}"/>
+
+                            <!-- Root Circle for Plants -->
+                            <Ellipse Width="{Binding ScaledRootRadius}"
+                                    Height="{Binding ScaledRootRadius}"
+                                    Fill="{Binding Color}"
+                                    Opacity="0.2"
+                                    IsVisible="{Binding Entity, Converter={x:Static helpers:TypeConverters.IsPlant}}"
+                                    Canvas.Left="{Binding CenteredRootX}"
+                                    Canvas.Top="{Binding CenteredRootY}"/>
+
+                            <!-- Contact Circle -->
+                            <Ellipse Width="{Binding ScaledContactRadius}"
+                                    Height="{Binding ScaledContactRadius}"
+                                    Fill="{Binding Color}"
+                                    Canvas.Left="{Binding CenteredContactX}"
+                                    Canvas.Top="{Binding CenteredContactY}"/>
+
+                            <!-- Entity Name and Stats -->
                             <TextBlock Text="{Binding Entity.DisplayName}"
                                     FontSize="10"
-                                    Foreground="Black"
                                     Canvas.Left="{Binding DisplayX}"
                                     Canvas.Top="{Binding DisplayY}">
                                 <TextBlock.RenderTransform>
                                     <TranslateTransform X="-20" Y="-17"/>
                                 </TextBlock.RenderTransform>
                             </TextBlock>
-                                                    
-                            <!-- Entity Circle -->
-                            <Ellipse Width="10" Height="10"
-                                    Fill="{Binding Color}"
-                                    Canvas.Left="{Binding DisplayX}"
-                                    Canvas.Top="{Binding DisplayY}">
-                                <Ellipse.RenderTransform>
-                                    <TranslateTransform X="-5" Y="-5"/>
-                                </Ellipse.RenderTransform>
-                            </Ellipse>
-                                                    
-                            <!-- Stats Text -->
+                                                        
                             <TextBlock Text="{Binding StatsText}"
                                     FontSize="10"
                                     Foreground="Black"

@@ -5,6 +5,8 @@ using System.Linq;
 using System;
 using ecosystem.Helpers;
 using ecosystem.Models.Entities.Animals.Carnivores;
+using ecosystem.Models.Entities.Environment;
+using ecosystem.Services.Simulation;
 
 namespace ecosystem.Models.Behaviors.Hunt;
 
@@ -23,19 +25,53 @@ public class HuntingBehavior : IBehavior<Animal>
 
     public bool CanExecute(Animal animal)
     {
-        if (!(animal is IPredator predator)) return false;
-        
-        if (animal.Energy >= animal.HungerThreshold) return false;
+        if (!(animal is Carnivore carnivore)) return false;
         
         var prey = FindNearestPrey(animal);
-        Console.WriteLine($"{animal.GetType().Name} hunting check: Energy={animal.Energy}, Threshold={animal.HungerThreshold}, PreyFound={prey != null}");
-        
-        return prey != null;
+        var meat = _worldService.GetEntitiesInRange(animal.Position, animal.VisionRadius)
+                    .OfType<Meat>()
+                    .OrderBy(m => animal.GetDistanceTo(m.Position))
+                    .FirstOrDefault();
+
+        var shouldEat = animal.Energy <= carnivore.BaseHungerThreshold || 
+                        (animal.Energy < 0.95 * animal.MaxEnergy &&
+                        ((prey != null && MathHelper.IsInContactWith(animal, prey)) || 
+                        (meat != null && MathHelper.IsInContactWith(animal, meat))));
+                    
+        return shouldEat && (prey != null || meat != null);
     }
 
     public void Execute(Animal animal)
     {
-        if (!(animal is IPredator)) return;
+        if (!(animal is Carnivore carnivore)) return;
+
+        var nearbyMeat = _worldService.GetEntitiesInRange(animal.Position, animal.VisionRadius)
+            .OfType<Meat>()
+            .OrderBy(m => animal.GetDistanceTo(m.Position))
+            .FirstOrDefault();
+
+        if (nearbyMeat != null)
+        {
+            if (MathHelper.IsInContactWith(animal, nearbyMeat))
+            {
+                carnivore.Eat(nearbyMeat);
+                
+                if (carnivore.Energy >= SimulationConstants.HEALING_ENERGY_THRESHOLD)
+                {
+                    carnivore.ConvertEnergyToHealth(carnivore.Energy - SimulationConstants.HEALING_ENERGY_THRESHOLD);
+                }
+            }
+            else
+            {
+                var direction = nearbyMeat.Position - animal.Position;
+                var distance = animal.GetDistanceTo(nearbyMeat.Position);
+                if (distance > 0)
+                {
+                    animal.Move(direction.X / distance, direction.Y / distance);
+                }
+            }
+            return;
+        }
 
         var prey = FindNearestPrey(animal);
         if (prey == null) return;
@@ -52,8 +88,7 @@ public class HuntingBehavior : IBehavior<Animal>
 
     private Animal? FindNearestPrey(Animal predator)
     {
-        var potentialPrey = _huntingStrategy.GetPotentialPrey(_worldService);
-        return potentialPrey
+        return _huntingStrategy.GetPotentialPrey(_worldService, predator.Position, predator.VisionRadius)
             .OrderBy(prey => predator.GetDistanceTo(prey.Position))
             .FirstOrDefault();
     }
@@ -63,11 +98,7 @@ public class HuntingBehavior : IBehavior<Animal>
         var predator = animal as Carnivore;
         if (predator == null) return;
         
-        int damage = _huntingStrategy.CalculateAttackDamage(predator.BaseAttackPower);
-        int energyGain = _huntingStrategy.CalculateEnergyGain(predator.BaseAttackPower);
-        
-        prey.TakeDamage(damage);
-        predator.AddEnergy(energyGain);
+        predator.Attack(prey);
     }
 
     private void MoveTowardsPrey(Animal predator, Animal prey)

@@ -14,8 +14,9 @@ namespace ecosystem.Services.Factory;
 
 public interface IEntityFactory
 {
-    T CreateAnimal<T>(double energy, double health, Position position, bool isMale) where T : Animal;
-    T CreatePlant<T>(double energy, double health, Position position) where T : Plant;
+    T CreateAnimal<T>(double initialHealthPercent, double initialEnergyPercent, Position position, bool isMale) where T : Animal;
+    T CreatePlant<T>(double initialHealthPercent, double initialEnergyPercent, Position position) where T : Plant;
+    Meat CreateMeat(Position position);
 }
 
 public class EntityFactory : IEntityFactory
@@ -39,54 +40,72 @@ public class EntityFactory : IEntityFactory
         _entityLocator = entityLocator;
         _plantLocator = plantLocator;
     }
-    public T CreateAnimal<T>(double energy, double health, Position position, bool isMale) where T : Animal
+    public T CreateAnimal<T>(double initialHealthPercent, double initialEnergyPercent, Position position, bool isMale) where T : Animal
     {
+        initialHealthPercent = Math.Clamp(initialHealthPercent, 0, 100);
+        initialEnergyPercent = Math.Clamp(initialEnergyPercent, 0, 100);
+
         if (typeof(T) == typeof(Fox))
         {
-            return (T)(Animal)new Fox(
+            var fox = new Fox(
                 _entityLocator,
                 _entityLocator,
                 _worldService,
                 _timeManager,
+                this,
                 position,
-                (int)health,
-                (int)energy,
+                (int)(Fox.DefaultMaxHealth * initialHealthPercent / 100),
+                (int)(Fox.DefaultMaxEnergy * initialEnergyPercent / 100),
                 isMale);
+            return (T)(Animal)fox;
         }
         else if (typeof(T) == typeof(Rabbit))
         {
-            return (T)(Animal)new Rabbit(
+            var rabbit = new Rabbit(
                 _entityLocator,
                 _plantLocator,
                 _worldService,
                 _timeManager,
+                this,
                 position,
-                (int)health,
-                (int)energy,
+                (int)(Rabbit.DefaultMaxHealth * initialHealthPercent / 100),
+                (int)(Rabbit.DefaultMaxEnergy * initialEnergyPercent / 100),
                 isMale);
+            return (T)(Animal)rabbit;
         }
         // ... handle other animal types
 
         throw new ArgumentException($"Unsupported animal type: {typeof(T).Name}");
     }
 
-    public T CreatePlant<T>(double energy, double health, Position position) where T : Plant
+    public T CreatePlant<T>(double initialHealthPercent, double initialEnergyPercent, Position position) where T : Plant
     {
+        initialHealthPercent = Math.Clamp(initialHealthPercent, 0, 100);
+        initialEnergyPercent = Math.Clamp(initialEnergyPercent, 0, 100);
+
         if (typeof(T) == typeof(Grass))
         {
-            return (T)(Plant)new Grass(
+            var grass = new Grass(
                 _worldService,
                 _timeManager,
-                (int)health,
-                (int)energy,
+                this,
+                (int)(Grass.DefaultMaxHealth * initialHealthPercent / 100),
+                (int)(Grass.DefaultMaxEnergy * initialEnergyPercent / 100),
                 position);
+            return (T)(Plant)grass;
         }
         
         throw new ArgumentException($"Unsupported plant type: {typeof(T).Name}");
     }
 
-    private Meat CreateMeat(Position position, int energyValue)
+    public Meat CreateMeat(Position position)
     {
-        return new Meat(position, energyValue, _timeManager);
+        return new Meat(
+            position,
+            healthValue: 20,
+            energyValue: 100,
+            _timeManager,
+            _worldService
+        );
     }
 }

@@ -5,6 +5,7 @@ using ecosystem.Services.World;
 using ecosystem.Helpers;
 using ecosystem.Models.Core;
 using System.Linq;
+using System;
 
 namespace ecosystem.Models.Behaviors.Movement;
 
@@ -18,8 +19,8 @@ public class TerritorialBehavior : IBehavior<Animal>
     public TerritorialBehavior(
         IWorldService worldService, 
         Position spawnPosition,
-        double territoryRadius = 100.0,
-        double territoryOverlapThreshold = 50.0)
+        double territoryRadius = 0.3,
+        double territoryOverlapThreshold = 0.15)
     {
         _worldService = worldService;
         _territoryCenter = spawnPosition;
@@ -32,10 +33,8 @@ public class TerritorialBehavior : IBehavior<Animal>
 
     public bool CanExecute(Animal animal)
     {
-        // Vérifie si l'animal est trop loin de son territoire
         bool isTooFarFromTerritory = animal.GetDistanceTo(_territoryCenter) > _territoryRadius;
         
-        // Vérifie si d'autres prédateurs sont trop proches
         bool isOtherPredatorNearby = CheckForNearbyPredators(animal);
 
         return isTooFarFromTerritory || isOtherPredatorNearby;
@@ -49,13 +48,11 @@ public class TerritorialBehavior : IBehavior<Animal>
 
         if (nearbyPredators.Any())
         {
-            // S'éloigner des autres prédateurs
             var closestPredator = nearbyPredators.OrderBy(p => animal.GetDistanceTo(p.Position)).First();
             MoveAwayFromPredator(animal, closestPredator);
         }
         else
         {
-            // Retourner vers le centre du territoire
             MoveTowardTerritory(animal);
         }
     }

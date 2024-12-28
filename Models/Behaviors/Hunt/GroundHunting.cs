@@ -4,24 +4,22 @@ using ecosystem.Models.Entities.Animals;
 using ecosystem.Models.Entities.Animals.Herbivores;
 using ecosystem.Services.World;
 using ecosystem.Helpers;
+using ecosystem.Models.Core;
 
 namespace ecosystem.Models.Behaviors.Hunt;
 
 public class GroundHuntingStrategy : IHuntingStrategy
 {
-    public int CalculateAttackDamage(double baseAttackPower)
+    private readonly IWorldService _worldService;
+
+    public GroundHuntingStrategy(IWorldService worldService)
     {
-        return (int)(baseAttackPower * (0.8 + RandomHelper.Instance.NextDouble() * 0.4));
+        _worldService = worldService;
     }
 
-    public int CalculateEnergyGain(double baseAttackPower)
+    public IEnumerable<Animal> GetPotentialPrey(IWorldService worldService, Position position, double visionRadius)
     {
-        return (int)(baseAttackPower * 0.5);
-    }
-
-    public IEnumerable<Animal> GetPotentialPrey(IWorldService worldService)
-    {
-        return worldService.Entities
+        return worldService.GetEntitiesInRange(position, visionRadius)
             .OfType<Herbivore>()
             .Where(h => !h.IsDead);
     }

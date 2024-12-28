@@ -21,8 +21,6 @@ public class RestBehavior : IBehavior<Animal>
 
     public void Execute(Animal animal)
     {
-        Console.WriteLine($"{animal.GetType().Name} is resting");
-
         if (_directionChangeTicks <= 0)
         {
             double angle = RandomHelper.Instance.NextDouble() * 2 * Math.PI;

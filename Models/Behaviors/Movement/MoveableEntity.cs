@@ -7,7 +7,7 @@ namespace ecosystem.Models.Behaviors.Movement;
 
 public abstract class MoveableEntity : LifeForm, IMoveable
 {
-    private double _movementAccumulator;
+    private double _energyCostAccumulator;  
     protected double BasalMetabolicRate { get; }
     protected abstract double SpeciesEnergyCostModifier { get; }
 
@@ -23,7 +23,7 @@ public abstract class MoveableEntity : LifeForm, IMoveable
         BasalMetabolicRate = basalMetabolicRate;
     }
 
-    public virtual double MovementSpeed { get; protected set; }
+    public virtual double MovementSpeed { get; set; }
 
     protected double _currentDirectionX = 0;
     protected double _currentDirectionY = 0;
@@ -31,32 +31,26 @@ public abstract class MoveableEntity : LifeForm, IMoveable
 
     public virtual void Move(double deltaX, double deltaY)
     {
-        // Calculate frame-adjusted movement
         double frameMovement = MovementSpeed * SimulationConstants.BASE_MOVEMENT_SPEED * _timeManager.DeltaTime;
-        _movementAccumulator += frameMovement;
-
-        if (_movementAccumulator >= SimulationConstants.MOVEMENT_THRESHOLD)
+        
+        double length = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+        if (length > 0)
         {
-            double length = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
-            if (length > 0)
-            {
-                deltaX /= length;
-                deltaY /= length;
-            }
+            deltaX /= length;
+            deltaY /= length;
+        }
 
-            Position = new Position(
-                Math.Clamp(Position.X + deltaX * _movementAccumulator, 0, 1),
-                Math.Clamp(Position.Y + deltaY * _movementAccumulator, 0, 1)
-            );
+        double newX = Math.Clamp(Position.X + deltaX * frameMovement, 0, 1);
+        double newY = Math.Clamp(Position.Y + deltaY * frameMovement, 0, 1);
 
-            // Calculate and accumulate movement energy cost
-            double energyCost = CalculateMovementEnergyCost(
-                deltaX * _movementAccumulator, 
-                deltaY * _movementAccumulator
-            );
-            
-            ConsumeEnergy(energyCost);
-            _movementAccumulator = 0;
+        Position = new Position(newX, newY);
+
+        _energyCostAccumulator += CalculateMovementEnergyCost(deltaX * frameMovement, deltaY * frameMovement);
+
+        if (_energyCostAccumulator >= 1)
+        {
+            ConsumeEnergy((int)Math.Floor(_energyCostAccumulator));
+            _energyCostAccumulator -= Math.Floor(_energyCostAccumulator);
         }
     }
 

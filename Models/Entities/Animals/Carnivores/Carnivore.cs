@@ -11,16 +11,16 @@ using ecosystem.Services.World;
 using System.Linq;
 using ecosystem.Models.Entities.Animals.Herbivores;
 using ecosystem.Services.Simulation;
+using ecosystem.Services.Factory;
 
 namespace ecosystem.Models.Entities.Animals.Carnivores;
 
-public abstract class Carnivore : Animal, IPredator
+public abstract class Carnivore : Animal
 {
-    protected readonly IEntityLocator<Animal> _preyLocator;  // Changed to _preyLocator
-    
+    protected readonly IEntityLocator<Animal> _preyLocator;
     public abstract double BaseAttackPower { get; }
     protected abstract double BaseAttackRange { get; }
-    protected abstract double BaseHungerThreshold { get; }
+    public abstract double BaseHungerThreshold { get; }
     protected abstract double BaseReproductionThreshold { get; }
     protected abstract double BaseReproductionEnergyCost { get; }
     protected double AttackPower { get; set; }
@@ -31,6 +31,7 @@ public abstract class Carnivore : Animal, IPredator
         IEntityLocator<Animal> preyLocator,
         IWorldService worldService,
         ITimeManager timeManager,
+        IEntityFactory entityFactory,
         Position position,
         int healthPoints,
         int energy,
@@ -38,7 +39,7 @@ public abstract class Carnivore : Animal, IPredator
         double visionRadius,
         double contactRadius,
         double basalMetabolicRate)
-        : base(entityLocator, worldService, timeManager, position, healthPoints, energy, isMale, 
+        : base(entityLocator, worldService, timeManager, entityFactory, position, healthPoints, energy, isMale, 
                visionRadius, contactRadius, basalMetabolicRate, EnvironmentType.Ground)
     {
         _preyLocator = preyLocator ?? throw new ArgumentNullException(nameof(preyLocator));
@@ -48,30 +49,6 @@ public abstract class Carnivore : Animal, IPredator
         ReproductionEnergyThreshold = BaseReproductionThreshold;
     }
 
-    public virtual Animal? FindNearestPrey()
-    {
-        return _preyLocator.FindNearest(
-            GetPotentialPrey(),
-            VisionRadius
-        );
-    }
-
-    public virtual void MoveTowardsPrey(Animal prey)
-    {
-        _directionChangeTicks = 0;
-        
-        double dx = prey.Position.X - Position.X;
-        double dy = prey.Position.Y - Position.Y;
-        double distance = Math.Sqrt(dx * dx + dy * dy);
-
-        if (distance > 0)
-        {
-            _currentDirectionX = dx / distance;
-            _currentDirectionY = dy / distance;
-            Move(_currentDirectionX, _currentDirectionY);
-        }
-    }
-
     public virtual bool CanAttack(Animal prey)
     {
         return MathHelper.IsInContactWith(this, prey);
@@ -79,37 +56,60 @@ public abstract class Carnivore : Animal, IPredator
 
     public virtual void Attack(Animal prey)
     {
-        if (CanAttack(prey))
+        if (CanAttack(prey) && CanBiteBasedOnCooldown())
         {
             int damage = CalculateAttackDamage();
             prey.TakeDamage(damage);
-            Energy += damage / 4;
             
-            if (prey.IsDead)
+            int energyGained = damage;
+            energyGained = Math.Min(energyGained, MaxEnergy - Energy);
+            
+            if (energyGained > 0)
             {
-                var meat = new Meat(prey.Position, prey.Energy, _timeManager);
-                _worldService.AddEntity(meat);
+                Energy += energyGained;
+                SetBiteCooldown();
+                
+                if (Energy >= SimulationConstants.HEALING_ENERGY_THRESHOLD && 
+                    HealthPoints < MaxHealth)
+                {
+                    ConvertEnergyToHealth(Energy - SimulationConstants.HEALING_ENERGY_THRESHOLD);
+                }
             }
         }
     }
 
     protected virtual int CalculateAttackDamage()
     {
-        // Comportement de base pour tous les carnivores
         return (int)(BaseAttackPower * (0.8 + RandomHelper.Instance.NextDouble() * 0.4));
     }
 
-    protected virtual int CalculateEnergyGain()
+    public virtual void Eat(Meat meat)
     {
-        // Énergie gagnée proportionnelle à l'attaque pour tous les carnivores
-        return (int)(BaseAttackPower * 0.5);
-    }
+        if (meat.IsDead || !CanBiteBasedOnCooldown()) return;
 
-    protected virtual IEnumerable<Animal> GetPotentialPrey()
-    {
-        // Par défaut, tous les herbivores sont des proies potentielles
-        return _worldService.Entities
-            .OfType<Herbivore>()
-            .Where(h => !h.IsDead);
+        int damageDealt = CalculateAttackDamage();
+        meat.TakeDamage(damageDealt);
+        
+        int energyGained = damageDealt * 4;
+        energyGained = Math.Min(energyGained, MaxEnergy - Energy);
+        
+        if (energyGained > 0)
+        {
+            Energy += energyGained;
+            SetBiteCooldown();
+            
+            if (Energy >= SimulationConstants.HEALING_ENERGY_THRESHOLD && 
+                HealthPoints < MaxHealth)
+            {
+                var excessEnergy = Energy - SimulationConstants.HEALING_ENERGY_THRESHOLD;
+                var healingAmount = (int)(excessEnergy * SimulationConstants.HEALING_CONVERSION_RATE);
+                
+                if (healingAmount > 0)
+                {
+                    Energy -= healingAmount;
+                    HealthPoints = Math.Min(MaxHealth, HealthPoints + healingAmount);
+                }
+            }
+        }
     }
 }

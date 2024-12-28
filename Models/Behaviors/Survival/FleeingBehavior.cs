@@ -26,13 +26,8 @@ public class FleeingBehavior : IBehavior<Animal>
         var predators = _worldService.GetEntitiesInRange(animal.Position, animal.VisionRadius)
             .OfType<Carnivore>()
             .Where(p => p != animal && 
-                        animal.GetDistanceTo(p.Position) <= animal.VisionRadius) // Double check distance
+                        animal.GetDistanceTo(p.Position) <= animal.VisionRadius)
             .ToList();
-
-        if (predators.Any())
-        {
-            Console.WriteLine($"{animal.GetType().Name} sees predator at distance {animal.GetDistanceTo(predators.First().Position)}");
-        }
 
         return predators.Any();
     }

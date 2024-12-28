@@ -29,7 +29,7 @@ public class WorldService : IWorldService
 
     public WorldService()
     {
-        Grid = new GridWorld(800, 450);
+        Grid = new GridWorld(800, 520);
     }
 
     public void AddEntity(Entity entity)
@@ -47,14 +47,27 @@ public class WorldService : IWorldService
     {
         lock (_lock)
         {
-            while (_entitiesToAdd.TryDequeue(out var entityToAdd))
-            {
-                Entities.Add(entityToAdd); 
-            }
-
+            bool changes = false;
+            
             while (_entitiesToRemove.TryDequeue(out var entityToRemove))
             {
-                Entities.Remove(entityToRemove);
+                if (Entities.Remove(entityToRemove))
+                {
+                    changes = true;
+                    Console.WriteLine($"Removed entity: {entityToRemove.GetType().Name}");
+                }
+            }
+
+            while (_entitiesToAdd.TryDequeue(out var entityToAdd))
+            {
+                Entities.Add(entityToAdd);
+                changes = true;
+                Console.WriteLine($"Added entity: {entityToAdd.GetType().Name}");
+            }
+
+            if (changes)
+            {
+                Console.WriteLine($"Current entity count: {Entities.Count}");
             }
         }
     }
@@ -63,12 +76,18 @@ public class WorldService : IWorldService
     {
         int x = (int)(position.X * Grid.Width);
         int y = (int)(position.Y * Grid.Height);
-        return Grid.GetEnvironmentAt(x, y);
+        var environment = Grid.GetEnvironmentAt(x, y);
+        
+        // Console.WriteLine($"Getting environment at ({position.X},{position.Y}) -> ({x},{y}): {environment}");
+        return environment;
     }
 
     public IEnumerable<Entity> GetEntitiesInRange(Position position, double radius)
     {
-        return Entities.Where(e => GetDistance(position, e.Position) <= radius);
+        lock (_lock)
+        {
+            return Entities.Where(e => GetDistance(position, e.Position) <= radius).ToList();
+        }
     }
 
     private double GetDistance(Position pos1, Position pos2)
