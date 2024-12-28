@@ -137,23 +137,7 @@ FindNearestPrey, MoveTowardsPrey, CanAttack et Attack.
 
 
 
-## /Path.cs
-### 1. Compréhension générale
-- But clair : ✅ 
-- Interactions attendues : ✅ 
-    - 
-### 2. Principes SOLID
-- SRP : ✅ Respecté. 
-- OCP : ✅ Respecté. Extensible. 
-- LSP : ✅ Respecté.  
-- ISP : ✅ Respecté. Rien d'inutile
-- DIP : ✅ Respecté.
-### 3. Structure et qualité du code
-- Code clair et lisible : ✅ 
-- Modularité : ✅ 
-- Testabilité : ✅ 
-### 4. Propositions d'amélioration
-- 
+
 
 
 
