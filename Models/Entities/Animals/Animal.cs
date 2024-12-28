@@ -19,6 +19,7 @@ namespace ecosystem.Models.Entities.Animals;
 public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVisionRange
 {
     private double _behaviorUpdateAccumulator;
+    
     protected readonly IEntityLocator<Animal> _entityLocator;
     protected readonly IWorldService _worldService;
     private readonly List<IBehavior<Animal>> _behaviors;
