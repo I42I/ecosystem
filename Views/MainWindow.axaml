@@ -43,14 +43,20 @@
                 <Rectangle Grid.Row="1" Grid.Column="1" Fill="SandyBrown"/>
             </Grid>
 
+            <!-- Safe Movement Area Border -->
+            <Border BorderBrush="Red" 
+                    BorderThickness="2" 
+                    Width="{Binding WindowWidth, Converter={StaticResource SafeAreaConverter}}"
+                    Height="{Binding WindowHeight, Converter={StaticResource SafeAreaConverter}, ConverterParameter=height}"
+                    Margin="{Binding WindowWidth, Converter={StaticResource SafeAreaMarginConverter}}"/>
+
             <!-- Entity Canvas -->
             <ItemsControl ItemsSource="{Binding EntityViewModels}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Canvas Name="MainCanvas" 
                                 Width="{Binding WindowWidth}" 
-                                Height="{Binding WindowHeight}"
-                                Margin="0,30,0,50"/>
+                                Height="{Binding WindowHeight}"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>

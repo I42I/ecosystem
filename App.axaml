@@ -7,6 +7,8 @@
     
     <Application.Resources>
         <helpers:OffsetConverter x:Key="AddOffset"/>
+        <helpers:SafeAreaConverter x:Key="SafeAreaConverter"/>
+        <helpers:SafeAreaMarginConverter x:Key="SafeAreaMarginConverter"/>
     </Application.Resources>
 
     <Application.DataTemplates>
