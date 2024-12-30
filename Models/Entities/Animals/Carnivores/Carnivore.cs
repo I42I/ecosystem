@@ -72,7 +72,14 @@ public abstract class Carnivore : Animal
                 if (Energy >= SimulationConstants.HEALING_ENERGY_THRESHOLD && 
                     HealthPoints < MaxHealth)
                 {
-                    ConvertEnergyToHealth(Energy - SimulationConstants.HEALING_ENERGY_THRESHOLD);
+                    var excessEnergy = Energy - SimulationConstants.HEALING_ENERGY_THRESHOLD;
+                    var healingAmount = (int)(excessEnergy * SimulationConstants.HEALING_CONVERSION_RATE);
+                    
+                    if (healingAmount > 0)
+                    {
+                        Energy -= healingAmount;
+                        HealthPoints = Math.Min(MaxHealth, HealthPoints + healingAmount);
+                    }
                 }
             }
         }

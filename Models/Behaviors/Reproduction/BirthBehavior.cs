@@ -14,14 +14,17 @@ public class BirthBehavior : IBehavior<Animal>
     
     public bool CanExecute(Animal animal)
     {
-        return animal.IsPregnant && animal.ReproductionCooldown <= 0;
+        return !animal.IsMale && 
+               animal.IsPregnant && 
+               animal.ReproductionCooldown <= 0 &&
+               animal.IsReadyToGiveBirth();
     }
     
     public void Execute(Animal animal)
     {
         var (x, y) = RandomHelper.GetRandomPositionInRadius(
             animal.Position.X, 
-            animal.Position.Y, 
+            animal.Position.Y,
             animal.ContactRadius * 2);
             
         var offspring = animal.CreateOffspring(new Position(x, y));

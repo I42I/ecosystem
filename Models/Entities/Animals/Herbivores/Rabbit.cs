@@ -18,12 +18,12 @@ namespace ecosystem.Models.Entities.Animals.Herbivores;
 
 public class Rabbit : Herbivore
 {
-    public static int DefaultMaxHealth => 80;
+    public static int DefaultMaxHealth => 60;
     public static int DefaultMaxEnergy => 80;
     public override int MaxHealth => DefaultMaxHealth;
     public override int MaxEnergy => DefaultMaxEnergy;
     protected override int BaseBiteSize => 4;
-   protected override double BaseBiteCooldownDuration => 0.02;
+    protected override double BaseBiteCooldownDuration => 0.02;
     public override double BaseHungerThreshold => 55.0;
     protected override double BaseReproductionThreshold => 70.0;
     protected override double BaseReproductionEnergyCost => 20.0;
@@ -72,6 +72,6 @@ public class Rabbit : Herbivore
 
     public override Animal CreateOffspring(Position position)
     {
-        return _entityFactory.CreateAnimal<Rabbit>(30, 50, position, RandomHelper.Instance.NextDouble() > 0.5);
+        return _entityFactory.CreateAnimal<Rabbit>(60, 80, position, RandomHelper.Instance.NextDouble() > 0.5);
     }
 }

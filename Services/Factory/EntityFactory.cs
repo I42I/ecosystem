@@ -171,8 +171,8 @@ public class EntityFactory : IEntityFactory
     {
         return new Meat(
             position,
-            healthValue: 20,
-            energyValue: 100,
+            Meat.DefaultMaxHealth,
+            Meat.DefaultMaxEnergy,
             _timeManager,
             _worldService
         );

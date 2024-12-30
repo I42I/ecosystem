@@ -19,7 +19,8 @@ public class HungerBehavior : IBehavior<Animal>
 
         var plant = herbivore.FindNearestPlant();
         
-        var shouldEat = animal.Energy <= herbivore.BaseHungerThreshold || 
+        var shouldEat = animal.Energy <= herbivore.BaseHungerThreshold ||
+                        animal.HealthPoints < animal.MaxHealth ||
                        (animal.Energy < 0.95 * animal.MaxEnergy && 
                         plant != null && 
                         MathHelper.IsInContactWith(animal, plant));

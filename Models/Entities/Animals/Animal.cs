@@ -111,6 +111,18 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
                 behavior.Execute(this);
             }
 
+            if (IsPregnant)
+            {
+                if (_currentPregnancy.HasValue)
+                {
+                    _currentPregnancy = new Pregnancy
+                    {
+                        GestationProgress = _currentPregnancy.Value.GestationProgress + _timeManager.DeltaTime,
+                        Father = _currentPregnancy.Value.Father
+                    };
+                }
+            }
+
             _behaviorUpdateAccumulator = 0;
         }
     }
@@ -207,5 +219,32 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
     public void Heal(int amount)
     {
         HealthPoints = Math.Min(MaxHealth, HealthPoints + amount);
+    }
+
+    protected struct Pregnancy
+    {
+        public double GestationProgress { get; set; }
+        public Animal Father { get; set; }
+    }
+    private Pregnancy? _currentPregnancy;
+
+    public void StartPregnancy(Animal father)
+    {
+        if (!IsPregnant && !IsMale)
+        {
+            IsPregnant = true;
+            _currentPregnancy = new Pregnancy 
+            { 
+                GestationProgress = 0,
+                Father = father
+            };
+        }
+    }
+
+    public bool IsReadyToGiveBirth()
+    {
+        return IsPregnant && 
+            _currentPregnancy.HasValue && 
+            _currentPregnancy.Value.GestationProgress >= SimulationConstants.GESTATION_PERIOD;
     }
 }

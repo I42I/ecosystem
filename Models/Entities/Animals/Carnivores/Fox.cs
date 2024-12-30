@@ -69,7 +69,7 @@ public class Fox : Carnivore
 
     public override Animal CreateOffspring(Position position)
     {
-        return _entityFactory.CreateAnimal<Fox>(30, 50, position, RandomHelper.Instance.NextDouble() > 0.5);
+        return _entityFactory.CreateAnimal<Fox>(60, 80, position, RandomHelper.Instance.NextDouble() > 0.5);
     }
 }
 

@@ -36,7 +36,7 @@ public static class SimulationConstants
     // Energy thresholds
     public const double MAX_ENERGY_PERCENT = 100.0;
     public const double HEALING_ENERGY_THRESHOLD = 90.0;
-    public const double HEALING_CONVERSION_RATE = 0.2;
+    public const double HEALING_CONVERSION_RATE = 1;
     
     // Health thresholds
     public const double MAX_HEALTH_PERCENT = 100.0;

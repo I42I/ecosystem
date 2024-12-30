@@ -46,16 +46,13 @@ public class PheromoneAttractedBehavior : IBehavior<Animal>
         {
             if (animal.IsInContactWith(mate))
             {
-                // Initiate reproduction
                 animal.RemoveEnergy((int)animal.ReproductionEnergyCost);
-                mate.IsPregnant = true;
+                mate.StartPregnancy(animal);
                 animal.ReproductionCooldown = SimulationConstants.MALE_REPRODUCTION_COOLDOWN;
-                mate.ReproductionCooldown = SimulationConstants.GESTATION_PERIOD;
                 Console.WriteLine($"Male {animal.GetType().Name} successfully mated");
             }
             else
             {
-                // Move towards mate with increased speed
                 var direction = mate.Position - animal.Position;
                 var originalSpeed = animal.MovementSpeed;
                 animal.MovementSpeed *= MATING_SPEED_MULTIPLIER;

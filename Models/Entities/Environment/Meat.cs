@@ -7,8 +7,8 @@ namespace ecosystem.Models.Entities.Environment;
 
 public class Meat : LifeForm
 {
-    public static int DefaultMaxHealth => 20;
-    public static int DefaultMaxEnergy => 100;
+    public static int DefaultMaxHealth => 100;
+    public static int DefaultMaxEnergy => 200;
     public override int MaxHealth => DefaultMaxHealth;
     public override int MaxEnergy => DefaultMaxEnergy;
     private readonly IWorldService _worldService;

@@ -67,14 +67,10 @@ public abstract class Herbivore : Animal
             plant.TakeDamage(damageDealt);
             
             int energyGained = (int)(damageDealt * 5);
-            
             energyGained = Math.Min(energyGained, MaxEnergy - Energy);
             
             Energy += energyGained;
-            
             SetBiteCooldown();
-            
-            Console.WriteLine($"[{GetType().Name}#{TypeId}] bit {plant.GetType().Name} for {damageDealt} damage, gained {energyGained} energy. Current energy: {Energy}/{MaxEnergy}");
             
             if (Energy >= SimulationConstants.HEALING_ENERGY_THRESHOLD && 
                 HealthPoints < MaxHealth)
@@ -86,7 +82,7 @@ public abstract class Herbivore : Animal
                 {
                     Energy -= healingAmount;
                     HealthPoints = Math.Min(MaxHealth, HealthPoints + healingAmount);
-                    Console.WriteLine($"[{GetType().Name}#{TypeId}] converted {healingAmount} energy to health. HP: {HealthPoints}/{MaxHealth}");
+                    Console.WriteLine($"[{GetType().Name}#{TypeId}] healed for {healingAmount} HP using excess energy");
                 }
             }
         }

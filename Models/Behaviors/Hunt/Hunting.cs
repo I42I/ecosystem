@@ -33,7 +33,8 @@ public class HuntingBehavior : IBehavior<Animal>
                     .OrderBy(m => animal.GetDistanceTo(m.Position))
                     .FirstOrDefault();
 
-        var shouldEat = animal.Energy <= carnivore.BaseHungerThreshold || 
+        var shouldEat = animal.Energy <= carnivore.BaseHungerThreshold ||
+                        animal.HealthPoints < animal.MaxHealth ||
                         (animal.Energy < 0.95 * animal.MaxEnergy &&
                         ((prey != null && MathHelper.IsInContactWith(animal, prey)) || 
                         (meat != null && MathHelper.IsInContactWith(animal, meat))));

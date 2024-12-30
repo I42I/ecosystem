@@ -12,23 +12,31 @@ using ecosystem.Models.Behaviors.Movement;
 using ecosystem.Models.Behaviors.Reproduction;
 using ecosystem.Models.Behaviors.Base;
 using ecosystem.Services.Simulation;
+using ecosystem.Services.Factory;
 
 namespace ecosystem.Models.Entities.Animals.Herbivores;
 
 public class Antelope : Herbivore
 {
+    public static int DefaultMaxHealth => 80;
+    public static int DefaultMaxEnergy => 80;
+    public override int MaxHealth => DefaultMaxHealth;
+    public override int MaxEnergy => DefaultMaxEnergy;
     protected override int BaseBiteSize => 5;
-    protected override double BaseHungerThreshold => 50.0;
+    protected override double BaseBiteCooldownDuration => 0.02;
+    public override double BaseHungerThreshold => 50.0;
     protected override double BaseReproductionThreshold => 65.0;
     protected override double BaseReproductionEnergyCost => 30.0;
     protected override double SpeciesEnergyCostModifier => 0.7;
     public override EnvironmentType PreferredEnvironment => EnvironmentType.Ground | EnvironmentType.Water;
+    private readonly IEntityFactory _entityFactory;
 
     public Antelope(
         IEntityLocator<Animal> entityLocator,
         IEntityLocator<Plant> plantLocator,
         IWorldService worldService,
         ITimeManager timeManager,
+        IEntityFactory entityFactory,
         Position position,
         int healthPoints,
         int energy,
@@ -38,6 +46,7 @@ public class Antelope : Herbivore
             plantLocator,
             worldService,
             timeManager,
+            entityFactory,
             position,
             healthPoints,
             energy,
@@ -46,6 +55,7 @@ public class Antelope : Herbivore
             contactRadius: 1.5,
             basalMetabolicRate: 0.7)
     {
+        _entityFactory = entityFactory;
         _environmentPreferences.AddRange(new[]
         {
             new EnvironmentPreference(EnvironmentType.Ground, 0.8, 1.2),
@@ -55,7 +65,6 @@ public class Antelope : Herbivore
         AddBehavior(new FleeingBehavior(worldService));
         AddBehavior(new BirthBehavior());
         AddBehavior(new EnvironmentSeekingBehavior(worldService));
-        AddBehavior(new MatingBehavior(_worldService, _timeManager));
         AddBehavior(new HungerBehavior());
         AddBehavior(new RestBehavior());
         
@@ -65,15 +74,6 @@ public class Antelope : Herbivore
 
     public override Animal CreateOffspring(Position position)
     {
-        return new Antelope(
-            _entityLocator,
-            _plantLocator,
-            _worldService,
-            _timeManager,
-            position,
-            healthPoints: HealthPoints / 2,
-            energy: Energy / 2,
-            isMale: RandomHelper.Instance.NextDouble() > 0.5
-        );
+        return _entityFactory.CreateAnimal<Antelope>(30, 50, position, RandomHelper.Instance.NextDouble() > 0.5);
     }
 }
