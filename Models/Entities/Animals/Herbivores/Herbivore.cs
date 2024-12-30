@@ -82,7 +82,6 @@ public abstract class Herbivore : Animal
                 {
                     Energy -= healingAmount;
                     HealthPoints = Math.Min(MaxHealth, HealthPoints + healingAmount);
-                    Console.WriteLine($"[{GetType().Name}#{TypeId}] healed for {healingAmount} HP using excess energy");
                 }
             }
         }

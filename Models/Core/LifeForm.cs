@@ -106,8 +106,6 @@ public abstract class LifeForm : Entity, IHasContactRange
             HealthPoints = Math.Max(0, HealthPoints - damageToApply);
             _healthAccumulator -= damageToApply;
 
-            Console.WriteLine($"{GetType().Name} took {damageToApply} damage, HP: {HealthPoints}");
-
             if (HealthPoints <= 0)
             {
                 Die();
@@ -119,7 +117,6 @@ public abstract class LifeForm : Entity, IHasContactRange
                 int energyToConvert = Math.Min(20, Energy);
                 Energy -= energyToConvert;
                 HealthPoints += energyToConvert / HEALTH_TO_ENERGY_CONVERSION_RATE;
-                Console.WriteLine($"{GetType().Name} converted {energyToConvert} energy to {energyToConvert / HEALTH_TO_ENERGY_CONVERSION_RATE} HP");
             }
         }
     }
@@ -147,7 +144,6 @@ public abstract class LifeForm : Entity, IHasContactRange
                 {
                     HealthPoints -= healthToConvert;
                     Energy += healthToConvert * HEALTH_TO_ENERGY_CONVERSION_RATE;
-                    Console.WriteLine($"{GetType().Name} converted {healthToConvert} HP to {healthToConvert * HEALTH_TO_ENERGY_CONVERSION_RATE} energy");
                 }
                 else
                 {

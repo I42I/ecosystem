@@ -18,12 +18,12 @@ public class Meat : LifeForm
     {
         _worldService = worldService;
         Color = Brushes.Red;
-        ContactRadius = 0.005;
+        ContactRadius = 0.007;
     }
 
     protected override void Die()
     {
-        var waste = new OrganicWaste(Position, Energy);
+        var waste = new OrganicWaste(Position, Energy, _worldService);
         _worldService.AddEntity(waste);
         _worldService.RemoveEntity(this);
     }

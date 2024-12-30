@@ -40,4 +40,16 @@ public static class SimulationConstants
     
     // Health thresholds
     public const double MAX_HEALTH_PERCENT = 100.0;
+
+    // Organic waste constants
+    public const double WASTE_CONTACT_RADIUS = 0.005;
+    public const double WASTE_DECAY_RATE = 0.001;
+    public const double WASTE_BASE_ENERGY = 50;
+    public const double WASTE_MIN_ENERGY = 5;
+
+    // Root system constants
+    public const double ROOT_GROWTH_RATE = 0.0001;
+    public const double MAX_ROOT_RADIUS = 0.2;
+    public const double MIN_ROOT_RADIUS = 0.05;
+    public const double WASTE_ABSORPTION_THRESHOLD = 0.001;
 }

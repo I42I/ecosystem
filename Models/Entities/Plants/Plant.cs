@@ -43,6 +43,15 @@ public abstract class Plant : LifeForm, IHasRootSystem
     protected override void UpdateBehavior()
     {
         ConsumeEnergy(SimulationConstants.BASE_ENERGY_LOSS * _timeManager.DeltaTime);
+        
+        var nearbyWaste = _worldService.GetEntitiesInRange(Position, RootRadius)
+            .OfType<OrganicWaste>()
+            .ToList();
+
+        foreach (var waste in nearbyWaste)
+        {
+            AbsorbWaste(waste);
+        }
 
         _growthAccumulator += _timeManager.DeltaTime;
         _reproductionAccumulator += _timeManager.DeltaTime;
@@ -73,13 +82,21 @@ public abstract class Plant : LifeForm, IHasRootSystem
 
     protected virtual void AbsorbWaste(OrganicWaste waste)
     {
-        double absorbedEnergy = waste.EnergyValue * BaseAbsorptionRate;
-        Energy += (int)absorbedEnergy;
-        waste.EnergyValue -= (int)absorbedEnergy;
+        double absorbedEnergy = waste.EnergyValue * BaseAbsorptionRate * _timeManager.DeltaTime;
         
-        if (waste.EnergyValue <= 0)
+        Console.WriteLine($"[{GetType().Name}#{TypeId}] processing waste absorption: Energy={absorbedEnergy:F3}, Threshold={SimulationConstants.WASTE_ABSORPTION_THRESHOLD:F3}");
+
+        if (absorbedEnergy >= SimulationConstants.WASTE_ABSORPTION_THRESHOLD)
         {
-            _worldService.RemoveEntity(waste);
+            int energyToAbsorb = (int)Math.Ceiling(absorbedEnergy);
+            Energy += energyToAbsorb;
+            waste.EnergyValue -= energyToAbsorb;
+
+            double growthFactor = energyToAbsorb * SimulationConstants.ROOT_GROWTH_RATE;
+            RootRadius += growthFactor;
+            RootRadius = Math.Min(RootRadius, SimulationConstants.MAX_ROOT_RADIUS);
+            
+            Console.WriteLine($"[{GetType().Name}#{TypeId}] absorbed {energyToAbsorb} energy from waste, root growth: +{growthFactor:F6}, new radius: {RootRadius:F3}");
         }
     }
 
@@ -95,7 +112,7 @@ public abstract class Plant : LifeForm, IHasRootSystem
 
     protected override void Die()
     {
-        var waste = new OrganicWaste(Position, Energy);
+        var waste = new OrganicWaste(Position, Energy, _worldService);
         _worldService.AddEntity(waste);
         _worldService.RemoveEntity(this);
     }

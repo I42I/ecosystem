@@ -143,7 +143,6 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
         _hasDied = true;
 
         int meatCount = (int)Math.Floor(MaxHealth * 0.5 / 20.0);
-        Console.WriteLine($"[{GetType().Name}#{TypeId}] died, creating {meatCount} meat pieces");
         
         CreateMeat(meatCount);
         _worldService.RemoveEntity(this);
@@ -211,7 +210,6 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
             {
                 RemoveEnergy(healingAmount);
                 Heal(healingAmount);
-                Console.WriteLine($"[{GetType().Name}#{TypeId}] converted {healingAmount} energy to health");
             }
         }
     }
