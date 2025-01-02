@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ecosystem.Models.Core;
 using System.ComponentModel;
@@ -24,12 +25,25 @@ public class EntityStats : INotifyPropertyChanged
         {
             _lifeForm.PropertyChanged += LifeForm_PropertyChanged;
         }
+
+        if (_entity is OrganicWaste organicWaste)
+        {
+            organicWaste.PropertyChanged += OrganicWaste_PropertyChanged;
+        }
     }
 
     private void LifeForm_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(LifeForm.HealthPoints) || 
             e.PropertyName == nameof(LifeForm.Energy))
+        {
+            OnPropertyChanged(nameof(DisplayStats));
+        }
+    }
+
+    private void OrganicWaste_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(OrganicWaste.EnergyValue))
         {
             OnPropertyChanged(nameof(DisplayStats));
         }
@@ -55,9 +69,9 @@ public class EntityStats : INotifyPropertyChanged
         {
             var stats = new List<string>();
             
-            if (_entity is OrganicWaste waste)
+            if (_entity is OrganicWaste organicWaste)
             {
-                stats.Add($"E:{waste.EnergyValue}");
+                stats.Add($"E:{organicWaste.EnergyValue}");
             }
             else if (_lifeForm != null)
             {
@@ -65,12 +79,14 @@ public class EntityStats : INotifyPropertyChanged
                 stats.Add($"E:{_lifeForm.Energy}");
             }
 
-            return string.Join(" | ", stats);
+            var result = string.Join(" | ", stats);
+            return result;
         }
     }
 
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
+        Console.WriteLine($"Property changed: {propertyName}");
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

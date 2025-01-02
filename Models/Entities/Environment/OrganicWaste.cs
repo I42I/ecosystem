@@ -24,19 +24,7 @@ public class OrganicWaste : Entity, IHasContactRange
             {
                 _energyValue = Math.Max(0, value);
                 OnPropertyChanged(nameof(EnergyValue));
-                OnPropertyChanged(nameof(StatsText));
             }
-        }
-    }
-
-    public override string StatsText => $"Energy: {EnergyValue}";
-
-    protected override void OnPropertyChanged(string propertyName)
-    {
-        base.OnPropertyChanged(propertyName);
-        if (propertyName == nameof(EnergyValue))
-        {
-            OnPropertyChanged(nameof(StatsText));
         }
     }
 

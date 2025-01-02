@@ -78,7 +78,7 @@ public abstract class Entity : INotifyPropertyChanged
             throw new ArgumentException("Position must be non-negative", nameof(position));
             
         Position = position;
-        Stats = new EntityStats(this as LifeForm);
+        Stats = new EntityStats(this);
     }
 
     public virtual void Update() { }
