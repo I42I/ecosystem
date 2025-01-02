@@ -18,7 +18,26 @@ public class OrganicWaste : Entity, IHasContactRange
     public int EnergyValue 
     { 
         get => _energyValue;
-        set => _energyValue = Math.Max(0, value);
+        set
+        {
+            if (_energyValue != value)
+            {
+                _energyValue = Math.Max(0, value);
+                OnPropertyChanged(nameof(EnergyValue));
+                OnPropertyChanged(nameof(StatsText));
+            }
+        }
+    }
+
+    public override string StatsText => $"Energy: {EnergyValue}";
+
+    protected override void OnPropertyChanged(string propertyName)
+    {
+        base.OnPropertyChanged(propertyName);
+        if (propertyName == nameof(EnergyValue))
+        {
+            OnPropertyChanged(nameof(StatsText));
+        }
     }
 
     public OrganicWaste(Position position, int energyValue, IWorldService worldService)

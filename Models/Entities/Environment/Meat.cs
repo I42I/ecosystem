@@ -12,6 +12,7 @@ public class Meat : LifeForm
     public override int MaxHealth => DefaultMaxHealth;
     public override int MaxEnergy => DefaultMaxEnergy;
     private readonly IWorldService _worldService;
+    protected bool _hasCreatedWaste = false;
 
     public Meat(Position position, int healthValue, int energyValue, ITimeManager timeManager, IWorldService worldService)
         : base(position, healthValue, energyValue, EnvironmentType.Ground, timeManager)
@@ -23,6 +24,9 @@ public class Meat : LifeForm
 
     protected override void Die()
     {
+        if (_hasCreatedWaste) return;
+        _hasCreatedWaste = true;
+
         var waste = new OrganicWaste(Position, Energy, _worldService);
         _worldService.AddEntity(waste);
         _worldService.RemoveEntity(this);

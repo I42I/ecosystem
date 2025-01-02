@@ -15,6 +15,7 @@ public abstract class Plant : LifeForm, IHasRootSystem
 {
     private double _growthAccumulator;
     private double _reproductionAccumulator;
+    protected bool _hasCreatedWaste = false;
     protected abstract double BaseAbsorptionRate { get; }
     protected readonly IWorldService _worldService;
     public abstract EnvironmentType PreferredEnvironment { get; }
@@ -43,7 +44,7 @@ public abstract class Plant : LifeForm, IHasRootSystem
     protected override void UpdateBehavior()
     {
         ConsumeEnergy(SimulationConstants.BASE_ENERGY_LOSS * _timeManager.DeltaTime);
-        
+
         var nearbyWaste = _worldService.GetEntitiesInRange(Position, RootRadius)
             .OfType<OrganicWaste>()
             .ToList();
@@ -54,17 +55,22 @@ public abstract class Plant : LifeForm, IHasRootSystem
         }
 
         _growthAccumulator += _timeManager.DeltaTime;
-        _reproductionAccumulator += _timeManager.DeltaTime;
-
         if (_growthAccumulator >= SimulationConstants.PLANT_GROWTH_INTERVAL)
         {
             ProcessGrowth();
             _growthAccumulator = 0;
         }
 
-        if (_reproductionAccumulator >= SimulationConstants.PLANT_REPRODUCTION_INTERVAL)
+        _reproductionAccumulator += _timeManager.DeltaTime;
+        if (_reproductionAccumulator >= SimulationConstants.PLANT_REPRODUCTION_CHECK_INTERVAL)
         {
-            if (CanSpreadSeeds())
+            double healthFactor = (double)HealthPoints / MaxHealth;
+            double energyFactor = (double)Energy / MaxEnergy;
+            double reproductionChance = SimulationConstants.PLANT_SEED_SPREAD_BASE_CHANCE * 
+                                    healthFactor * 
+                                    energyFactor;
+
+            if (CanSpreadSeeds() && RandomHelper.Instance.NextDouble() < reproductionChance)
             {
                 SpreadSeeds();
             }
@@ -83,8 +89,6 @@ public abstract class Plant : LifeForm, IHasRootSystem
     protected virtual void AbsorbWaste(OrganicWaste waste)
     {
         double absorbedEnergy = waste.EnergyValue * BaseAbsorptionRate * _timeManager.DeltaTime;
-        
-        Console.WriteLine($"[{GetType().Name}#{TypeId}] processing waste absorption: Energy={absorbedEnergy:F3}, Threshold={SimulationConstants.WASTE_ABSORPTION_THRESHOLD:F3}");
 
         if (absorbedEnergy >= SimulationConstants.WASTE_ABSORPTION_THRESHOLD)
         {
@@ -95,23 +99,42 @@ public abstract class Plant : LifeForm, IHasRootSystem
             double growthFactor = energyToAbsorb * SimulationConstants.ROOT_GROWTH_RATE;
             RootRadius += growthFactor;
             RootRadius = Math.Min(RootRadius, SimulationConstants.MAX_ROOT_RADIUS);
-            
-            Console.WriteLine($"[{GetType().Name}#{TypeId}] absorbed {energyToAbsorb} energy from waste, root growth: +{growthFactor:F6}, new radius: {RootRadius:F3}");
         }
     }
 
-    protected abstract bool CanSpreadSeeds();
+    protected virtual bool CanSpreadSeeds()
+    {
+        return Energy >= SimulationConstants.PLANT_MIN_ENERGY_FOR_REPRODUCTION && 
+            HealthPoints >= SimulationConstants.PLANT_MIN_HEALTH_FOR_REPRODUCTION;
+    }
+
     protected abstract Plant CreateOffspring(Position position);
 
     private void SpreadSeeds()
     {
-        var (x, y) = RandomHelper.GetRandomPositionInRadius(Position.X, Position.Y, SeedRadius);
-        var randomPosition = new Position(x, y);
-        var offspring = CreateOffspring(randomPosition);
+        var (x, y) = RandomHelper.GetRandomPositionInRadius(
+            Position.X,
+            Position.Y,
+            SeedRadius
+        );
+        
+        var newPosition = new Position(x, y);
+        
+        if (_worldService.GetEnvironmentAt(newPosition).HasFlag(PreferredEnvironment))
+        {
+            var offspring = CreateOffspring(newPosition);
+            Energy -= (int)SimulationConstants.PLANT_REPRODUCTION_ENERGY_COST;
+            
+            _worldService.AddEntity(offspring);
+            Console.WriteLine($"{GetType().Name}#{TypeId} spread seeds at ({x:F2}, {y:F2})");
+        }
     }
 
     protected override void Die()
     {
+        if (_hasCreatedWaste) return;
+        _hasCreatedWaste = true;
+
         var waste = new OrganicWaste(Position, Energy, _worldService);
         _worldService.AddEntity(waste);
         _worldService.RemoveEntity(this);

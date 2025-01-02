@@ -52,4 +52,17 @@ public static class SimulationConstants
     public const double MAX_ROOT_RADIUS = 0.2;
     public const double MIN_ROOT_RADIUS = 0.05;
     public const double WASTE_ABSORPTION_THRESHOLD = 0.001;
+
+    // Plant reproduction constants
+    public const double PLANT_SEED_SPREAD_BASE_CHANCE = 0.05;
+    public const int PLANT_MIN_ENERGY_FOR_REPRODUCTION = 50;
+    public const int PLANT_MIN_HEALTH_FOR_REPRODUCTION = 30;
+    public const int PLANT_REPRODUCTION_ENERGY_COST = 30;
+    public const double PLANT_REPRODUCTION_CHECK_INTERVAL = 0.5;
+
+    // Digestion constants
+    public const double DIGESTION_TIME = 0.1;
+    public const double DIGESTION_EFFICIENCY = 0.7;
+    public const int MIN_WASTE_PER_DIGESTION = 1;
+    public const double WASTE_DROP_RADIUS = 0.01;
 }

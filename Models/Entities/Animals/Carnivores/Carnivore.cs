@@ -67,6 +67,7 @@ public abstract class Carnivore : Animal
             if (energyGained > 0)
             {
                 Energy += energyGained;
+                ProcessFoodConsumption(energyGained);
                 SetBiteCooldown();
                 
                 if (Energy >= SimulationConstants.HEALING_ENERGY_THRESHOLD && 

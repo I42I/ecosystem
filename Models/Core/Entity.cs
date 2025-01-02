@@ -58,7 +58,7 @@ public abstract class Entity : INotifyPropertyChanged
     public string DisplayName => $"{GetType().Name} {_id}";
     public int TypeId => _id;
 
-    public string StatsText => Stats?.DisplayStats ?? string.Empty;
+    public virtual string StatsText => Stats?.DisplayStats ?? string.Empty;
 
     protected Entity(Position position)
     {

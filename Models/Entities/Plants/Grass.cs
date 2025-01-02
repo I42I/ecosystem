@@ -45,7 +45,9 @@ public class Grass : Plant
 
     protected override bool CanSpreadSeeds()
     {
-        return Energy > 50 && HealthPoints > 50;
+        return base.CanSpreadSeeds() && 
+            Energy >= SimulationConstants.PLANT_MIN_ENERGY_FOR_REPRODUCTION && 
+            HealthPoints >= SimulationConstants.PLANT_MIN_HEALTH_FOR_REPRODUCTION;
     }
 
     protected override Plant CreateOffspring(Position position)

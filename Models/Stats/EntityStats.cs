@@ -2,21 +2,24 @@ using System.Collections.Generic;
 using ecosystem.Models.Core;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System;
+using ecosystem.Models.Entities.Environment;
 
 namespace ecosystem.Models.Stats;
 
 public class EntityStats : INotifyPropertyChanged
 {
     private string? _currentBehavior;
+    private readonly Entity? _entity;
     private readonly LifeForm? _lifeForm;
     private string _displayStats = string.Empty;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public EntityStats(LifeForm? lifeForm = null)
+    public EntityStats(Entity? entity = null)
     {
-        _lifeForm = lifeForm;
+        _entity = entity;
+        _lifeForm = entity as LifeForm;
+        
         if (_lifeForm != null)
         {
             _lifeForm.PropertyChanged += LifeForm_PropertyChanged;
@@ -52,7 +55,11 @@ public class EntityStats : INotifyPropertyChanged
         {
             var stats = new List<string>();
             
-            if (_lifeForm != null)
+            if (_entity is OrganicWaste waste)
+            {
+                stats.Add($"E:{waste.EnergyValue}");
+            }
+            else if (_lifeForm != null)
             {
                 stats.Add($"HP:{_lifeForm.HealthPoints}");
                 stats.Add($"E:{_lifeForm.Energy}");

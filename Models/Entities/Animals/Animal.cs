@@ -24,6 +24,7 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
     protected readonly IWorldService _worldService;
     private readonly List<IBehavior<Animal>> _behaviors;
     private readonly IEntityFactory _entityFactory;
+    private readonly IDigestive _digestionSystem;
     protected readonly List<EnvironmentPreference> _environmentPreferences = new();
     public IReadOnlyList<EnvironmentPreference> PreferredEnvironments => _environmentPreferences;
     public abstract EnvironmentType PreferredEnvironment { get; }
@@ -49,6 +50,7 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
         _entityLocator = entityLocator;
         _worldService = worldService;
         _entityFactory = entityFactory;
+        _digestionSystem = new DigestionSystem(this, _worldService, _timeManager);
         IsMale = isMale;
         VisionRadius = visionRadius;
         ContactRadius = contactRadius;
@@ -122,6 +124,8 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
                     };
                 }
             }
+
+            _digestionSystem.ProcessDigestion(_timeManager.DeltaTime);
 
             _behaviorUpdateAccumulator = 0;
         }
@@ -244,5 +248,10 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
         return IsPregnant && 
             _currentPregnancy.HasValue && 
             _currentPregnancy.Value.GestationProgress >= SimulationConstants.GESTATION_PERIOD;
+    }
+
+    protected void ProcessFoodConsumption(int amount)
+    {
+        _digestionSystem.AddFood(amount);
     }
 }

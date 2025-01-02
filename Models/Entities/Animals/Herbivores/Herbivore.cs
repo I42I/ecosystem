@@ -70,6 +70,7 @@ public abstract class Herbivore : Animal
             energyGained = Math.Min(energyGained, MaxEnergy - Energy);
             
             Energy += energyGained;
+            ProcessFoodConsumption(energyGained);
             SetBiteCooldown();
             
             if (Energy >= SimulationConstants.HEALING_ENERGY_THRESHOLD && 
