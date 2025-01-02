@@ -87,6 +87,15 @@ public partial class MainWindowViewModel : ViewModelBase
         Status = "Reset";
     }
 
+    [ObservableProperty]
+    private bool _isDebugMode = false;
+
+    [RelayCommand]
+    private void ToggleDebug()
+    {
+        IsDebugMode = !IsDebugMode;
+    }
+
     partial void OnSimulationSpeedChanged(double value)
     {
         _timeManager.SetSimulationSpeed(value);

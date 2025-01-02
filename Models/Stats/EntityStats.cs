@@ -4,6 +4,7 @@ using ecosystem.Models.Core;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using ecosystem.Models.Entities.Environment;
+using ecosystem.Models.Entities.Animals;
 
 namespace ecosystem.Models.Stats;
 
@@ -75,6 +76,10 @@ public class EntityStats : INotifyPropertyChanged
             }
             else if (_lifeForm != null)
             {
+                if (_entity is Animal animal)
+                {
+                    stats.Add($"({(animal.IsMale ? "M" : "F")})");
+                }
                 stats.Add($"HP:{_lifeForm.HealthPoints}");
                 stats.Add($"E:{_lifeForm.Energy}");
             }

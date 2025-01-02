@@ -142,7 +142,20 @@ public class EntityFactory : IEntityFactory
                 isMale);
             return (T)(Animal)rabbit;
         }
-        // ... handle other animal types
+        else if (typeof(T) == typeof(Squirrel))
+        {
+            var squirrel = new Squirrel(
+                _entityLocator,
+                _plantLocator,
+                _worldService,
+                _timeManager,
+                this,
+                position,
+                (int)(Squirrel.DefaultMaxHealth * initialHealthPercent / 100),
+                (int)(Squirrel.DefaultMaxEnergy * initialEnergyPercent / 100),
+                isMale);
+            return (T)(Animal)squirrel;
+        }
 
         throw new ArgumentException($"Unsupported animal type: {typeof(T).Name}");
     }

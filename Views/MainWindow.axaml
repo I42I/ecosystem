@@ -19,9 +19,12 @@
             <Button Command="{Binding StartSimulationCommand}">Start</Button>
             <Button Command="{Binding PauseSimulationCommand}" Margin="5,0">Pause</Button>
             <Button Command="{Binding ResetSimulationCommand}">Reset</Button>
+            <Button Command="{Binding ToggleDebugCommand}" Margin="5,0">
+                Debug Mode
+            </Button>
             <TextBlock Text="{Binding Status}" 
-                      VerticalAlignment="Center"
-                      Margin="10,0"/>
+                    VerticalAlignment="Center"
+                    Margin="10,0"/>
         </StackPanel>
 
         <!-- Main simulation area -->
@@ -69,56 +72,71 @@
                                 IsVisible="{Binding HasSprite}"
                                 Canvas.Left="{Binding SpriteCenteredX}"
                                 Canvas.Top="{Binding SpriteCenteredY}">
+                                <Image.IsVisible>
+                                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                        <Binding Path="HasSprite"/>
+                                        <Binding Path="!$parent[Window].((vm:MainWindowViewModel)DataContext).IsDebugMode"/>
+                                    </MultiBinding>
+                                </Image.IsVisible>
                                 <Image.RenderTransform>
-                                    <ScaleTransform ScaleX="{Binding MovementDirection}" ScaleY="1"/>
+                                    <TransformGroup>
+                                        <TranslateTransform Y="-10"/>
+                                        <ScaleTransform ScaleX="{Binding MovementDirection}" ScaleY="1"/>
+                                    </TransformGroup>
                                 </Image.RenderTransform>
                             </Image>
 
-                            <!-- Vision Circle for Animals -->
-                            <Ellipse Width="{Binding ScaledVisionRadius}"
-                                    Height="{Binding ScaledVisionRadius}"
-                                    Fill="{Binding Color}"
-                                    Opacity="0.2"
-                                    IsVisible="{Binding Entity, Converter={x:Static helpers:TypeConverters.IsAnimal}}"
-                                    Canvas.Left="{Binding CenteredX}"
-                                    Canvas.Top="{Binding CenteredY}"/>
+                            <!-- Debug Elements -->
+                            <Canvas IsVisible="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).IsDebugMode}">
+                                <!-- Root Circle for Plants -->
+                                <Ellipse Width="{Binding ScaledRootRadius}"
+                                        Height="{Binding ScaledRootRadius}"
+                                        Fill="{Binding Color}"
+                                        Opacity="0.2"
+                                        IsVisible="{Binding Entity, Converter={x:Static helpers:TypeConverters.IsPlant}}"
+                                        Canvas.Left="{Binding CenteredRootX}"
+                                        Canvas.Top="{Binding CenteredRootY}"/>
 
-                            <!-- Root Circle for Plants -->
-                            <Ellipse Width="{Binding ScaledRootRadius}"
-                                    Height="{Binding ScaledRootRadius}"
-                                    Fill="{Binding Color}"
-                                    Opacity="0.2"
-                                    IsVisible="{Binding Entity, Converter={x:Static helpers:TypeConverters.IsPlant}}"
-                                    Canvas.Left="{Binding CenteredRootX}"
-                                    Canvas.Top="{Binding CenteredRootY}"/>
+                                <!-- Vision Circle -->
+                                <Ellipse Width="{Binding ScaledVisionRadius}"
+                                        Height="{Binding ScaledVisionRadius}"
+                                        Stroke="{Binding Color}"
+                                        StrokeThickness="1"
+                                        Fill="{Binding Color}"
+                                        Opacity="0.2"
+                                        Canvas.Left="{Binding CenteredX}"
+                                        Canvas.Top="{Binding CenteredY}"/>
 
-                            <!-- Contact Circle -->
-                            <!-- <Ellipse Width="{Binding ScaledContactRadius}"
-                                    Height="{Binding ScaledContactRadius}"
-                                    Fill="{Binding Color}"
-                                    Canvas.Left="{Binding CenteredContactX}"
-                                    Canvas.Top="{Binding CenteredContactY}"/> -->
+                                <!-- Contact Circle -->
+                                <Ellipse Width="{Binding ScaledContactRadius}"
+                                        Height="{Binding ScaledContactRadius}"
+                                        Stroke="Red"
+                                        StrokeThickness="1"
+                                        Fill="{Binding Color}"
+                                        Canvas.Left="{Binding CenteredContactX}"
+                                        Canvas.Top="{Binding CenteredContactY}"/>
 
-                            <!-- Entity Name and Stats -->
-                            <TextBlock Text="{Binding Entity.DisplayName}"
-                                    FontSize="10"
-                                    Canvas.Left="{Binding DisplayX}"
-                                    Canvas.Top="{Binding DisplayY}">
-                                <TextBlock.RenderTransform>
-                                    <TranslateTransform X="-20" Y="-17"/>
-                                </TextBlock.RenderTransform>
-                            </TextBlock>
-                                                        
-                            <TextBlock Text="{Binding StatsText}"
-                                    FontSize="10"
-                                    Foreground="Black"
-                                    TextAlignment="Center"
-                                    Canvas.Left="{Binding DisplayX}"
-                                    Canvas.Top="{Binding DisplayY}">
-                                <TextBlock.RenderTransform>
-                                    <TranslateTransform X="-30" Y="10"/>
-                                </TextBlock.RenderTransform>
-                            </TextBlock>
+                                <!-- Entity Name and Stats -->
+                                <TextBlock Text="{Binding Entity.DisplayName}"
+                                        FontSize="10"
+                                        Canvas.Left="{Binding DisplayX}"
+                                        Canvas.Top="{Binding DisplayY}">
+                                    <TextBlock.RenderTransform>
+                                        <TranslateTransform X="-20" Y="-17"/>
+                                    </TextBlock.RenderTransform>
+                                </TextBlock>
+                                                            
+                                <TextBlock Text="{Binding StatsText}"
+                                        FontSize="10"
+                                        Foreground="Black"
+                                        TextAlignment="Center"
+                                        Canvas.Left="{Binding DisplayX}"
+                                        Canvas.Top="{Binding DisplayY}">
+                                    <TextBlock.RenderTransform>
+                                        <TranslateTransform X="-30" Y="10"/>
+                                    </TextBlock.RenderTransform>
+                                </TextBlock>
+                            </Canvas>
                         </Canvas>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

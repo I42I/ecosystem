@@ -110,8 +110,8 @@ public class SimulationEngine : ISimulationEngine
             for (int i = 0; i < 5; i++)
             {
                 var position = RandomHelper.GetRandomPosition();
-                var rabbit = _entityFactory.CreateAnimal<Rabbit>(100, 100, position, i % 2 == 0);
-                entities.Add(rabbit);
+                var squirrel = _entityFactory.CreateAnimal<Squirrel>(100, 100, position, i % 2 == 0);
+                entities.Add(squirrel);
             }
             
             for (int i = 0; i < 10; i++)

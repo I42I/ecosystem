@@ -9,5 +9,7 @@ public enum AnimationState
     TakingDamage,
     Sleeping,
     Dying,
-    Dead
+    Dead,
+    Eat,
+    Dig
 }

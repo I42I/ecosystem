@@ -62,7 +62,6 @@ public class AnimatedSprite
     {
         if (!_animations.ContainsKey(_currentState)) 
         {
-            Console.WriteLine($"No animation found for state: {_currentState}");
             return;
         }
 
@@ -85,9 +84,6 @@ public class AnimatedSprite
             {
                 _currentFrame++;
             }
-
-            Console.WriteLine($"Frame changed: {oldFrame} -> {_currentFrame} " +
-                            $"(State={_currentState}, Row={config.Row})");
         }
     }
 
@@ -99,10 +95,6 @@ public class AnimatedSprite
             config.Row * FrameHeight,
             FrameWidth,
             FrameHeight);
-
-        Console.WriteLine($"Source Rect: X={rect.X}, Y={rect.Y}, " +
-                        $"W={rect.Width}, H={rect.Height}");
-                        
         return rect;
     }
 }

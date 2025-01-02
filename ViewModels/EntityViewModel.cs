@@ -95,7 +95,7 @@ public class EntityViewModel : ViewModelBase
 
     public bool HasSprite => _entity is IAnimatable;
 
-    public double SpriteSize => Entity is IAnimatable ? ScaledContactRadius * 2 : ScaledContactRadius;
+    public double SpriteSize => Entity is IAnimatable ? ScaledContactRadius * 3 : ScaledContactRadius;
 
     public double SpriteCenteredX => DisplayX - SpriteSize / 2;
     public double SpriteCenteredY => DisplayY - SpriteSize / 2;
@@ -141,7 +141,6 @@ public class EntityViewModel : ViewModelBase
 
     public void UpdateAnimation(double deltaTime)
     {
-        Console.WriteLine($"Updating animation for {_entity}");
         if (_entity is IAnimatable animatable)
         {
             animatable.UpdateAnimation(deltaTime);
