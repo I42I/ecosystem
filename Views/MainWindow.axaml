@@ -62,6 +62,18 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Canvas>
+                            <!-- Sprite Image -->
+                            <Image Width="{Binding ScaledContactRadius}"
+                                Height="{Binding ScaledContactRadius}"
+                                Source="{Binding SpriteBitmap}"
+                                IsVisible="{Binding HasSprite}"
+                                Canvas.Left="{Binding CenteredContactX}"
+                                Canvas.Top="{Binding CenteredContactY}">
+                                <Image.RenderTransform>
+                                    <ScaleTransform ScaleX="{Binding MovementDirection}" ScaleY="1"/>
+                                </Image.RenderTransform>
+                            </Image>
+
                             <!-- Vision Circle for Animals -->
                             <Ellipse Width="{Binding ScaledVisionRadius}"
                                     Height="{Binding ScaledVisionRadius}"
@@ -81,11 +93,11 @@
                                     Canvas.Top="{Binding CenteredRootY}"/>
 
                             <!-- Contact Circle -->
-                            <Ellipse Width="{Binding ScaledContactRadius}"
+                            <!-- <Ellipse Width="{Binding ScaledContactRadius}"
                                     Height="{Binding ScaledContactRadius}"
                                     Fill="{Binding Color}"
                                     Canvas.Left="{Binding CenteredContactX}"
-                                    Canvas.Top="{Binding CenteredContactY}"/>
+                                    Canvas.Top="{Binding CenteredContactY}"/> -->
 
                             <!-- Entity Name and Stats -->
                             <TextBlock Text="{Binding Entity.DisplayName}"

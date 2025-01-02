@@ -3,6 +3,10 @@ using System.ComponentModel;
 using Avalonia.Media;
 using ecosystem.Models.Core;
 using ecosystem.Models.Radius;
+using ecosystem.Models.Animation;
+using ecosystem.Models.Entities.Animals;
+using Avalonia.Media.Imaging;
+using Avalonia;
 
 namespace ecosystem.ViewModels;
 
@@ -82,6 +86,49 @@ public class EntityViewModel : ViewModelBase
             e.PropertyName == nameof(Entity.Stats.CurrentBehavior))
         {
             OnPropertyChanged(nameof(StatsText));
+        }
+    }
+
+    public bool HasSprite => _entity is IAnimatable;
+    
+    public IImage? SpriteBitmap
+    {
+        get
+        {
+            if (_entity is IAnimatable animatable && animatable.Sprite != null)
+            {
+                var sourceRect = animatable.Sprite.GetSourceRect();
+                return new CroppedBitmap(
+                    animatable.Sprite.SpriteSheet,
+                    new PixelRect(
+                        (int)sourceRect.X, 
+                        (int)sourceRect.Y,
+                        (int)sourceRect.Width, 
+                        (int)sourceRect.Height));
+            }
+            return null;
+        }
+    }
+
+    public double MovementDirection
+    {
+        get
+        {
+            if (_entity is Animal animal)
+            {
+                return animal.MovementSpeed > 0 ? 1 : -1;
+            }
+            return 1;
+        }
+    }
+
+    public void UpdateAnimation(double deltaTime)
+    {
+        if (_entity is IAnimatable animatable)
+        {
+            animatable.UpdateAnimation(deltaTime);
+            OnPropertyChanged(nameof(SpriteBitmap));
+            OnPropertyChanged(nameof(MovementDirection));
         }
     }
 }

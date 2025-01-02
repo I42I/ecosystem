@@ -13,10 +13,11 @@ using ecosystem.Services.Simulation;
 using ecosystem.Helpers;
 using ecosystem.Models.Radius;
 using ecosystem.Services.Factory;
+using ecosystem.Models.Animation;
 
 namespace ecosystem.Models.Entities.Animals;
 
-public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVisionRange
+public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVisionRange, IAnimatable
 {
     private double _behaviorUpdateAccumulator;
     
@@ -253,5 +254,45 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
     protected void ProcessFoodConsumption(int amount)
     {
         _digestionSystem.AddFood(amount);
+    }
+
+    public virtual AnimatedSprite? Sprite { get; protected set; }
+    public virtual AnimationState CurrentState { get; protected set; }
+
+    public virtual void UpdateAnimation(double deltaTime)
+    {
+        var newState = DetermineAnimationState();
+        if (newState != CurrentState)
+        {
+            CurrentState = newState;
+            Sprite?.SetState(CurrentState);
+        }
+
+        Sprite?.Update(deltaTime);
+    }
+
+    protected virtual AnimationState DetermineAnimationState()
+    {
+        if (IsDead) return AnimationState.Dead;
+        return MovementSpeed > 0 ? AnimationState.Moving : AnimationState.Idle;
+    }
+
+    protected virtual void InitializeSprite(string spritePath, int frameWidth, int frameHeight)
+    {
+        Sprite = new AnimatedSprite(spritePath, frameWidth, frameHeight);
+        
+        Sprite.AddAnimation(AnimationState.Idle, 
+            new AnimatedSprite.AnimationConfig(
+                row: 0,
+                startFrame: 0,
+                frameCount: 2,
+                frameDuration: 0.2));
+                
+        Sprite.AddAnimation(AnimationState.Moving, 
+            new AnimatedSprite.AnimationConfig(
+                row: 2,
+                startFrame: 0,
+                frameCount: 4,
+                frameDuration: 0.1));
     }
 }
