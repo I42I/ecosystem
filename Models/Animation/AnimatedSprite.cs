@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Media.Imaging;
 using System.Collections.Generic;
 using Avalonia;
@@ -59,34 +60,49 @@ public class AnimatedSprite
 
     public void Update(double deltaTime)
     {
-        if (!_animations.ContainsKey(_currentState)) return;
+        if (!_animations.ContainsKey(_currentState)) 
+        {
+            Console.WriteLine($"No animation found for state: {_currentState}");
+            return;
+        }
 
         var config = _animations[_currentState];
         _animationTimer += deltaTime;
 
         if (_animationTimer >= config.FrameDuration)
         {
+            var oldFrame = _currentFrame;
             _animationTimer = 0;
-            _currentFrame++;
 
-            var maxFrame = config.StartFrame + config.FrameCount;
-            if (_currentFrame >= maxFrame)
+            if (_currentFrame >= config.StartFrame + config.FrameCount - 1)
             {
                 if (config.Loop)
                     _currentFrame = config.StartFrame;
                 else
-                    _currentFrame = maxFrame - 1;
+                    _currentFrame = config.StartFrame + config.FrameCount - 1;
             }
+            else
+            {
+                _currentFrame++;
+            }
+
+            Console.WriteLine($"Frame changed: {oldFrame} -> {_currentFrame} " +
+                            $"(State={_currentState}, Row={config.Row})");
         }
     }
 
     public Rect GetSourceRect()
     {
         var config = _animations[_currentState];
-        return new Rect(
+        var rect = new Rect(
             _currentFrame * FrameWidth,
             config.Row * FrameHeight,
             FrameWidth,
             FrameHeight);
+
+        Console.WriteLine($"Source Rect: X={rect.X}, Y={rect.Y}, " +
+                        $"W={rect.Width}, H={rect.Height}");
+                        
+        return rect;
     }
 }

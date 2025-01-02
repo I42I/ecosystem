@@ -70,42 +70,43 @@ public class Fox : Carnivore
             var spritePath = AssetHelper.GetAssetPath("Fox Sprite Sheet.png");
             InitializeSprite(spritePath, 32, 32);
 
+            Console.WriteLine("Initializing Fox animations");
+
             // Configure animations avec les bonnes lignes
             Sprite?.AddAnimation(AnimationState.Idle, 
                 new AnimatedSprite.AnimationConfig(
                     row: 0,
                     startFrame: 0,
                     frameCount: 5,
-                    frameDuration: 0.2));
+                    frameDuration: 0.05));
 
             Sprite?.AddAnimation(AnimationState.IdleAlt, 
                 new AnimatedSprite.AnimationConfig(
                     row: 1,
                     startFrame: 0,    
                     frameCount: 14,
-                    frameDuration: 0.2));
+                    frameDuration: 0.05));
 
             Sprite?.AddAnimation(AnimationState.Moving, 
                 new AnimatedSprite.AnimationConfig(
                     row: 2,
                     startFrame: 0,    
                     frameCount: 8,
-                    frameDuration: 0.1));
+                    frameDuration: 0.05));
 
             Sprite?.AddAnimation(AnimationState.Catching,
                 new AnimatedSprite.AnimationConfig(
                     row: 3,
                     startFrame: 0,
                     frameCount: 11,
-                    frameDuration: 0.1,
-                    loop: false));
+                    frameDuration: 0.05));
 
             Sprite?.AddAnimation(AnimationState.TakingDamage,
                 new AnimatedSprite.AnimationConfig(
                     row: 4,
                     startFrame: 0,
                     frameCount: 5,
-                    frameDuration: 0.1,
+                    frameDuration: 0.05,
                     loop: false));
 
             Sprite?.AddAnimation(AnimationState.Sleeping,
@@ -113,15 +114,17 @@ public class Fox : Carnivore
                     row: 5,
                     startFrame: 0,
                     frameCount: 6,
-                    frameDuration: 0.2));
+                    frameDuration: 0.05));
             
             Sprite?.AddAnimation(AnimationState.Dying,
                 new AnimatedSprite.AnimationConfig(
                     row: 6,
                     startFrame: 0,
                     frameCount: 7,
-                    frameDuration: 0.2,
+                    frameDuration: 0.05,
                     loop: false));
+
+            Console.WriteLine("Fox animations initialized successfully");
         }
         catch (Exception ex)
         {
@@ -148,9 +151,10 @@ public class Fox : Carnivore
             case "TakeDamage":
                 return AnimationState.TakingDamage;
             default:
-                if (MovementSpeed > 0)
-                    return AnimationState.Moving;
-                return (DateTime.Now.Second % 2 == 0) ? AnimationState.Idle : AnimationState.IdleAlt;
+                double deltaX = Math.Abs(_currentDirectionX);
+                double deltaY = Math.Abs(_currentDirectionY);
+                bool isMoving = deltaX > 0.01 || deltaY > 0.01;
+                return isMoving ? AnimationState.Moving : (RandomHelper.NextDouble() > 0.5 ? AnimationState.Idle : AnimationState.IdleAlt);
         }
     }
 

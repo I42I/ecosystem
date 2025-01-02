@@ -114,6 +114,7 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
 
+
     private void Entities_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         lock (_lock)
@@ -122,7 +123,13 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 foreach (Entity entity in e.NewItems)
                 {
-                    _entityViewModels.Add(new EntityViewModel(entity));
+                    var vm = new EntityViewModel(entity);
+                    _entityViewModels.Add(vm);
+                    
+                    if (_timeManager is TimeManager tm)
+                    {
+                        tm.SimulationUpdated += (s, e) => vm.UpdateAnimation(tm.DeltaTime);
+                    }
                 }
             }
             if (e.OldItems != null)

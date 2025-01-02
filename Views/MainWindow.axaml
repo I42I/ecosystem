@@ -63,12 +63,12 @@
                     <DataTemplate>
                         <Canvas>
                             <!-- Sprite Image -->
-                            <Image Width="{Binding ScaledContactRadius}"
-                                Height="{Binding ScaledContactRadius}"
+                            <Image Width="{Binding SpriteSize}"
+                                Height="{Binding SpriteSize}"
                                 Source="{Binding SpriteBitmap}"
                                 IsVisible="{Binding HasSprite}"
-                                Canvas.Left="{Binding CenteredContactX}"
-                                Canvas.Top="{Binding CenteredContactY}">
+                                Canvas.Left="{Binding SpriteCenteredX}"
+                                Canvas.Top="{Binding SpriteCenteredY}">
                                 <Image.RenderTransform>
                                     <ScaleTransform ScaleX="{Binding MovementDirection}" ScaleY="1"/>
                                 </Image.RenderTransform>

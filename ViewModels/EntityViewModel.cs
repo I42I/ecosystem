@@ -7,6 +7,7 @@ using ecosystem.Models.Animation;
 using ecosystem.Models.Entities.Animals;
 using Avalonia.Media.Imaging;
 using Avalonia;
+using ecosystem.Models.Behaviors.Movement;
 
 namespace ecosystem.ViewModels;
 
@@ -65,6 +66,9 @@ public class EntityViewModel : ViewModelBase
         OnPropertyChanged(nameof(CenteredContactY));
         OnPropertyChanged(nameof(CenteredRootX));
         OnPropertyChanged(nameof(CenteredRootY));
+        OnPropertyChanged(nameof(SpriteSize));
+        OnPropertyChanged(nameof(SpriteCenteredX));
+        OnPropertyChanged(nameof(SpriteCenteredY));
     }
 
     private void Entity_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -90,7 +94,13 @@ public class EntityViewModel : ViewModelBase
     }
 
     public bool HasSprite => _entity is IAnimatable;
+
+    public double SpriteSize => Entity is IAnimatable ? ScaledContactRadius * 2 : ScaledContactRadius;
+
+    public double SpriteCenteredX => DisplayX - SpriteSize / 2;
+    public double SpriteCenteredY => DisplayY - SpriteSize / 2;
     
+    private IImage? _currentSpriteBitmap;
     public IImage? SpriteBitmap
     {
         get
@@ -98,25 +108,32 @@ public class EntityViewModel : ViewModelBase
             if (_entity is IAnimatable animatable && animatable.Sprite != null)
             {
                 var sourceRect = animatable.Sprite.GetSourceRect();
-                return new CroppedBitmap(
+                _currentSpriteBitmap = new CroppedBitmap(
                     animatable.Sprite.SpriteSheet,
                     new PixelRect(
                         (int)sourceRect.X, 
                         (int)sourceRect.Y,
                         (int)sourceRect.Width, 
                         (int)sourceRect.Height));
+                return _currentSpriteBitmap;
             }
             return null;
         }
     }
 
+    private double _lastDirection = 1;
     public double MovementDirection
     {
         get
         {
-            if (_entity is Animal animal)
+            if (_entity is MoveableEntity moveable)
             {
-                return animal.MovementSpeed > 0 ? 1 : -1;
+                var direction = moveable.CurrentDirectionX;
+                if (Math.Abs(direction) > 0.01)
+                {
+                    _lastDirection = direction < 0 ? -1 : 1;
+                }
+                return _lastDirection;
             }
             return 1;
         }
@@ -124,6 +141,7 @@ public class EntityViewModel : ViewModelBase
 
     public void UpdateAnimation(double deltaTime)
     {
+        Console.WriteLine($"Updating animation for {_entity}");
         if (_entity is IAnimatable animatable)
         {
             animatable.UpdateAnimation(deltaTime);

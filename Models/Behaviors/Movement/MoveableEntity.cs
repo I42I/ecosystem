@@ -27,6 +27,7 @@ public abstract class MoveableEntity : LifeForm, IMoveable
 
     protected double _currentDirectionX = 0;
     protected double _currentDirectionY = 0;
+    public double CurrentDirectionX => _currentDirectionX;
     protected int _directionChangeTicks = 0;
 
     public virtual void Move(double deltaX, double deltaY)
@@ -38,10 +39,25 @@ public abstract class MoveableEntity : LifeForm, IMoveable
         {
             deltaX /= length;
             deltaY /= length;
+            
+            var oldDirection = _currentDirectionX;
+            _currentDirectionX = deltaX;
+            _currentDirectionY = deltaY;
+            
+            if (Math.Sign(oldDirection) != Math.Sign(_currentDirectionX))
+            {
+                OnPropertyChanged(nameof(CurrentDirectionX));
+            }
         }
 
         double newX = Math.Clamp(Position.X + deltaX * frameMovement, 0, 1);
         double newY = Math.Clamp(Position.Y + deltaY * frameMovement, 0, 1);
+
+        if (Math.Abs(newX - Position.X) < 0.001 && Math.Abs(newY - Position.Y) < 0.001)
+        {
+            _currentDirectionX = 0;
+            _currentDirectionY = 0;
+        }
 
         Position = new Position(newX, newY);
 
