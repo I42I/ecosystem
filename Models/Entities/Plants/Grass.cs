@@ -5,11 +5,14 @@ using ecosystem.Models.Core;
 using ecosystem.Services.World;
 using ecosystem.Services.Simulation;
 using ecosystem.Services.Factory;
+using ecosystem.Models.Animation;
+using ecosystem.Helpers;
 
 namespace ecosystem.Models.Entities.Plants;
 
-public class Grass : Plant
+public class Grass : Plant, IStaticSpriteEntity
 {
+    public ISprite? Sprite { get; private set; }
     public static int DefaultMaxHealth => 50;
     public static int DefaultMaxEnergy => 200;
     public override int MaxHealth => DefaultMaxHealth;
@@ -39,6 +42,15 @@ public class Grass : Plant
     {
         _entityFactory = entityFactory;
         Color = Brushes.Green;
+
+        try
+        {
+            Sprite = new StaticSprite(AssetHelper.GetAssetPath("Fern1_1.png"));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to load meat sprite: {ex.Message}");
+        }
     }
 
     public override EnvironmentType PreferredEnvironment => EnvironmentType.Ground;

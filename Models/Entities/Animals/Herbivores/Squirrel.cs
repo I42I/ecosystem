@@ -76,7 +76,6 @@ public class Squirrel : Herbivore
 
             Console.WriteLine("Initializing Fox animations");
 
-            // Configure animations avec les bonnes lignes
             Sprite?.AddAnimation(AnimationState.Idle, 
                 new AnimatedSprite.AnimationConfig(
                     row: 0,
@@ -143,7 +142,7 @@ public class Squirrel : Herbivore
         return _entityFactory.CreateAnimal<Squirrel>(60, 80, position, RandomHelper.Instance.NextDouble() > 0.5);
     }
 
-        protected override AnimationState DetermineAnimationState()
+    protected override AnimationState DetermineAnimationState()
     {
         if (IsDead) return AnimationState.Dead;
         
@@ -156,7 +155,7 @@ public class Squirrel : Herbivore
             default:
                 double deltaX = Math.Abs(_currentDirectionX);
                 double deltaY = Math.Abs(_currentDirectionY);
-                bool isMoving = deltaX > 0.01 || deltaY > 0.01;
+                bool isMoving = deltaX > 0.001 || deltaY > 0.001;
                 return isMoving ? AnimationState.Moving : (RandomHelper.NextDouble() > 0.5 ? AnimationState.Idle : AnimationState.IdleAlt);
         }
     }

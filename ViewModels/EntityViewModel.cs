@@ -93,14 +93,18 @@ public class EntityViewModel : ViewModelBase
         }
     }
 
-    public bool HasSprite => _entity is IAnimatable;
+    public bool HasSprite => _entity is IAnimatable || _entity is IStaticSpriteEntity;
 
-    public double SpriteSize => Entity is IAnimatable ? ScaledContactRadius * 3 : ScaledContactRadius;
+    public double SpriteSize => Entity switch
+    {
+        IAnimatable => ScaledContactRadius * 3,
+        IStaticSpriteEntity => ScaledContactRadius * 4,
+        _ => ScaledContactRadius
+    };
 
     public double SpriteCenteredX => DisplayX - SpriteSize / 2;
     public double SpriteCenteredY => DisplayY - SpriteSize / 2;
     
-    private IImage? _currentSpriteBitmap;
     public IImage? SpriteBitmap
     {
         get
@@ -108,14 +112,17 @@ public class EntityViewModel : ViewModelBase
             if (_entity is IAnimatable animatable && animatable.Sprite != null)
             {
                 var sourceRect = animatable.Sprite.GetSourceRect();
-                _currentSpriteBitmap = new CroppedBitmap(
+                return new CroppedBitmap(
                     animatable.Sprite.SpriteSheet,
                     new PixelRect(
                         (int)sourceRect.X, 
                         (int)sourceRect.Y,
                         (int)sourceRect.Width, 
                         (int)sourceRect.Height));
-                return _currentSpriteBitmap;
+            }
+            else if (_entity is IStaticSpriteEntity staticEntity && staticEntity.Sprite != null)
+            {
+                return staticEntity.Sprite.SpriteSheet;
             }
             return null;
         }

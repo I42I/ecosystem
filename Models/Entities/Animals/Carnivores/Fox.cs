@@ -72,7 +72,6 @@ public class Fox : Carnivore
 
             Console.WriteLine("Initializing Fox animations");
 
-            // Configure animations avec les bonnes lignes
             Sprite?.AddAnimation(AnimationState.Idle, 
                 new AnimatedSprite.AnimationConfig(
                     row: 0,
