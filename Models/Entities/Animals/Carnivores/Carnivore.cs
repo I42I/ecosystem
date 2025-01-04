@@ -58,7 +58,9 @@ public abstract class Carnivore : Animal
     {
         if (CanAttack(prey) && CanBiteBasedOnCooldown())
         {
+            Console.WriteLine($"Calculating damage for attack");
             int damage = CalculateAttackDamage();
+            Console.WriteLine($"Applying {damage} damage");
             prey.TakeDamage(damage);
             
             int energyGained = damage;

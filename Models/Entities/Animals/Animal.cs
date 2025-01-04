@@ -20,7 +20,6 @@ namespace ecosystem.Models.Entities.Animals;
 public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVisionRange, IAnimatable
 {
     private double _behaviorUpdateAccumulator;
-    
     protected readonly IEntityLocator<Animal> _entityLocator;
     protected readonly IWorldService _worldService;
     private readonly List<IBehavior<Animal>> _behaviors;
@@ -259,40 +258,35 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
     public virtual AnimatedSprite? Sprite { get; protected set; }
     public virtual AnimationState CurrentState { get; protected set; }
 
-    public virtual void UpdateAnimation(double deltaTime)
-    {
-        var newState = DetermineAnimationState();
-        if (newState != CurrentState)
-        {
-            CurrentState = newState;
-            Sprite?.SetState(CurrentState);
-        }
-
-        Sprite?.Update(deltaTime);
-    }
-
     protected virtual AnimationState DetermineAnimationState()
     {
         if (IsDead) return AnimationState.Dead;
         return MovementSpeed > 0 ? AnimationState.Moving : AnimationState.Idle;
     }
 
+    protected IAnimationManager? _animationManager;
+    
     protected virtual void InitializeSprite(string spritePath, int frameWidth, int frameHeight)
     {
         Sprite = new AnimatedSprite(spritePath, frameWidth, frameHeight);
+        _animationManager = new AnimationManager(Sprite);
+    }
+
+    public virtual void UpdateAnimation(double deltaTime)
+    {
+        if (_animationManager == null) return;
         
-        Sprite.AddAnimation(AnimationState.Idle, 
-            new AnimatedSprite.AnimationConfig(
-                row: 0,
-                startFrame: 0,
-                frameCount: 2,
-                frameDuration: 0.2));
-                
-        Sprite.AddAnimation(AnimationState.Moving, 
-            new AnimatedSprite.AnimationConfig(
-                row: 2,
-                startFrame: 0,
-                frameCount: 4,
-                frameDuration: 0.1));
+        if (!_animationManager.HasQueuedAnimations)
+        {
+            bool isMoving = Math.Abs(_currentDirectionX) > 0.01 || 
+                        Math.Abs(_currentDirectionY) > 0.01;
+                        
+            if (isMoving && _animationManager.CurrentState != AnimationState.Moving)
+            {
+                _animationManager.PlayAnimation(new AnimationEvent(AnimationState.Moving));
+            }
+        }
+        
+        _animationManager.Update(deltaTime);
     }
 }

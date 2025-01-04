@@ -21,14 +21,33 @@ public abstract class MoveableEntity : LifeForm, IMoveable
         : base(position, healthPoints, energy, environment, timeManager)
     {
         BasalMetabolicRate = basalMetabolicRate;
+        _previousPosition = position;
     }
 
     public virtual double MovementSpeed { get; set; }
 
     protected double _currentDirectionX = 0;
-    protected double _currentDirectionY = 0;
     public double CurrentDirectionX => _currentDirectionX;
-    protected int _directionChangeTicks = 0;
+    protected double _currentDirectionY = 0;
+    protected Position? _previousPosition;
+
+    private DateTime _lastMoveTime = DateTime.Now;
+    private const double MOVEMENT_TIMEOUT = 0.1;
+    private bool _wasMoving = false;
+    public bool IsMoving
+    {
+        get
+        {
+            bool currentlyMoving = (DateTime.Now - _lastMoveTime).TotalSeconds < MOVEMENT_TIMEOUT;
+            
+            if (currentlyMoving != _wasMoving)
+            {
+                _wasMoving = currentlyMoving;
+            }
+            
+            return currentlyMoving;
+        }
+    }
 
     public virtual void Move(double deltaX, double deltaY)
     {
@@ -39,30 +58,22 @@ public abstract class MoveableEntity : LifeForm, IMoveable
         {
             deltaX /= length;
             deltaY /= length;
-            
-            var oldDirection = _currentDirectionX;
-            _currentDirectionX = deltaX;
-            _currentDirectionY = deltaY;
-            
-            if (Math.Sign(oldDirection) != Math.Sign(_currentDirectionX))
-            {
-                OnPropertyChanged(nameof(CurrentDirectionX));
-            }
         }
 
+        double oldX = Position.X;
+        double oldY = Position.Y;
         double newX = Math.Clamp(Position.X + deltaX * frameMovement, 0, 1);
         double newY = Math.Clamp(Position.Y + deltaY * frameMovement, 0, 1);
 
-        if (Math.Abs(newX - Position.X) < 0.001 && Math.Abs(newY - Position.Y) < 0.001)
+        if (Math.Abs(newX - oldX) > 0.0001 || Math.Abs(newY - oldY) > 0.0001)
         {
-            _currentDirectionX = 0;
-            _currentDirectionY = 0;
+            Position = new Position(newX, newY);
+            _currentDirectionX = Math.Sign(newX - oldX);
+            _currentDirectionY = Math.Sign(newY - oldY);
+            _lastMoveTime = DateTime.Now;
         }
 
-        Position = new Position(newX, newY);
-
         _energyCostAccumulator += CalculateMovementEnergyCost(deltaX * frameMovement, deltaY * frameMovement);
-
         if (_energyCostAccumulator >= 1)
         {
             ConsumeEnergy((int)Math.Floor(_energyCostAccumulator));

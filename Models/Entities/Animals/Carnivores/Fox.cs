@@ -91,21 +91,22 @@ public class Fox : Carnivore
                     row: 2,
                     startFrame: 0,    
                     frameCount: 8,
-                    frameDuration: 0.02));
+                    frameDuration: 0.01));
 
             Sprite?.AddAnimation(AnimationState.Catching,
                 new AnimatedSprite.AnimationConfig(
                     row: 3,
                     startFrame: 0,
                     frameCount: 11,
-                    frameDuration: 0.02));
+                    frameDuration: 0.01,
+                    loop: false));
 
             Sprite?.AddAnimation(AnimationState.TakingDamage,
                 new AnimatedSprite.AnimationConfig(
                     row: 4,
                     startFrame: 0,
                     frameCount: 5,
-                    frameDuration: 0.02,
+                    frameDuration: 0.015,
                     loop: false));
 
             Sprite?.AddAnimation(AnimationState.Sleeping,
@@ -139,28 +140,33 @@ public class Fox : Carnivore
         return _entityFactory.CreateAnimal<Fox>(60, 80, position, RandomHelper.Instance.NextDouble() > 0.5);
     }
 
-    protected override AnimationState DetermineAnimationState()
+    public override void Attack(Animal prey)
     {
-        if (IsDead) return AnimationState.Dead;
-        
-        switch (Stats.CurrentBehavior)
-        {
-            case "Attack":
-                return AnimationState.Catching;
-            case "TakeDamage":
-                return AnimationState.TakingDamage;
-            default:
-                double deltaX = Math.Abs(_currentDirectionX);
-                double deltaY = Math.Abs(_currentDirectionY);
-                bool isMoving = deltaX > 0.01 || deltaY > 0.01;
-                return isMoving ? AnimationState.Moving : (RandomHelper.NextDouble() > 0.5 ? AnimationState.Idle : AnimationState.IdleAlt);
-        }
+        base.Attack(prey);
+        _animationManager?.PlayAnimation(new AnimationEvent(AnimationState.Catching, true));
     }
 
-    public override void Update()
+    public override void TakeDamage(double amount)
     {
-        base.Update();
-        UpdateAnimation(_timeManager.DeltaTime);
+        base.TakeDamage(amount);
+        _animationManager?.PlayAnimation(new AnimationEvent(AnimationState.TakingDamage, true));
+    }
+
+    public override void UpdateAnimation(double deltaTime)
+    {
+        if (_animationManager == null) return;
+
+        if (!_animationManager.HasQueuedAnimations)
+        {
+            AnimationState targetState = IsMoving ? AnimationState.Moving : AnimationState.Idle;
+
+            if (_animationManager.CurrentState != targetState)
+            {
+                _animationManager.PlayAnimation(new AnimationEvent(targetState));
+            }
+        }
+        
+        _animationManager.Update(deltaTime);
     }
 }
 

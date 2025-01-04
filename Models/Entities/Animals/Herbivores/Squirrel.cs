@@ -95,7 +95,7 @@ public class Squirrel : Herbivore
                     row: 2,
                     startFrame: 0,    
                     frameCount: 8,
-                    frameDuration: 0.02));
+                    frameDuration: 0.01));
 
             Sprite?.AddAnimation(AnimationState.Dig,
                 new AnimatedSprite.AnimationConfig(
@@ -117,7 +117,8 @@ public class Squirrel : Herbivore
                     row: 5,
                     startFrame: 0,
                     frameCount: 4,
-                    frameDuration: 0.02));
+                    frameDuration: 0.02,
+                    loop: false));
             
             Sprite?.AddAnimation(AnimationState.Dying,
                 new AnimatedSprite.AnimationConfig(
@@ -142,27 +143,32 @@ public class Squirrel : Herbivore
         return _entityFactory.CreateAnimal<Squirrel>(60, 80, position, RandomHelper.Instance.NextDouble() > 0.5);
     }
 
-    protected override AnimationState DetermineAnimationState()
+    public override void Eat(Plant plant)
     {
-        if (IsDead) return AnimationState.Dead;
-        
-        switch (Stats.CurrentBehavior)
-        {
-            case "Eat":
-                return AnimationState.Eat;
-            case "TakeDamage":
-                return AnimationState.TakingDamage;
-            default:
-                double deltaX = Math.Abs(_currentDirectionX);
-                double deltaY = Math.Abs(_currentDirectionY);
-                bool isMoving = deltaX > 0.001 || deltaY > 0.001;
-                return isMoving ? AnimationState.Moving : (RandomHelper.NextDouble() > 0.5 ? AnimationState.Idle : AnimationState.IdleAlt);
-        }
+        base.Eat(plant);
+        _animationManager?.PlayAnimation(new AnimationEvent(AnimationState.Eat, true)); 
     }
 
-    public override void Update()
+    public override void TakeDamage(double amount)
     {
-        base.Update();
-        UpdateAnimation(_timeManager.DeltaTime);
+        base.TakeDamage(amount);
+        _animationManager?.PlayAnimation(new AnimationEvent(AnimationState.TakingDamage, true));
+    }
+
+    public override void UpdateAnimation(double deltaTime)
+    {
+        if (_animationManager == null) return;
+
+        if (!_animationManager.HasQueuedAnimations)
+        {
+            AnimationState targetState = IsMoving ? AnimationState.Moving : AnimationState.Idle;
+
+            if (_animationManager.CurrentState != targetState)
+            {
+                _animationManager.PlayAnimation(new AnimationEvent(targetState));
+            }
+        }
+        
+        _animationManager.Update(deltaTime);
     }
 }

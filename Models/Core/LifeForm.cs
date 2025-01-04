@@ -96,7 +96,7 @@ public abstract class LifeForm : Entity, IHasContactRange
         }
     }
 
-    public void TakeDamage(double amount)
+    public virtual void TakeDamage(double amount)
     {
         _healthAccumulator += amount;
         

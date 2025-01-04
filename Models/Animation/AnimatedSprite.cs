@@ -12,6 +12,8 @@ public class AnimatedSprite
     private double _animationTimer;
     private int _currentFrame;
     private AnimationState _currentState;
+    public bool IsAnimationComplete => !_animations[_currentState].Loop && 
+        _currentFrame >= _animations[_currentState].StartFrame + _animations[_currentState].FrameCount - 1;
 
     public class AnimationConfig
     {
@@ -96,5 +98,10 @@ public class AnimatedSprite
             FrameWidth,
             FrameHeight);
         return rect;
+    }
+
+    public AnimationConfig? GetCurrentConfig()
+    {
+        return _animations.TryGetValue(_currentState, out var config) ? config : null;
     }
 }
