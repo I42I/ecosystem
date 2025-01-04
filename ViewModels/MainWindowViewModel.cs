@@ -7,6 +7,7 @@ using ecosystem.Services.Simulation;
 using ecosystem.Services.World;
 using ecosystem.Models.Core;
 using System.Collections.ObjectModel;
+using ecosystem.Helpers;
 
 namespace ecosystem.ViewModels;
 
@@ -31,6 +32,12 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private bool _debug = true;
 
+    [ObservableProperty]
+    private string _simulationTime = "00:00:00";
+    
+    [ObservableProperty] 
+    private int _simulationSeed = RandomHelper.Seed;
+
     public MainWindowViewModel(ISimulationEngine simulationEngine, ITimeManager timeManager, IWorldService worldService)
     {
         _simulationEngine = simulationEngine;
@@ -49,6 +56,9 @@ public partial class MainWindowViewModel : ViewModelBase
                     {
                         entityVM.UpdateDisplaySize(WindowWidth, WindowHeight);
                     }
+
+                    var time = TimeSpan.FromSeconds(tm.DisplayTime);
+                    SimulationTime = $"{time.Hours:D2}:{time.Minutes:D2}:{time.Seconds:D2}";
                 }
             };
         }
@@ -65,18 +75,23 @@ public partial class MainWindowViewModel : ViewModelBase
         Status = "Running";
     }
 
-    [RelayCommand]
-    private void StartSimulation()
-    {
-        _timeManager.Start();
-        Status = "Running";
-    }
+    [ObservableProperty] 
+    private bool _isRunning = true;
 
     [RelayCommand]
-    private void PauseSimulation()
+    private void ToggleSimulation()
     {
-        _timeManager.Pause();
-        Status = "Paused";
+        if (IsRunning)
+        {
+            _timeManager.Pause();
+            Status = "Paused";
+        }
+        else
+        {
+            _timeManager.Start();
+            Status = "Running"; 
+        }
+        IsRunning = !IsRunning;
     }
 
     [RelayCommand]
@@ -105,7 +120,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private double _windowWidth = 800;
 
     [ObservableProperty]
-    private double _windowHeight = 520;
+    private double _windowHeight = 600;
 
     partial void OnWindowWidthChanged(double value)
     {

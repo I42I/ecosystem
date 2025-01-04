@@ -31,6 +31,9 @@ public class TimeManager : ITimeManager
     public double DeltaTime => FIXED_TIME_STEP * _simulationSpeed * SimulationConstants.SIMULATION_SPEED;
     public event EventHandler? SimulationUpdated;
 
+    private double _displayTime;
+    private const double DISPLAY_TIME_MULTIPLIER = 10.0;
+
     public TimeManager()
     {
         _gameLoop = new GameLoop(UpdateLogic, Render);
@@ -45,6 +48,7 @@ public class TimeManager : ITimeManager
             action();
         }
         _currentTime += DeltaTime;
+        _displayTime += DeltaTime * DISPLAY_TIME_MULTIPLIER;
     }
 
     private void Render()
@@ -83,6 +87,8 @@ public class TimeManager : ITimeManager
         _isResetting = false;
     }
 
+    public double DisplayTime => _displayTime;
+
     public void Reset()
     {
         _isResetting = true;
@@ -93,6 +99,7 @@ public class TimeManager : ITimeManager
             _gameLoop.WaitForStop();
         }
         _currentTime = 0;
+        _displayTime = 0;
         _simulationSpeed = 1.0;
         _gameLoop = new GameLoop(UpdateLogic, Render);
         _isResetting = false;

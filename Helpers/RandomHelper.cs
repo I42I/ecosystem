@@ -8,7 +8,8 @@ public static class RandomHelper
     private static readonly object lockObject = new object();
     private static Random? instance;
     private const double BORDER_MARGIN = 0.05;
-    private static int seed = 42;
+    private static int _seed = 42;
+    public static int Seed => _seed;
 
     public static Random Instance
     {
@@ -16,7 +17,7 @@ public static class RandomHelper
         {
             lock (lockObject)
             {
-                return instance ??= new Random(seed);
+                return instance ??= new Random(_seed);
             }
         }
     }
@@ -25,9 +26,9 @@ public static class RandomHelper
     {
         lock (lockObject)
         {
-            seed = seedValue;
-            instance = new Random(seed);
-            Console.WriteLine($"Initialized RandomHelper with seed: {seed}");
+            _seed = seedValue;
+            instance = new Random(_seed);
+            Console.WriteLine($"Initialized RandomHelper with seed: {_seed}");
         }
     }
 

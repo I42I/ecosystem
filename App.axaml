@@ -9,6 +9,10 @@
         <helpers:OffsetConverter x:Key="AddOffset"/>
         <helpers:SafeAreaConverter x:Key="SafeAreaConverter"/>
         <helpers:SafeAreaMarginConverter x:Key="SafeAreaMarginConverter"/>
+        <helpers:BoolToColorConverter x:Key="BoolToColorConverter"/>
+        <helpers:BoolToValueConverter x:Key="BoolToValueConverter"
+                                TrueValue="Pause"
+                                FalseValue="Play"/>
     </Application.Resources>
 
     <Application.DataTemplates>
