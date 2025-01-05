@@ -29,9 +29,9 @@ public static class SimulationConstants
     public const double ENERGY_HEALTH_CONVERSION_RATE = 10;
 
     // Reproduction timings
-    public const double MALE_REPRODUCTION_COOLDOWN = 30.0;
+    public const double MALE_REPRODUCTION_COOLDOWN = 10.0;
     public const double GESTATION_PERIOD = 0.5;
-    public const double FEMALE_REPRODUCTION_COOLDOWN = 40.0;
+    public const double FEMALE_REPRODUCTION_COOLDOWN = 15.0;
 
     // Energy thresholds
     public const double MAX_ENERGY_PERCENT = 100.0;
@@ -44,11 +44,11 @@ public static class SimulationConstants
     // Organic waste constants
     public const double WASTE_CONTACT_RADIUS = 0.005;
     public const double WASTE_DECAY_RATE = 0.001;
-    public const double WASTE_BASE_ENERGY = 50;
-    public const double WASTE_MIN_ENERGY = 5;
+    public const double WASTE_BASE_ENERGY = 100;
+    public const double WASTE_MIN_ENERGY = 10;
 
     // Root system constants
-    public const double ROOT_GROWTH_RATE = 0.0001;
+    public const double ROOT_GROWTH_RATE = 0.0003;
     public const double MAX_ROOT_RADIUS = 0.2;
     public const double MIN_ROOT_RADIUS = 0.05;
     public const double WASTE_ABSORPTION_THRESHOLD = 0.001;

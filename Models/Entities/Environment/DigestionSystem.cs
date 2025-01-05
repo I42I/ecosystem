@@ -74,7 +74,7 @@ public class DigestionSystem : IDigestive
         double wasteRatio = 1 - SimulationConstants.DIGESTION_EFFICIENCY;
         int wasteAmount = Math.Max(
             SimulationConstants.MIN_WASTE_PER_DIGESTION,
-            (int)(_foodInDigestion * wasteRatio)
+            (int)(_foodInDigestion * wasteRatio * 10)
         );
         return wasteAmount;
     }

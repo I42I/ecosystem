@@ -98,7 +98,7 @@ public class EntityViewModel : ViewModelBase
     public double SpriteSize => Entity switch
     {
         IAnimatable => ScaledContactRadius * 3,
-        IStaticSpriteEntity => ScaledContactRadius * 3,
+        IStaticSpriteEntity => ScaledContactRadius * 2,
         _ => ScaledContactRadius
     };
 

@@ -28,6 +28,9 @@ public class Squirrel : Herbivore
     public override double BaseHungerThreshold => 55.0;
     protected override double BaseReproductionThreshold => 70.0;
     protected override double BaseReproductionEnergyCost => 20.0;
+    public double GestationPeriod => 0.2;
+    public double MaleReproductionCooldown => 3.0;
+    public double FemaleReproductionCooldown => 5.0;
     protected override double SpeciesEnergyCostModifier => 0.8;
     public static EnvironmentType DefaultEnvironment => EnvironmentType.Ground;
     public override EnvironmentType PreferredEnvironment => DefaultEnvironment;
@@ -141,6 +144,11 @@ public class Squirrel : Herbivore
         }
 
         Console.WriteLine($"Created Squirrel with color {Color} at {Position.X}, {Position.Y}");
+    }
+
+    public override int GetOffspringCount()
+    {
+        return RandomHelper.Instance.Next(1, 4);
     }
 
     public override Animal CreateOffspring(Position position)

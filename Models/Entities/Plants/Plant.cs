@@ -22,6 +22,10 @@ public abstract class Plant : LifeForm, IHasRootSystem
     public double RootRadius { get; protected set; }
     public double SeedRadius { get; protected set; }
 
+    private const double BASE_HEALING_COST = 2.0;
+    private const double RADIUS_GROWTH_RATE = 0.003;
+    private readonly double _baseContactRadius;
+
     protected Plant(
         int healthPoints,
         int energy,
@@ -35,15 +39,38 @@ public abstract class Plant : LifeForm, IHasRootSystem
         ITimeManager timeManager)
         : base(position, healthPoints, energy, environment, timeManager)
     {
+        _baseContactRadius = contactRadius;
+        ContactRadius = contactRadius;
         _worldService = worldService;
         RootRadius = rootRadius;
         SeedRadius = seedRadius;
         ContactRadius = contactRadius;
     }
 
+    private double _absorptionCooldown = 0;
     protected override void UpdateBehavior()
     {
+        base.UpdateBehavior();
+
+        if (Energy > SimulationConstants.HEALING_ENERGY_THRESHOLD/100 * MaxEnergy)
+        {
+            double excessEnergy = Energy - (SimulationConstants.HEALING_ENERGY_THRESHOLD/100 * MaxEnergy);
+            double energyToConvert = Math.Min(5, excessEnergy * 0.1);
+            
+            if (energyToConvert >= 1)
+            {
+                ConvertEnergyToHealth(energyToConvert);
+            }
+        }
+
+        UpdateContactRadius();
+
         ConsumeEnergy(SimulationConstants.BASE_ENERGY_LOSS * _timeManager.DeltaTime);
+
+        if (_absorptionCooldown > 0)
+        {
+            _absorptionCooldown -= _timeManager.DeltaTime;
+        }
 
         var nearbyWaste = _worldService.GetEntitiesInRange(Position, RootRadius)
             .OfType<OrganicWaste>()
@@ -51,7 +78,11 @@ public abstract class Plant : LifeForm, IHasRootSystem
 
         foreach (var waste in nearbyWaste)
         {
-            AbsorbWaste(waste);
+            if (_absorptionCooldown <= 0)
+            {
+                AbsorbWaste(waste);
+                _absorptionCooldown = 0.2;
+            }
         }
 
         _growthAccumulator += _timeManager.DeltaTime;
@@ -78,6 +109,36 @@ public abstract class Plant : LifeForm, IHasRootSystem
         }
     }
 
+    private void UpdateContactRadius()
+    {
+        if (HealthPoints > MaxHealth)
+        {
+            double healthExcess = HealthPoints - MaxHealth;
+            double growthFactor = Math.Log10(1 + healthExcess) * RADIUS_GROWTH_RATE;
+            ContactRadius = _baseContactRadius + growthFactor;
+        }
+        else
+        {
+            ContactRadius = _baseContactRadius;
+        }
+    }
+
+    protected void ConvertEnergyToHealth(double energyAmount)
+    {
+        if (energyAmount <= 0) return;
+
+        int energyToConvert = (int)Math.Ceiling(energyAmount);
+        int healingAmount = (int)(energyToConvert / BASE_HEALING_COST);
+
+        if (healingAmount > 0)
+        {
+            Energy -= energyToConvert;
+            HealthPoints += healingAmount;
+                
+            Console.WriteLine($"[{GetType().Name}#{TypeId}] Converted {energyToConvert} energy to {healingAmount} health. New HP: {HealthPoints}");
+        }
+    }
+
     protected virtual void ProcessGrowth()
     {
         if (Environment.HasFlag(PreferredEnvironment))
@@ -88,17 +149,32 @@ public abstract class Plant : LifeForm, IHasRootSystem
 
     protected virtual void AbsorbWaste(OrganicWaste waste)
     {
-        double absorbedEnergy = waste.EnergyValue * BaseAbsorptionRate * _timeManager.DeltaTime;
+        // Absorption plus significative
+        double absorbedEnergy = waste.EnergyValue * BaseAbsorptionRate;
+        
+        Console.WriteLine($"[{GetType().Name}#{TypeId}] attempting to absorb {absorbedEnergy} energy from waste with value {waste.EnergyValue}");
 
         if (absorbedEnergy >= SimulationConstants.WASTE_ABSORPTION_THRESHOLD)
         {
+            // Absorber une partie significative de l'énergie
             int energyToAbsorb = (int)Math.Ceiling(absorbedEnergy);
+            int previousEnergy = Energy;
             Energy += energyToAbsorb;
-            waste.EnergyValue -= energyToAbsorb;
+            waste.EnergyValue = Math.Max(0, waste.EnergyValue - energyToAbsorb);
 
+            // Croissance plus significative
             double growthFactor = energyToAbsorb * SimulationConstants.ROOT_GROWTH_RATE;
+            double previousRadius = RootRadius;
             RootRadius += growthFactor;
             RootRadius = Math.Min(RootRadius, SimulationConstants.MAX_ROOT_RADIUS);
+
+            Console.WriteLine($"[{GetType().Name}#{TypeId}]: Energy {previousEnergy}->{Energy}, Radius {previousRadius:F3}->{RootRadius:F3}");
+
+            // Si le déchet n'a plus d'énergie, le supprimer
+            if (waste.EnergyValue <= 0)
+            {
+                _worldService.RemoveEntity(waste);
+            }
         }
     }
 

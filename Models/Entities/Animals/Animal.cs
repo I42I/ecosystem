@@ -111,15 +111,17 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
                 behavior.Execute(this);
             }
 
-            if (IsPregnant)
+            if (IsPregnant && _currentPregnancy.HasValue)
             {
-                if (_currentPregnancy.HasValue)
+                var pregnancy = _currentPregnancy.Value;
+                pregnancy.GestationProgress += _timeManager.DeltaTime / 
+                    ((this as IReproductionConstants)?.GestationPeriod ?? SimulationConstants.GESTATION_PERIOD);
+                _currentPregnancy = pregnancy;
+
+                if (pregnancy.GestationProgress >= 1.0)
                 {
-                    _currentPregnancy = new Pregnancy
-                    {
-                        GestationProgress = _currentPregnancy.Value.GestationProgress + _timeManager.DeltaTime,
-                        Father = _currentPregnancy.Value.Father
-                    };
+                    IsPregnant = false;
+                    _currentPregnancy = null;
                 }
             }
 
@@ -177,6 +179,10 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
             ?? new EnvironmentPreference(EnvironmentType.None, 0.3, 3.0);
     }
 
+    public virtual int GetOffspringCount()
+    {
+        return 1;
+    }
     public abstract Animal CreateOffspring(Position position);
 
     protected override IBehavior<LifeForm>? GetCurrentBehavior()
@@ -202,7 +208,7 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
 
     public void ConvertEnergyToHealth(double amount)
     {
-        if (Energy >= SimulationConstants.HEALING_ENERGY_THRESHOLD &&
+        if (Energy >= SimulationConstants.HEALING_ENERGY_THRESHOLD/100 * MaxEnergy &&
             HealthPoints < MaxHealth)
         {
             var excessEnergy = Math.Min(amount, Energy - SimulationConstants.HEALING_ENERGY_THRESHOLD);
@@ -224,8 +230,9 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
     protected struct Pregnancy
     {
         public double GestationProgress { get; set; }
-        public Animal Father { get; set; }
+        public Animal Father { get; init; }
     }
+    
     private Pregnancy? _currentPregnancy;
 
     public void StartPregnancy(Animal father)
@@ -233,19 +240,19 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
         if (!IsPregnant && !IsMale)
         {
             IsPregnant = true;
-            _currentPregnancy = new Pregnancy 
-            { 
+            _currentPregnancy = new Pregnancy
+            {
                 GestationProgress = 0,
                 Father = father
             };
+            ReproductionCooldown = (this as IReproductionConstants)?.FemaleReproductionCooldown 
+                ?? SimulationConstants.FEMALE_REPRODUCTION_COOLDOWN;
         }
     }
 
     public bool IsReadyToGiveBirth()
     {
-        return IsPregnant && 
-            _currentPregnancy.HasValue && 
-            _currentPregnancy.Value.GestationProgress >= SimulationConstants.GESTATION_PERIOD;
+        return _currentPregnancy?.GestationProgress >= 1.0;
     }
 
     protected void ProcessFoodConsumption(int amount)

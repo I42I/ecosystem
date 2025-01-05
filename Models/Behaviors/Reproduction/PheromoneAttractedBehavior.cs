@@ -48,7 +48,10 @@ public class PheromoneAttractedBehavior : IBehavior<Animal>
             {
                 animal.RemoveEnergy((int)animal.ReproductionEnergyCost);
                 mate.StartPregnancy(animal);
-                animal.ReproductionCooldown = SimulationConstants.MALE_REPRODUCTION_COOLDOWN;
+                
+                animal.ReproductionCooldown = (animal as IReproductionConstants)?.MaleReproductionCooldown 
+                    ?? SimulationConstants.MALE_REPRODUCTION_COOLDOWN;
+                    
                 Console.WriteLine($"Male {animal.GetType().Name} successfully mated");
             }
             else

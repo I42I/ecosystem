@@ -7,6 +7,13 @@ using ecosystem.Services.Simulation;
 
 namespace ecosystem.Models.Behaviors.Reproduction;
 
+public interface IReproductionConstants
+{
+    double GestationPeriod { get; }
+    double MaleReproductionCooldown { get; }
+    double FemaleReproductionCooldown { get; }
+}
+
 public class BirthBehavior : IBehavior<Animal>
 {
     public string Name => "Birth";
@@ -22,20 +29,25 @@ public class BirthBehavior : IBehavior<Animal>
     
     public void Execute(Animal animal)
     {
-        var spawnPosition = RandomHelper.GetRandomPositionInRadiusForEnvironment(
-            animal.Position.X,
-            animal.Position.Y,
-            animal.ContactRadius * 2,
-            animal.PreferredEnvironment,
-            animal.WorldService
-        );
-            
-        var offspring = animal.CreateOffspring(spawnPosition);
-        animal.WorldService.AddEntity(offspring);
+        int offspringCount = animal.GetOffspringCount();
+        
+        for (int i = 0; i < offspringCount; i++)
+        {
+            var spawnPosition = RandomHelper.GetRandomPositionInRadiusForEnvironment(
+                animal.Position.X,
+                animal.Position.Y,
+                animal.ContactRadius * 2,
+                animal.PreferredEnvironment,
+                animal.WorldService
+            );
+                
+            var offspring = animal.CreateOffspring(spawnPosition);
+            animal.WorldService.AddEntity(offspring);
+        }
         
         animal.IsPregnant = false;
         animal.ReproductionCooldown = SimulationConstants.FEMALE_REPRODUCTION_COOLDOWN;
         
-        Console.WriteLine($"Female {animal.GetType().Name} gave birth at ({spawnPosition.X:F2}, {spawnPosition.Y:F2})");
+        Console.WriteLine($"Female {animal.GetType().Name} gave birth to {offspringCount} offspring");
     }
 }
