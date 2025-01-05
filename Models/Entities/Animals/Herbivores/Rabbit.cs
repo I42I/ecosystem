@@ -28,7 +28,8 @@ public class Rabbit : Herbivore
     protected override double BaseReproductionThreshold => 70.0;
     protected override double BaseReproductionEnergyCost => 20.0;
     protected override double SpeciesEnergyCostModifier => 0.8;
-    public override EnvironmentType PreferredEnvironment => EnvironmentType.Ground;
+    public static EnvironmentType DefaultEnvironment => EnvironmentType.Ground;
+    public override EnvironmentType PreferredEnvironment => DefaultEnvironment;
     private readonly IEntityFactory _entityFactory;
 
 

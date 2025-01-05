@@ -112,21 +112,25 @@ public abstract class Plant : LifeForm, IHasRootSystem
 
     private void SpreadSeeds()
     {
-        var (x, y) = RandomHelper.GetRandomPositionInRadius(
-            Position.X,
-            Position.Y,
-            SeedRadius
-        );
-        
-        var newPosition = new Position(x, y);
-        
-        if (_worldService.GetEnvironmentAt(newPosition).HasFlag(PreferredEnvironment))
+        int maxAttempts = 10;
+        for (int i = 0; i < maxAttempts; i++)
         {
-            var offspring = CreateOffspring(newPosition);
-            Energy -= (int)SimulationConstants.PLANT_REPRODUCTION_ENERGY_COST;
-            
-            _worldService.AddEntity(offspring);
-            Console.WriteLine($"{GetType().Name}#{TypeId} spread seeds at ({x:F2}, {y:F2})");
+            var position = RandomHelper.GetRandomPositionInRadiusForEnvironment(
+                Position.X,
+                Position.Y,
+                SeedRadius,
+                PreferredEnvironment,
+                _worldService
+            );
+
+            if (_worldService.IsValidSpawnLocation(position, PreferredEnvironment))
+            {
+                var offspring = CreateOffspring(position);
+                Energy -= (int)SimulationConstants.PLANT_REPRODUCTION_ENERGY_COST;
+                _worldService.AddEntity(offspring);
+                Console.WriteLine($"{GetType().Name}#{TypeId} spread seeds at ({position.X:F2}, {position.Y:F2})");
+                return;
+            }
         }
     }
 

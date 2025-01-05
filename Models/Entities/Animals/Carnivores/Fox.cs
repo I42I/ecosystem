@@ -26,7 +26,8 @@ public class Fox : Carnivore
     protected override double BaseReproductionThreshold => 60.0;
     protected override double BaseReproductionEnergyCost => 30.0;
     protected override double SpeciesEnergyCostModifier => 1.2;
-    public override EnvironmentType PreferredEnvironment => EnvironmentType.Ground;
+    public static EnvironmentType DefaultEnvironment => EnvironmentType.Ground;
+    public override EnvironmentType PreferredEnvironment => DefaultEnvironment;
     private readonly Position _territoryCenter;
     private readonly IEntityFactory _entityFactory;
 
@@ -58,9 +59,13 @@ public class Fox : Carnivore
         MovementSpeed = 2.0;
         Color = Brushes.Orange;
         _territoryCenter = position;
-
+        
         _environmentPreferences.Clear();
-        _environmentPreferences.Add(new EnvironmentPreference(PreferredEnvironment, 1.0, 1.0));
+        _environmentPreferences.Add(new EnvironmentPreference(
+            PreferredEnvironment, 
+            movementMod: 1.0,
+            energyLossMod: 1.0
+        ));
         
         AddBehavior(new HuntingBehavior(worldService, new GroundHuntingStrategy(worldService)));
         // AddBehavior(new TerritorialBehavior(worldService, position));

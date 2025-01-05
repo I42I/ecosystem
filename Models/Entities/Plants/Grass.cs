@@ -18,6 +18,8 @@ public class Grass : Plant, IStaticSpriteEntity
     public override int MaxHealth => DefaultMaxHealth;
     public override int MaxEnergy => DefaultMaxEnergy;
     protected override double BaseAbsorptionRate => 0.2;
+    public static EnvironmentType DefaultEnvironment => EnvironmentType.Ground;
+    public override EnvironmentType PreferredEnvironment => DefaultEnvironment;
     private readonly IEntityFactory _entityFactory;
 
 
@@ -52,8 +54,6 @@ public class Grass : Plant, IStaticSpriteEntity
             Console.WriteLine($"Failed to load meat sprite: {ex.Message}");
         }
     }
-
-    public override EnvironmentType PreferredEnvironment => EnvironmentType.Ground;
 
     protected override bool CanSpreadSeeds()
     {

@@ -1,6 +1,7 @@
 using System;
 using ecosystem.Models.Core;
 using ecosystem.Models.Entities.Environment;
+using ecosystem.Services.World;
 
 namespace ecosystem.Helpers;
 
@@ -79,5 +80,38 @@ public static class RandomHelper
             double angle = Instance.NextDouble() * 2 * Math.PI;
             return (Math.Cos(angle), Math.Sin(angle));
         }
+    }
+
+    public static Position GetRandomPositionForEnvironment(EnvironmentType environment, IWorldService worldService, int maxAttempts = 50)
+    {
+        for (int i = 0; i < maxAttempts; i++)
+        {
+            var position = GetRandomPosition();
+            if (worldService.IsValidSpawnLocation(position, environment))
+            {
+                return position;
+            }
+        }
+        throw new InvalidOperationException($"Could not find valid spawn location for environment {environment} after {maxAttempts} attempts");
+    }
+
+    public static Position GetRandomPositionInRadiusForEnvironment(
+        double centerX, 
+        double centerY, 
+        double radius, 
+        EnvironmentType environment,
+        IWorldService worldService,
+        int maxAttempts = 50)
+    {
+        for (int i = 0; i < maxAttempts; i++)
+        {
+            var (x, y) = GetRandomPositionInRadius(centerX, centerY, radius);
+            var position = new Position(x, y);
+            if (worldService.IsValidSpawnLocation(position, environment))
+            {
+                return position;
+            }
+        }
+        return new Position(centerX, centerY);
     }
 }

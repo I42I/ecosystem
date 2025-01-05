@@ -15,6 +15,8 @@ public class Algae : Plant
     public override int MaxHealth => DefaultMaxHealth;
     public override int MaxEnergy => DefaultMaxEnergy;
     protected override double BaseAbsorptionRate => 0.3;
+    public static EnvironmentType DefaultEnvironment => EnvironmentType.Water;
+    public override EnvironmentType PreferredEnvironment => DefaultEnvironment;
     private readonly IEntityFactory _entityFactory;
 
     public Algae(
@@ -39,8 +41,6 @@ public class Algae : Plant
         _entityFactory = entityFactory;
         Color = Brushes.LightSeaGreen;
     }
-
-    public override EnvironmentType PreferredEnvironment => EnvironmentType.Water;
 
     protected override bool CanSpreadSeeds()
     {

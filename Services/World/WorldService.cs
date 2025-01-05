@@ -17,6 +17,7 @@ public interface IWorldService
     EnvironmentType GetEnvironmentAt(Position position);
     IEnumerable<Entity> GetEntitiesInRange(Position position, double radius);
     void ProcessEntityQueues();
+    bool IsValidSpawnLocation(Position position, EnvironmentType requiredEnvironment);
 }
 
 public class WorldService : IWorldService
@@ -95,5 +96,11 @@ public class WorldService : IWorldService
         var dx = pos1.X - pos2.X;
         var dy = pos1.Y - pos2.Y;
         return Math.Sqrt(dx * dx + dy * dy);
+    }
+
+    public bool IsValidSpawnLocation(Position position, EnvironmentType requiredEnvironment)
+    {
+        var environment = GetEnvironmentAt(position);
+        return environment.HasFlag(requiredEnvironment);
     }
 }

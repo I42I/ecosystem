@@ -22,17 +22,20 @@ public class BirthBehavior : IBehavior<Animal>
     
     public void Execute(Animal animal)
     {
-        var (x, y) = RandomHelper.GetRandomPositionInRadius(
-            animal.Position.X, 
+        var spawnPosition = RandomHelper.GetRandomPositionInRadiusForEnvironment(
+            animal.Position.X,
             animal.Position.Y,
-            animal.ContactRadius * 2);
+            animal.ContactRadius * 2,
+            animal.PreferredEnvironment,
+            animal.WorldService
+        );
             
-        var offspring = animal.CreateOffspring(new Position(x, y));
+        var offspring = animal.CreateOffspring(spawnPosition);
         animal.WorldService.AddEntity(offspring);
         
         animal.IsPregnant = false;
         animal.ReproductionCooldown = SimulationConstants.FEMALE_REPRODUCTION_COOLDOWN;
         
-        Console.WriteLine($"Female {animal.GetType().Name} gave birth at ({x:F2}, {y:F2})");
+        Console.WriteLine($"Female {animal.GetType().Name} gave birth at ({spawnPosition.X:F2}, {spawnPosition.Y:F2})");
     }
 }
