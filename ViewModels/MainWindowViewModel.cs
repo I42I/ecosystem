@@ -81,59 +81,27 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         _gridCells.Clear();
         
-        const int DETAIL_LEVEL = 4; // Plus le nombre est grand, plus la transition sera lisse
-        var baseWidth = WindowWidth / _worldService.Grid.Width;
-        var baseHeight = WindowHeight / _worldService.Grid.Height;
+        var cellWidth = WindowWidth / _worldService.Grid.Width;
+        var cellHeight = WindowHeight / _worldService.Grid.Height;
 
         for (int x = 0; x < _worldService.Grid.Width; x++)
         {
             for (int y = 0; y < _worldService.Grid.Height; y++)
             {
-                var (type, weight) = _worldService.Grid.GetEnvironmentInfoAt(x, y);
-                
-                // Subdiviser chaque cellule près des frontières
-                int subdivisions = DetermineSubdivisions(weight);
-                var subWidth = baseWidth / subdivisions;
-                var subHeight = baseHeight / subdivisions;
+                var envType = _worldService.Grid.GetEnvironmentAt(x, y);
+                var color = envType == EnvironmentType.Water ? 
+                    new SolidColorBrush(Colors.DeepSkyBlue) : 
+                    new SolidColorBrush(Colors.ForestGreen);
 
-                for (int sx = 0; sx < subdivisions; sx++)
-                {
-                    for (int sy = 0; sy < subdivisions; sy++)
-                    {
-                        var subX = x * baseWidth + sx * subWidth;
-                        var subY = y * baseHeight + sy * subHeight;
-
-                        // Interpoler la couleur
-                        var groundColor = Colors.SandyBrown;
-                        var waterColor = Colors.LightBlue;
-                        
-                        var color = new Color(
-                            (byte)(waterColor.R + (groundColor.R - waterColor.R) * weight),
-                            (byte)(waterColor.G + (groundColor.G - waterColor.G) * weight),
-                            (byte)(waterColor.B + (groundColor.B - waterColor.B) * weight),
-                            255
-                        );
-
-                        _gridCells.Add(new GridCellViewModel(
-                            subX,
-                            subY,
-                            subWidth + 0.5, // +0.5 pour éviter les gaps
-                            subHeight + 0.5,
-                            new SolidColorBrush(color)
-                        ));
-                    }
-                }
+                _gridCells.Add(new GridCellViewModel(
+                    x * cellWidth,
+                    y * cellHeight,
+                    cellWidth + 1,
+                    cellHeight + 1,
+                    color
+                ));
             }
         }
-    }
-
-    private int DetermineSubdivisions(float weight)
-    {
-        // Plus on est proche de 0.5 (frontière), plus on subdivise
-        float threshold = Math.Abs(weight - 0.5f);
-        if (threshold < 0.1f) return 4;      // Très près de la frontière
-        if (threshold < 0.2f) return 2;      // Assez près de la frontière
-        return 1;                            // Loin de la frontière
     }
 
     public void InitializeAndStart()

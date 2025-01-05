@@ -1,5 +1,6 @@
 using System;
 using ecosystem.Models.Core;
+using ecosystem.Models.Entities.Environment;
 
 namespace ecosystem.Helpers;
 
