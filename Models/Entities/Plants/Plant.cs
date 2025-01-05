@@ -134,8 +134,6 @@ public abstract class Plant : LifeForm, IHasRootSystem
         {
             Energy -= energyToConvert;
             HealthPoints += healingAmount;
-                
-            Console.WriteLine($"[{GetType().Name}#{TypeId}] Converted {energyToConvert} energy to {healingAmount} health. New HP: {HealthPoints}");
         }
     }
 
@@ -149,28 +147,20 @@ public abstract class Plant : LifeForm, IHasRootSystem
 
     protected virtual void AbsorbWaste(OrganicWaste waste)
     {
-        // Absorption plus significative
         double absorbedEnergy = waste.EnergyValue * BaseAbsorptionRate;
-        
-        Console.WriteLine($"[{GetType().Name}#{TypeId}] attempting to absorb {absorbedEnergy} energy from waste with value {waste.EnergyValue}");
 
         if (absorbedEnergy >= SimulationConstants.WASTE_ABSORPTION_THRESHOLD)
         {
-            // Absorber une partie significative de l'énergie
             int energyToAbsorb = (int)Math.Ceiling(absorbedEnergy);
             int previousEnergy = Energy;
             Energy += energyToAbsorb;
             waste.EnergyValue = Math.Max(0, waste.EnergyValue - energyToAbsorb);
 
-            // Croissance plus significative
             double growthFactor = energyToAbsorb * SimulationConstants.ROOT_GROWTH_RATE;
             double previousRadius = RootRadius;
             RootRadius += growthFactor;
             RootRadius = Math.Min(RootRadius, SimulationConstants.MAX_ROOT_RADIUS);
-
-            Console.WriteLine($"[{GetType().Name}#{TypeId}]: Energy {previousEnergy}->{Energy}, Radius {previousRadius:F3}->{RootRadius:F3}");
-
-            // Si le déchet n'a plus d'énergie, le supprimer
+            
             if (waste.EnergyValue <= 0)
             {
                 _worldService.RemoveEntity(waste);

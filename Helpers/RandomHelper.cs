@@ -10,7 +10,7 @@ public static class RandomHelper
     private static readonly object lockObject = new object();
     private static Random? instance;
     private const double BORDER_MARGIN = 0.05;
-    private static int _seed = 42;
+    private static int _seed;
     public static int Seed => _seed;
 
     public static Random Instance

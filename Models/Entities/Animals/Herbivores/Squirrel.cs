@@ -17,7 +17,7 @@ using ecosystem.Models.Animation;
 
 namespace ecosystem.Models.Entities.Animals.Herbivores;
 
-public class Squirrel : Herbivore
+public class Squirrel : Herbivore, IReproductionConstants
 {
     public static int DefaultMaxHealth => 60;
     public static int DefaultMaxEnergy => 80;
@@ -82,7 +82,7 @@ public class Squirrel : Herbivore
             var spritePath = AssetHelper.GetAssetPath("Squirrel Sprite Sheet.png");
             InitializeSprite(spritePath, 32, 32);
 
-            Console.WriteLine("Initializing Fox animations");
+            Console.WriteLine("Initializing Squirrel animations");
 
             Sprite?.AddAnimation(AnimationState.Idle, 
                 new AnimatedSprite.AnimationConfig(
@@ -117,7 +117,7 @@ public class Squirrel : Herbivore
                     row: 4,
                     startFrame: 0,
                     frameCount: 2,
-                    frameDuration: 0.02,
+                    frameDuration: 0.04,
                     loop: false));
 
             Sprite?.AddAnimation(AnimationState.TakingDamage,

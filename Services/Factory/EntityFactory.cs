@@ -104,7 +104,64 @@ public class EntityFactory : IEntityFactory
                 isMale);
             return (T)(Animal)squirrel;
         }
+        else if (typeof(T) == typeof(Fish))
+        {
+            if (!_worldService.IsValidSpawnLocation(position, Fish.DefaultEnvironment))
+            {
+                position = RandomHelper.GetRandomPositionForEnvironment(Fish.DefaultEnvironment, _worldService);
+            }
 
+            var fish = new Fish(
+                _entityLocator,
+                _plantLocator,
+                _worldService,
+                _timeManager,
+                this,
+                position,
+                (int)(Fish.DefaultMaxHealth * initialHealthPercent / 100),
+                (int)(Fish.DefaultMaxEnergy * initialEnergyPercent / 100),
+                isMale);
+            return (T)(Animal)fish;
+        }
+        else if (typeof(T) == typeof(Duck))
+        {
+            if (!_worldService.IsValidSpawnLocation(position, Duck.DefaultEnvironment))
+            {
+                position = RandomHelper.GetRandomPositionForEnvironment(Duck.DefaultEnvironment, _worldService);
+            }
+
+            var duck = new Duck(
+                _entityLocator,
+                _plantLocator,
+                _worldService,
+                _timeManager,
+                this,
+                position,
+                (int)(Duck.DefaultMaxHealth * initialHealthPercent / 100),
+                (int)(Duck.DefaultMaxEnergy * initialEnergyPercent / 100),
+                isMale);
+            return (T)(Animal)duck;
+        }
+        else if (typeof(T) == typeof(Shark))
+        {
+            if (!_worldService.IsValidSpawnLocation(position, Shark.DefaultEnvironment))
+            {
+                position = RandomHelper.GetRandomPositionForEnvironment(Shark.DefaultEnvironment, _worldService);
+            }
+
+            var shark = new Shark(
+                _entityLocator,
+                _entityLocator,
+                _worldService,
+                _timeManager,
+                this,
+                position,
+                (int)(Shark.DefaultMaxHealth * initialHealthPercent / 100),
+                (int)(Shark.DefaultMaxEnergy * initialEnergyPercent / 100),
+                isMale);
+            return (T)(Animal)shark;
+        }
+        
         throw new ArgumentException($"Unsupported animal type: {typeof(T).Name}");
     }
 
@@ -132,6 +189,26 @@ public class EntityFactory : IEntityFactory
                 position
             );
             return (T)(Plant)grass;
+        }
+        else if (typeof(T) == typeof(Algae))
+        {
+            if (!_worldService.IsValidSpawnLocation(position, Algae.DefaultEnvironment))
+            {
+                position = RandomHelper.GetRandomPositionForEnvironment(
+                    Algae.DefaultEnvironment,
+                    _worldService
+                );
+            }
+
+            var algae = new Algae(
+                _worldService,
+                _timeManager,
+                this,
+                (int)(Algae.DefaultMaxHealth * initialHealthPercent / 100),
+                (int)(Algae.DefaultMaxEnergy * initialEnergyPercent / 100),
+                position
+            );
+            return (T)(Plant)algae;
         }
         else if (typeof(T) == typeof(Algae))
         {

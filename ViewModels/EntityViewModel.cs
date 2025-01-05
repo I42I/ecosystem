@@ -4,7 +4,7 @@ using Avalonia.Media;
 using ecosystem.Models.Core;
 using ecosystem.Models.Radius;
 using ecosystem.Models.Animation;
-using ecosystem.Models.Entities.Animals;
+using ecosystem.Models.Entities.Animals.Herbivores;
 using Avalonia.Media.Imaging;
 using Avalonia;
 using ecosystem.Models.Behaviors.Movement;
@@ -97,6 +97,7 @@ public class EntityViewModel : ViewModelBase
 
     public double SpriteSize => Entity switch
     {
+        Duck => ScaledContactRadius * 2,
         IAnimatable => ScaledContactRadius * 3,
         IStaticSpriteEntity => ScaledContactRadius * 2,
         _ => ScaledContactRadius

@@ -26,6 +26,7 @@ public interface ISimulationEngine
 public class SimulationEngine : ISimulationEngine
 {
     public event EventHandler? SimulationUpdated;
+    public event EventHandler<int>? SeedChanged;
 
     private readonly IWorldService _worldService;
     private readonly IEntityFactory _entityFactory;
@@ -48,7 +49,10 @@ public class SimulationEngine : ISimulationEngine
     {
         try
         {
-            RandomHelper.Initialize(42);
+            var seed = new Random().Next();
+            RandomHelper.Initialize(seed);
+            SeedChanged?.Invoke(this, seed);
+            
             CreateInitialEntities();
         }
         catch (Exception ex)
@@ -72,8 +76,11 @@ public class SimulationEngine : ISimulationEngine
                 }
                 _worldService.ProcessEntityQueues();
 
-                RandomHelper.Initialize(42);
+                var seed = new Random().Next();
+                RandomHelper.Initialize(seed);
+                SeedChanged?.Invoke(this, seed);
 
+                _worldService.ResetGrid();
                 CreateInitialEntities();
 
                 _timeManager.Reset();
@@ -113,12 +120,40 @@ public class SimulationEngine : ISimulationEngine
                 var squirrel = _entityFactory.CreateAnimal<Squirrel>(100, 100, position, i % 2 == 0);
                 entities.Add(squirrel);
             }
+
+            for (int i = 0; i < 8; i++)
+            {
+                var position = RandomHelper.GetRandomPosition();
+                var fish = _entityFactory.CreateAnimal<Fish>(100, 100, position, i % 2 == 0);
+                entities.Add(fish);
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                var position = RandomHelper.GetRandomPosition();
+                var shark = _entityFactory.CreateAnimal<Shark>(100, 100, position, i % 2 == 0);
+                entities.Add(shark);
+            }
+
+            for (int i = 0; i < 6; i++)
+            {
+                var position = RandomHelper.GetRandomPosition();
+                var duck = _entityFactory.CreateAnimal<Duck>(100, 100, position, i % 2 == 0);
+                entities.Add(duck);
+            }
             
             for (int i = 0; i < 20; i++)
             {
                 var position = RandomHelper.GetRandomPosition();
                 var grass = _entityFactory.CreatePlant<Grass>(100, 100, position);
                 entities.Add(grass);
+            }
+
+            for (int i = 0; i < 15; i++)
+            {
+                var position = RandomHelper.GetRandomPosition();
+                var algae = _entityFactory.CreatePlant<Algae>(100, 100, position);
+                entities.Add(algae);
             }
 
             foreach (var entity in entities)

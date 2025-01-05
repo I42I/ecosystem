@@ -38,7 +38,12 @@ public partial class MainWindowViewModel : ViewModelBase
     private string _simulationTime = "00:00:00";
     
     [ObservableProperty] 
-    private int _simulationSeed = RandomHelper.Seed;
+    private int _simulationSeed;
+
+    partial void OnSimulationSeedChanged(int value)
+    {
+        Console.WriteLine($"Setting simulation seed to: {value}");
+    }
 
     private ObservableCollection<GridCellViewModel> _gridCells;
     public ObservableCollection<GridCellViewModel> GridCells => _gridCells;
@@ -74,7 +79,21 @@ public partial class MainWindowViewModel : ViewModelBase
             };
         }
 
+        if (_simulationEngine is SimulationEngine engine)
+        {
+            engine.SeedChanged += (s, seed) => 
+            {
+                SimulationSeed = seed;
+            };
+        }
+
         _worldService.Entities.CollectionChanged += Entities_CollectionChanged;
+
+        _worldService.GridReset += (s, e) => 
+        {
+            UpdateGridCells();
+            OnPropertyChanged(nameof(SimulationSeed));
+        };
     }
 
     private void UpdateGridCells()

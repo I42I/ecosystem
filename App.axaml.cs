@@ -28,26 +28,36 @@ public partial class App : Application
         AvaloniaXamlLoader.Load(this);
     }
 
+    private IServiceProvider ConfigureServices()
+    {
+        var services = new ServiceCollection();
+        
+        services.AddSingleton<IWorldService, WorldService>();
+        services.AddSingleton<IEntityFactory, EntityFactory>();
+        services.AddSingleton<ISimulationEngine, SimulationEngine>();
+        services.AddSingleton<IEntityLocator<Animal>, WorldEntityLocator<Animal>>();
+        services.AddSingleton<IEntityLocator<Plant>, WorldEntityLocator<Plant>>();
+        services.AddSingleton<ITimeManager, TimeManager>();
+        services.AddTransient<MainWindowViewModel>();
+
+        return services.BuildServiceProvider();
+    }
+
     public override void OnFrameworkInitializationCompleted()
     {
         try
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                var services = new ServiceCollection();
-            
-                services.AddSingleton<IWorldService, WorldService>();
-                services.AddSingleton<IEntityFactory, EntityFactory>();
-                services.AddSingleton<ISimulationEngine, SimulationEngine>();
-                services.AddSingleton<IEntityLocator<Animal>, WorldEntityLocator<Animal>>();
-                services.AddSingleton<IEntityLocator<Plant>, WorldEntityLocator<Plant>>();
-                services.AddSingleton<ITimeManager, TimeManager>();
-                services.AddTransient<MainWindowViewModel>();
+                var seed = new Random().Next();
+                RandomHelper.Initialize(seed);
 
-                Services = services.BuildServiceProvider();
+                Services = ConfigureServices();
+                var worldService = Services.GetRequiredService<IWorldService>();
+
+                worldService.ResetGrid();
 
                 var viewModel = Services.GetRequiredService<MainWindowViewModel>();
-            
                 desktop.MainWindow = new MainWindow
                 {
                     DataContext = viewModel

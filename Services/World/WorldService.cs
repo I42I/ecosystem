@@ -18,6 +18,8 @@ public interface IWorldService
     IEnumerable<Entity> GetEntitiesInRange(Position position, double radius);
     void ProcessEntityQueues();
     bool IsValidSpawnLocation(Position position, EnvironmentType requiredEnvironment);
+    void ResetGrid();
+    event EventHandler GridReset;
 }
 
 public class WorldService : IWorldService
@@ -26,11 +28,12 @@ public class WorldService : IWorldService
     public ObservableCollection<Entity> Entities { get; } = new();
     private readonly ConcurrentQueue<Entity> _entitiesToAdd = new();
     private readonly ConcurrentQueue<Entity> _entitiesToRemove = new();
-    public GridWorld Grid { get; }
+    private GridWorld? _grid;
+    public GridWorld Grid => _grid ?? throw new InvalidOperationException("Grid not yet initialized.");
+    public event EventHandler? GridReset;
 
     public WorldService()
     {
-        Grid = new GridWorld(800, 520);
     }
 
     public void AddEntity(Entity entity)
@@ -73,6 +76,12 @@ public class WorldService : IWorldService
         }
     }
 
+    public void ResetGrid()
+    {
+        _grid = new GridWorld(800, 520);
+        GridReset?.Invoke(this, EventArgs.Empty);
+    }
+
     public EnvironmentType GetEnvironmentAt(Position position)
     {
         int x = (int)(position.X * Grid.Width);
@@ -101,6 +110,6 @@ public class WorldService : IWorldService
     public bool IsValidSpawnLocation(Position position, EnvironmentType requiredEnvironment)
     {
         var environment = GetEnvironmentAt(position);
-        return environment.HasFlag(requiredEnvironment);
+        return (environment & requiredEnvironment) != 0;
     }
 }
