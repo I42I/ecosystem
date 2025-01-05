@@ -107,14 +107,14 @@ public class SimulationEngine : ISimulationEngine
                 entities.Add(fox);
             }
             
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 10; i++)
             {
                 var position = RandomHelper.GetRandomPosition();
                 var squirrel = _entityFactory.CreateAnimal<Squirrel>(100, 100, position, i % 2 == 0);
                 entities.Add(squirrel);
             }
             
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 20; i++)
             {
                 var position = RandomHelper.GetRandomPosition();
                 var grass = _entityFactory.CreatePlant<Grass>(100, 100, position);

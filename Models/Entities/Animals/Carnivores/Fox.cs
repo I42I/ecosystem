@@ -59,7 +59,7 @@ public class Fox : Carnivore
         MovementSpeed = 2.0;
         Color = Brushes.Orange;
         _territoryCenter = position;
-        
+
         _environmentPreferences.Clear();
         _environmentPreferences.Add(new EnvironmentPreference(
             PreferredEnvironment, 

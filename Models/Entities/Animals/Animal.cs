@@ -21,7 +21,6 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
 {
     private double _behaviorUpdateAccumulator;
     protected readonly IEntityLocator<Animal> _entityLocator;
-    protected readonly IWorldService _worldService;
     private readonly List<IBehavior<Animal>> _behaviors;
     private readonly IEntityFactory _entityFactory;
     private readonly IDigestive _digestionSystem;
@@ -45,10 +44,9 @@ public abstract class Animal : MoveableEntity, IEnvironmentSensitive, IHasVision
         double contactRadius,
         double basalMetabolicRate,
         EnvironmentType environment) 
-        : base(position, healthPoints, energy, environment, basalMetabolicRate, timeManager)
+        : base(position, healthPoints, energy, environment, basalMetabolicRate, timeManager, worldService)
     {
         _entityLocator = entityLocator;
-        _worldService = worldService;
         _entityFactory = entityFactory;
         _digestionSystem = new DigestionSystem(this, _worldService, _timeManager);
         IsMale = isMale;

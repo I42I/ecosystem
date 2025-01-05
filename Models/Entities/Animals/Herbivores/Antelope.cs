@@ -64,7 +64,6 @@ public class Antelope : Herbivore
         
         AddBehavior(new FleeingBehavior(worldService));
         AddBehavior(new BirthBehavior());
-        AddBehavior(new EnvironmentSeekingBehavior(worldService));
         AddBehavior(new HungerBehavior());
         AddBehavior(new RestBehavior());
         
