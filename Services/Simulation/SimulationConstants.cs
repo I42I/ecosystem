@@ -16,8 +16,8 @@ public static class SimulationConstants
     public const double PLANT_REPRODUCTION_INTERVAL = 5.0;
     
     // Energy costs
-    public const double BASE_ENERGY_LOSS = 0.05;
-    public const double MOVEMENT_ENERGY_COST = 0.02;
+    public const double BASE_ENERGY_LOSS = 0.02;
+    public const double MOVEMENT_ENERGY_COST = 0.01;
     public const double ENVIRONMENT_DAMAGE_RATE = 0.1;
     public const double ATTACK_ENERGY_COST = 0.1;
     public const double REPRODUCTION_ENERGY_COST = 0.5;
