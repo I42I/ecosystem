@@ -66,7 +66,6 @@ public class DigestionSystem : IDigestive
         );
 
         _worldService.AddEntity(waste);
-        Console.WriteLine($"{_animal.GetType().Name}#{_animal.TypeId} created waste of {wasteAmount} energy");
     }
 
     private int CalculateWasteAmount()

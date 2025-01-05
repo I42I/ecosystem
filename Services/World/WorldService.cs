@@ -88,7 +88,6 @@ public class WorldService : IWorldService
         int y = (int)(position.Y * Grid.Height);
         var environment = Grid.GetEnvironmentAt(x, y);
         
-        // Console.WriteLine($"Getting environment at ({position.X},{position.Y}) -> ({x},{y}): {environment}");
         return environment;
     }
 

@@ -15,7 +15,6 @@ public class SafeAreaConverter : IValueConverter
         {
             if (parameter?.ToString() == "height")
             {
-                // Prendre en compte la marge supérieure et inférieure pour la hauteur
                 return size + TOP_MARGIN;
             }
             return size;
@@ -35,7 +34,6 @@ public class SafeAreaMarginConverter : IValueConverter
 
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        // Décaler la bordure vers le haut du TOP_MARGIN
         return new Avalonia.Thickness(0, 0, 0, 0);
     }
 
