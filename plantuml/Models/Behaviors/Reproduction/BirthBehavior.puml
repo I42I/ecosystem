@@ -1,4 +1,9 @@
 @startuml
+interface IReproductionConstants {
+    GestationPeriod : double <<get>>
+    MaleReproductionCooldown : double <<get>>
+    FemaleReproductionCooldown : double <<get>>
+}
 class BirthBehavior {
     + Name : string <<get>>
     + Priority : int <<get>>

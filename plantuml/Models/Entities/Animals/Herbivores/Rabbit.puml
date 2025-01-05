@@ -14,6 +14,7 @@ class Rabbit {
     + <<override>> CreateOffspring(position:Position) : Animal
 }
 Herbivore <|-- Rabbit
+Rabbit --> "DefaultEnvironment" EnvironmentType
 Rabbit --> "PreferredEnvironment" EnvironmentType
 Rabbit --> "_entityFactory" IEntityFactory
 @enduml

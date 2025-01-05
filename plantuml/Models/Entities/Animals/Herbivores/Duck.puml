@@ -10,10 +10,18 @@ class Duck {
     # <<override>> BaseReproductionThreshold : double <<get>>
     # <<override>> BaseReproductionEnergyCost : double <<get>>
     # <<override>> SpeciesEnergyCostModifier : double <<get>>
+    + GestationPeriod : double <<get>>
+    + MaleReproductionCooldown : double <<get>>
+    + FemaleReproductionCooldown : double <<get>>
     + Duck(entityLocator:IEntityLocator<Animal>, plantLocator:IEntityLocator<Plant>, worldService:IWorldService, timeManager:ITimeManager, entityFactory:IEntityFactory, position:Position, healthPoints:int, energy:int, isMale:bool)
     + <<override>> CreateOffspring(position:Position) : Animal
+    + <<override>> Eat(plant:Plant) : void
+    + <<override>> TakeDamage(amount:double) : void
+    + <<override>> UpdateAnimation(deltaTime:double) : void
 }
 Herbivore <|-- Duck
+IReproductionConstants <|-- Duck
+Duck --> "DefaultEnvironment" EnvironmentType
 Duck --> "PreferredEnvironment" EnvironmentType
 Duck --> "_entityFactory" IEntityFactory
 @enduml

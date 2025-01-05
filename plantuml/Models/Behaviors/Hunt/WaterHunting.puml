@@ -1,0 +1,8 @@
+@startuml
+class WaterHuntingStrategy {
+    + WaterHuntingStrategy(worldService:IWorldService)
+    + GetPotentialPrey(worldService:IWorldService, position:Position, visionRadius:double) : IEnumerable<Animal>
+}
+IHuntingStrategy <|-- WaterHuntingStrategy
+WaterHuntingStrategy --> "_worldService" IWorldService
+@enduml

@@ -8,6 +8,7 @@ interface ISimulationEngine {
 }
 class SimulationEngine {
     +  <<event>> SimulationUpdated : EventHandler? 
+    +  <<event>> SeedChanged : EventHandler<int>? 
     - <<readonly>> _updateLock : object
     + SimulationEngine(worldService:IWorldService, entityFactory:IEntityFactory, timeManager:ITimeManager)
     + InitializeSimulation() : void

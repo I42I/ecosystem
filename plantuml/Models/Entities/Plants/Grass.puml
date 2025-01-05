@@ -12,6 +12,7 @@ class Grass {
 Plant <|-- Grass
 IStaticSpriteEntity <|-- Grass
 Grass --> "Sprite" ISprite
-Grass --> "_entityFactory" IEntityFactory
+Grass --> "DefaultEnvironment" EnvironmentType
 Grass --> "PreferredEnvironment" EnvironmentType
+Grass --> "_entityFactory" IEntityFactory
 @enduml

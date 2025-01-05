@@ -1,35 +1,14 @@
 @startuml
 class GridWorld {
+    - <<const>> GRID_WIDTH : int = 20
+    - <<const>> GRID_HEIGHT : int = 13
     + Width : int <<get>>
     + Height : int <<get>>
-    - <<const>> WATER_THRESHOLD : double = 0.7
-    - <<const>> SMOOTHING_PASSES : int = 4
-    + GridWorld(width:int, height:int)
-    - GenerateRandomMap() : void
-    - InitializeRandomGrid() : void
-    - SmoothGrid() : void
-    - CountNeighbors(x:int, y:int, type:EnvironmentType) : int
-    - ConsolidateWaterBodies() : void
-    - FloodFill(x:int, y:int, visited:bool[,], waterBody:List<(int x, int y)>) : void
-    - MergeRegions() : List<Region>
-    - _cachedRegions : List<Region>?
-    + HasChanges : bool <<get>> = true
-    + GetMergedRegions() : IReadOnlyList<Region>
-    - MarkDirty() : void
+    + GridWorld(displayWidth:int, displayHeight:int)
+    - GenerateNaturalBiomes() : void
+    - EnsureMaxWaterCoverage(maxRatio:float) : void
+    - ApplySmoothingPass() : void
+    - CountWaterNeighbors(cx:int, cy:int) : int
     + GetEnvironmentAt(x:int, y:int) : EnvironmentType
-    + GetEnvironmentColorAt(x:int, y:int) : IBrush
-    + WorldToGrid(position:Position) : (double X, double Y)
-    + GridToWorld(gridX:int, gridY:int) : Position
 }
-class "Dictionary`2"<T1,T2> {
-}
-struct Region <<record>> {
-    + X : int <<get>> <<init>>
-    + Y : int <<get>> <<init>>
-    + Width : int <<get>> <<init>>
-    + Height : int <<get>> <<init>>
-}
-GridWorld o-> "environmentColors<EnvironmentType,IBrush>" "Dictionary`2"
-GridWorld +-- Region
-Region --> "Type" EnvironmentType
 @enduml

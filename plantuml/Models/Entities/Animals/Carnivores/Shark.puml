@@ -11,10 +11,16 @@ class Shark {
     # <<override>> BaseReproductionThreshold : double <<get>>
     # <<override>> BaseReproductionEnergyCost : double <<get>>
     # <<override>> SpeciesEnergyCostModifier : double <<get>>
-    + Shark(entityLocator:IEntityLocator<Animal>, preyLocator:IEntityLocator<Animal>, worldService:IWorldService, timeManager:ITimeManager, entityFactory:IEntityFactory, healthPoints:int, energy:int, position:Position, isMale:bool)
+    + GestationPeriod : double <<get>>
+    + MaleReproductionCooldown : double <<get>>
+    + FemaleReproductionCooldown : double <<get>>
+    + Shark(entityLocator:IEntityLocator<Animal>, preyLocator:IEntityLocator<Animal>, worldService:IWorldService, timeManager:ITimeManager, entityFactory:IEntityFactory, position:Position, healthPoints:int, energy:int, isMale:bool)
     + <<override>> CreateOffspring(position:Position) : Animal
+    + <<override>> UpdateAnimation(deltaTime:double) : void
 }
 Carnivore <|-- Shark
+IReproductionConstants <|-- Shark
+Shark --> "DefaultEnvironment" EnvironmentType
 Shark --> "PreferredEnvironment" EnvironmentType
 Shark --> "_entityFactory" IEntityFactory
 @enduml

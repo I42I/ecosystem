@@ -18,6 +18,7 @@ class Fox {
     + <<override>> UpdateAnimation(deltaTime:double) : void
 }
 Carnivore <|-- Fox
+Fox --> "DefaultEnvironment" EnvironmentType
 Fox --> "PreferredEnvironment" EnvironmentType
 Fox --> "_territoryCenter" Position
 Fox --> "_entityFactory" IEntityFactory

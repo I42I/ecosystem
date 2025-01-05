@@ -3,7 +3,7 @@ abstract class MoveableEntity {
     - _energyCostAccumulator : double
     # BasalMetabolicRate : double <<get>>
     # {abstract} SpeciesEnergyCostModifier : double <<get>>
-    # MoveableEntity(position:Position, healthPoints:int, energy:int, environment:EnvironmentType, basalMetabolicRate:double, timeManager:ITimeManager)
+    # MoveableEntity(position:Position, healthPoints:int, energy:int, environment:EnvironmentType, basalMetabolicRate:double, timeManager:ITimeManager, worldService:IWorldService)
     + <<virtual>> MovementSpeed : double <<get>> <<set>>
     # _currentDirectionX : double = 0
     + CurrentDirectionX : double <<get>>
@@ -12,7 +12,14 @@ abstract class MoveableEntity {
     - <<const>> MOVEMENT_TIMEOUT : double = 0.1
     - _wasMoving : bool = false
     + IsMoving : bool <<get>>
+    - <<const>> AVOIDANCE_START_THRESHOLD : double = 1.2
+    - <<const>> HARD_AVOIDANCE_THRESHOLD : double = 1.5
+    - <<const>> DANGER_CHECK_DISTANCE : double = 0.05
+    - <<const>> DIRECTION_SAMPLES : int = 12
     + <<virtual>> Move(deltaX:double, deltaY:double) : void
+    - CalculateAvoidanceFactor(currentDanger:double, futureDanger:double) : double
+    - FindSafeDirection(originalDx:double, originalDy:double, avoidanceFactor:double) : (double x, double y)?
+    - Lerp(a:double, b:double, t:double) : double
     # <<virtual>> CalculateMovementEnergyCost(deltaX:double, deltaY:double) : double
     # <<virtual>> GetEnvironmentMovementModifier() : double
     + AddEnergy(amount:int) : void
@@ -20,5 +27,6 @@ abstract class MoveableEntity {
 }
 LifeForm <|-- MoveableEntity
 IMoveable <|-- MoveableEntity
+MoveableEntity --> "_worldService" IWorldService
 MoveableEntity o-> "_lastMoveTime" DateTime
 @enduml

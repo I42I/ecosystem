@@ -1,5 +1,4 @@
 @startuml
-scale 0.1
 !include .\\App.axaml.puml
 !include .\\Program.puml
 !include .\\ViewLocator.puml
@@ -47,7 +46,7 @@ scale 0.1
 !include .\\Models\Behaviors\Hunt\Hunting.puml
 !include .\\Models\Behaviors\Hunt\IHuntingStrategy.puml
 !include .\\Models\Behaviors\Hunt\IPredator.puml
-!include .\\Models\Behaviors\Movement\EnvironmentSeekingBehavior.puml
+!include .\\Models\Behaviors\Hunt\WaterHunting.puml
 !include .\\Models\Behaviors\Movement\GroupMovement.puml
 !include .\\Models\Behaviors\Movement\IMoveable.puml
 !include .\\Models\Behaviors\Movement\MoveableEntity.puml
@@ -81,6 +80,5 @@ scale 0.1
 !include .\\Models\Entities\Animals\Herbivores\Fish.puml
 !include .\\Models\Entities\Animals\Herbivores\Herbivore.puml
 !include .\\Models\Entities\Animals\Herbivores\Rabbit.puml
-!include .\\Models\Entities\Animals\Herbivores\Sheep.puml
 !include .\\Models\Entities\Animals\Herbivores\Squirrel.puml
 @enduml

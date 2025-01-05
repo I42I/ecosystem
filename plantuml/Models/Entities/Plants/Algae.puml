@@ -1,5 +1,6 @@
 @startuml
 class Algae {
+    # _animationManager : IAnimationManager?
     + {static} DefaultMaxHealth : int <<get>>
     + {static} DefaultMaxEnergy : int <<get>>
     + <<override>> MaxHealth : int <<get>>
@@ -8,8 +9,14 @@ class Algae {
     + Algae(worldService:IWorldService, timeManager:ITimeManager, entityFactory:IEntityFactory, healthPoints:int, energy:int, position:Position)
     # <<override>> CanSpreadSeeds() : bool
     # <<override>> CreateOffspring(position:Position) : Plant
+    # InitializeSprite(path:string, frameWidth:int, frameHeight:int) : void
+    + UpdateAnimation(deltaTime:double) : void
 }
 Plant <|-- Algae
-Algae --> "_entityFactory" IEntityFactory
+IAnimatable <|-- Algae
+Algae --> "Sprite" AnimatedSprite
+Algae --> "CurrentState" AnimationState
+Algae --> "DefaultEnvironment" EnvironmentType
 Algae --> "PreferredEnvironment" EnvironmentType
+Algae --> "_entityFactory" IEntityFactory
 @enduml

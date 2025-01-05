@@ -5,16 +5,23 @@ interface IWorldService {
     GetEnvironmentAt(position:Position) : EnvironmentType
     GetEntitiesInRange(position:Position, radius:double) : IEnumerable<Entity>
     ProcessEntityQueues() : void
+    IsValidSpawnLocation(position:Position, requiredEnvironment:EnvironmentType) : bool
+    ResetGrid() : void
+     <<event>> GridReset : EventHandler 
 }
 class WorldService {
     - <<readonly>> _lock : object
+    - _grid : GridWorld?
+    +  <<event>> GridReset : EventHandler? 
     + WorldService()
     + AddEntity(entity:Entity) : void
     + RemoveEntity(entity:Entity) : void
     + ProcessEntityQueues() : void
+    + ResetGrid() : void
     + GetEnvironmentAt(position:Position) : EnvironmentType
     + GetEntitiesInRange(position:Position, radius:double) : IEnumerable<Entity>
     - GetDistance(pos1:Position, pos2:Position) : double
+    + IsValidSpawnLocation(position:Position, requiredEnvironment:EnvironmentType) : bool
 }
 class "ObservableCollection`1"<T> {
 }

@@ -21,6 +21,7 @@ abstract class Animal {
     # <<override>> Die() : void
     - CreateMeat(count:int) : void
     + GetBestEnvironmentPreference(currentEnv:EnvironmentType) : EnvironmentPreference
+    + <<virtual>> GetOffspringCount() : int
     + {abstract} CreateOffspring(position:Position) : Animal
     # <<override>> GetCurrentBehavior() : IBehavior<LifeForm>?
     + ConvertEnergyToHealth(amount:double) : void
@@ -48,7 +49,6 @@ IEnvironmentSensitive <|-- Animal
 IHasVisionRange <|-- Animal
 IAnimatable <|-- Animal
 Animal --> "_entityLocator<Animal>" "IEntityLocator`1"
-Animal --> "_worldService" IWorldService
 Animal --> "_behaviors<IBehavior<Animal>>" "List`1"
 Animal --> "_entityFactory" IEntityFactory
 Animal --> "_digestionSystem" IDigestive

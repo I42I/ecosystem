@@ -1,2 +1,26 @@
 @startuml
+class Fish {
+    + {static} DefaultMaxHealth : int <<get>>
+    + {static} DefaultMaxEnergy : int <<get>>
+    + <<override>> MaxHealth : int <<get>>
+    + <<override>> MaxEnergy : int <<get>>
+    # <<override>> BaseBiteSize : int <<get>>
+    # <<override>> BaseBiteCooldownDuration : double <<get>>
+    + <<override>> BaseHungerThreshold : double <<get>>
+    # <<override>> BaseReproductionThreshold : double <<get>>
+    # <<override>> BaseReproductionEnergyCost : double <<get>>
+    # <<override>> SpeciesEnergyCostModifier : double <<get>>
+    + GestationPeriod : double <<get>>
+    + MaleReproductionCooldown : double <<get>>
+    + FemaleReproductionCooldown : double <<get>>
+    + Fish(entityLocator:IEntityLocator<Animal>, plantLocator:IEntityLocator<Plant>, worldService:IWorldService, timeManager:ITimeManager, entityFactory:IEntityFactory, position:Position, healthPoints:int, energy:int, isMale:bool)
+    + <<override>> CreateOffspring(position:Position) : Animal
+    + <<override>> TakeDamage(amount:double) : void
+    + <<override>> UpdateAnimation(deltaTime:double) : void
+}
+Herbivore <|-- Fish
+IReproductionConstants <|-- Fish
+Fish --> "DefaultEnvironment" EnvironmentType
+Fish --> "PreferredEnvironment" EnvironmentType
+Fish --> "_entityFactory" IEntityFactory
 @enduml

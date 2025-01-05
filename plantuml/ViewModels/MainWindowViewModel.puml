@@ -6,6 +6,7 @@ class MainWindowViewModel <<partial>> {
     - _debug : bool = true
     - _simulationTime : string = "00:00:00"
     - _simulationSeed : int
+    <<partial>> - OnSimulationSeedChanged(value:int) : void
     + MainWindowViewModel(simulationEngine:ISimulationEngine, timeManager:ITimeManager, worldService:IWorldService)
     - UpdateGridCells() : void
     + InitializeAndStart() : void
