@@ -1,0 +1,8 @@
+@startuml
+interface ISprite {
+    GetSourceRect() : Avalonia.Rect
+}
+interface IStaticSpriteEntity {
+}
+IStaticSpriteEntity --> "Sprite" ISprite
+@enduml

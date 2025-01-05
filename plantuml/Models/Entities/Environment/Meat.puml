@@ -1,8 +1,15 @@
 @startuml
 class Meat {
-    + Meat(position:Position, energyValue:int)
-    # <<override>> UpdateBehavior() : void
+    + {static} DefaultMaxHealth : int <<get>>
+    + {static} DefaultMaxEnergy : int <<get>>
+    + <<override>> MaxHealth : int <<get>>
+    + <<override>> MaxEnergy : int <<get>>
+    # _hasCreatedWaste : bool = false
+    + Meat(position:Position, healthValue:int, energyValue:int, timeManager:ITimeManager, worldService:IWorldService)
     # <<override>> Die() : void
 }
 LifeForm <|-- Meat
+IStaticSpriteEntity <|-- Meat
+Meat --> "Sprite" ISprite
+Meat --> "_worldService" IWorldService
 @enduml

@@ -1,9 +1,12 @@
 @startuml
 abstract class Animal {
-    # Animal(entityLocator:IEntityLocator<Animal>, worldService:IWorldService, timeManager:ITimeManager, position:Position, healthPoints:int, energy:int, isMale:bool, visionRadius:double, contactRadius:double, basalMetabolicRate:double, environment:EnvironmentType)
+    - _behaviorUpdateAccumulator : double
+    - _biteCooldown : double = 0
+    # {abstract} BaseBiteCooldownDuration : double <<get>>
+    - _hasDied : bool = false
+    # Animal(entityLocator:IEntityLocator<Animal>, worldService:IWorldService, timeManager:ITimeManager, entityFactory:IEntityFactory, position:Position, healthPoints:int, energy:int, isMale:bool, visionRadius:double, contactRadius:double, basalMetabolicRate:double, environment:EnvironmentType)
     + IsMale : bool <<get>> <<set>>
-    + VisionRadius : double <<get>> <<set>>
-    + ContactRadius : double <<get>> <<set>>
+    + VisionRadius : double <<get>> <<protected set>>
     + IsAdult : bool <<get>> <<set>>
     + ReproductionCooldown : double <<get>> <<set>>
     + HungerThreshold : double <<get>> <<set>>
@@ -13,11 +16,23 @@ abstract class Animal {
     + AddBehavior(behavior:IBehavior<Animal>) : void
     - AddBaseBehaviors() : void
     # <<override>> UpdateBehavior() : void
+    # CanBiteBasedOnCooldown() : bool
+    # SetBiteCooldown() : void
     # <<override>> Die() : void
-    - CreateMeat() : void
+    - CreateMeat(count:int) : void
     + GetBestEnvironmentPreference(currentEnv:EnvironmentType) : EnvironmentPreference
     + {abstract} CreateOffspring(position:Position) : Animal
     # <<override>> GetCurrentBehavior() : IBehavior<LifeForm>?
+    + ConvertEnergyToHealth(amount:double) : void
+    + Heal(amount:int) : void
+    - _currentPregnancy : Pregnancy?
+    + StartPregnancy(father:Animal) : void
+    + IsReadyToGiveBirth() : bool
+    # ProcessFoodConsumption(amount:int) : void
+    # <<virtual>> DetermineAnimationState() : AnimationState
+    # _animationManager : IAnimationManager?
+    # <<virtual>> InitializeSprite(spritePath:string, frameWidth:int, frameHeight:int) : void
+    + <<virtual>> UpdateAnimation(deltaTime:double) : void
 }
 class "IEntityLocator`1"<T> {
 }
@@ -25,13 +40,24 @@ class "List`1"<T> {
 }
 class "IReadOnlyList`1"<T> {
 }
+struct Pregnancy {
+    + GestationProgress : double <<get>> <<set>>
+}
 MoveableEntity <|-- Animal
 IEnvironmentSensitive <|-- Animal
+IHasVisionRange <|-- Animal
+IAnimatable <|-- Animal
 Animal --> "_entityLocator<Animal>" "IEntityLocator`1"
 Animal --> "_worldService" IWorldService
 Animal --> "_behaviors<IBehavior<Animal>>" "List`1"
+Animal --> "_entityFactory" IEntityFactory
+Animal --> "_digestionSystem" IDigestive
 Animal o-> "_environmentPreferences<EnvironmentPreference>" "List`1"
 Animal --> "PreferredEnvironments<EnvironmentPreference>" "IReadOnlyList`1"
 Animal --> "PreferredEnvironment" EnvironmentType
 Animal --> "WorldService" IWorldService
+Animal --> "Sprite" AnimatedSprite
+Animal --> "CurrentState" AnimationState
+Animal +-- Pregnancy
+Pregnancy --> "Father" Animal
 @enduml

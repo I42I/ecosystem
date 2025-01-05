@@ -2,24 +2,19 @@
 abstract class Carnivore {
     + {abstract} BaseAttackPower : double <<get>>
     # {abstract} BaseAttackRange : double <<get>>
-    # {abstract} BaseHungerThreshold : double <<get>>
+    + {abstract} BaseHungerThreshold : double <<get>>
     # {abstract} BaseReproductionThreshold : double <<get>>
     # {abstract} BaseReproductionEnergyCost : double <<get>>
     # AttackPower : double <<get>> <<set>>
     # AttackRange : double <<get>> <<set>>
-    # Carnivore(entityLocator:IEntityLocator<Animal>, preyLocator:IEntityLocator<Animal>, worldService:IWorldService, timeManager:ITimeManager, position:Position, healthPoints:int, energy:int, isMale:bool, visionRadius:double, contactRadius:double, basalMetabolicRate:double)
-    + <<virtual>> FindNearestPrey() : Animal?
-    + <<virtual>> MoveTowardsPrey(prey:Animal) : void
+    # Carnivore(entityLocator:IEntityLocator<Animal>, preyLocator:IEntityLocator<Animal>, worldService:IWorldService, timeManager:ITimeManager, entityFactory:IEntityFactory, position:Position, healthPoints:int, energy:int, isMale:bool, visionRadius:double, contactRadius:double, basalMetabolicRate:double)
     + <<virtual>> CanAttack(prey:Animal) : bool
     + <<virtual>> Attack(prey:Animal) : void
     # <<virtual>> CalculateAttackDamage() : int
-    # <<virtual>> CalculateEnergyGain() : int
-    # <<virtual>> GetPotentialPrey() : IEnumerable<Animal>
-    # <<override>> CalculateMovementEnergyCost(deltaX:double, deltaY:double) : int
+    + <<virtual>> Eat(meat:Meat) : void
 }
 class "IEntityLocator`1"<T> {
 }
 Animal <|-- Carnivore
-IPredator <|-- Carnivore
 Carnivore --> "_preyLocator<Animal>" "IEntityLocator`1"
 @enduml

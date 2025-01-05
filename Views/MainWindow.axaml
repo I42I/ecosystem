@@ -150,23 +150,28 @@
         </Border>
 
         <!-- Main simulation area -->
-        <Grid>
-            <!-- Background -->
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <Rectangle Grid.Row="0" Grid.Column="0" Fill="SandyBrown"/>
-                <Rectangle Grid.Row="0" Grid.Column="1" Fill="LightBlue"/>
-                <Rectangle Grid.Row="1" Grid.Column="0" Fill="LightGreen"/>
-                <Rectangle Grid.Row="1" Grid.Column="1" Fill="SandyBrown"/>
-            </Grid>
+        <Canvas Name="WorldCanvas">
+            <!-- Grille de fond -->
+            <ItemsControl ItemsSource="{Binding GridCells}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Width="{Binding WindowWidth}" 
+                                Height="{Binding WindowHeight}"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.DataTemplates>
+                    <DataTemplate DataType="{x:Type vm:GridCellViewModel}">
+                        <Canvas>
+                            <Rectangle 
+                                Width="{Binding Width}"
+                                Height="{Binding Height}"
+                                Fill="{Binding Color}"
+                                Canvas.Left="{Binding X}"
+                                Canvas.Top="{Binding Y}"/>
+                        </Canvas>
+                    </DataTemplate>
+                </ItemsControl.DataTemplates>
+            </ItemsControl>
 
             <!-- Safe Movement Area Border -->
             <Border BorderBrush="Red" 
@@ -263,6 +268,6 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-        </Grid>
+        </Canvas>
     </DockPanel>
 </Window>

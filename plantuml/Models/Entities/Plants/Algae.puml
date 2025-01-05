@@ -1,2 +1,15 @@
 @startuml
+class Algae {
+    + {static} DefaultMaxHealth : int <<get>>
+    + {static} DefaultMaxEnergy : int <<get>>
+    + <<override>> MaxHealth : int <<get>>
+    + <<override>> MaxEnergy : int <<get>>
+    # <<override>> BaseAbsorptionRate : double <<get>>
+    + Algae(worldService:IWorldService, timeManager:ITimeManager, entityFactory:IEntityFactory, healthPoints:int, energy:int, position:Position)
+    # <<override>> CanSpreadSeeds() : bool
+    # <<override>> CreateOffspring(position:Position) : Plant
+}
+Plant <|-- Algae
+Algae --> "_entityFactory" IEntityFactory
+Algae --> "PreferredEnvironment" EnvironmentType
 @enduml

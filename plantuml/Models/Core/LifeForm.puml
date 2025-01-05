@@ -1,16 +1,26 @@
 @startuml
 abstract class LifeForm {
+    - _energyAccumulator : double
+    - _healthAccumulator : double
+    - _healthPoints : int
+    - _energy : int
+    + {abstract} MaxHealth : int <<get>>
+    + {abstract} MaxEnergy : int <<get>>
+    + IsDead : bool <<get>>
+    + ContactRadius : double <<get>> <<protected set>>
+    # LifeForm(position:Position, healthPoints:int, energy:int, environment:EnvironmentType, timeManager:ITimeManager)
     + HealthPoints : int <<get>> <<protected set>>
     + Energy : int <<get>> <<protected set>>
-    + IsDead : bool <<get>>
-    # LifeForm(position:Position, healthPoints:int, energy:int, environment:EnvironmentType)
     + <<override>> Update() : void
     # <<virtual>> GetCurrentBehavior() : IBehavior<LifeForm>?
     # <<virtual>> UpdateBehavior() : void
-    + TakeDamage(amount:int) : void
-    # ConsumeEnergy(amount:int) : void
+    + <<virtual>> TakeDamage(amount:double) : void
+    # <<const>> HEALTH_TO_ENERGY_CONVERSION_RATE : int = 10
+    # ConsumeEnergy(amount:double) : void
     # {abstract} Die() : void
 }
 Entity <|-- LifeForm
+IHasContactRange <|-- LifeForm
+LifeForm --> "_timeManager" ITimeManager
 LifeForm --> "Environment" EnvironmentType
 @enduml

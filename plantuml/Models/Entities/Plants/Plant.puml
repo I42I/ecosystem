@@ -1,17 +1,22 @@
 @startuml
 abstract class Plant {
+    - _growthAccumulator : double
+    - _reproductionAccumulator : double
+    # _hasCreatedWaste : bool = false
     # {abstract} BaseAbsorptionRate : double <<get>>
-    # Plant(healthPoints:int, energy:int, position:Position, basalMetabolicRate:double, environment:EnvironmentType, worldService:IWorldService)
     + RootRadius : double <<get>> <<protected set>>
     + SeedRadius : double <<get>> <<protected set>>
+    # Plant(healthPoints:int, energy:int, position:Position, basalMetabolicRate:double, environment:EnvironmentType, rootRadius:double, seedRadius:double, contactRadius:double, worldService:IWorldService, timeManager:ITimeManager)
     # <<override>> UpdateBehavior() : void
+    # <<virtual>> ProcessGrowth() : void
     # <<virtual>> AbsorbWaste(waste:OrganicWaste) : void
-    # {abstract} CanSpreadSeeds() : bool
+    # <<virtual>> CanSpreadSeeds() : bool
     # {abstract} CreateOffspring(position:Position) : Plant
     - SpreadSeeds() : void
     # <<override>> Die() : void
 }
 LifeForm <|-- Plant
+IHasRootSystem <|-- Plant
 Plant --> "_worldService" IWorldService
 Plant --> "PreferredEnvironment" EnvironmentType
 @enduml

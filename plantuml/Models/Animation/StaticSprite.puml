@@ -1,0 +1,9 @@
+@startuml
+class StaticSprite {
+    + StaticSprite(imagePath:string)
+    + GetSourceRect() : Rect
+}
+ISprite <|-- StaticSprite
+StaticSprite --> "_image" Bitmap
+StaticSprite --> "SpriteSheet" Bitmap
+@enduml

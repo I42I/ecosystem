@@ -1,0 +1,30 @@
+@startuml
+class AnimatedSprite {
+    - _animationTimer : double
+    - _currentFrame : int
+    + IsAnimationComplete : bool <<get>>
+    + AnimatedSprite(imagePath:string, frameWidth:int, frameHeight:int)
+    + FrameWidth : int <<get>>
+    + FrameHeight : int <<get>>
+    + AddAnimation(state:AnimationState, config:AnimationConfig) : void
+    + SetState(newState:AnimationState) : void
+    + Update(deltaTime:double) : void
+    + GetSourceRect() : Rect
+    + GetCurrentConfig() : AnimationConfig?
+}
+class "Dictionary`2"<T1,T2> {
+}
+class AnimationConfig {
+    + StartFrame : int <<get>>
+    + Row : int <<get>>
+    + FrameCount : int <<get>>
+    + FrameDuration : double <<get>>
+    + Loop : bool <<get>>
+    + AnimationConfig(row:int, startFrame:int, frameCount:int, frameDuration:double, loop:bool)
+}
+AnimatedSprite --> "_spriteSheet" Bitmap
+AnimatedSprite --> "_animations<AnimationState,AnimationConfig>" "Dictionary`2"
+AnimatedSprite --> "_currentState" AnimationState
+AnimatedSprite --> "SpriteSheet" Bitmap
+AnimatedSprite +-- AnimationConfig
+@enduml

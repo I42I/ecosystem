@@ -1,8 +1,15 @@
 @startuml
 class OrganicWaste {
     - _energyValue : int
+    - _decayAccumulator : double
+    + ContactRadius : double <<get>>
     + EnergyValue : int <<get>> <<set>>
-    + OrganicWaste(position:Position, energyValue:int)
+    + OrganicWaste(position:Position, energyValue:int, worldService:IWorldService)
+    + <<override>> Update() : void
 }
 Entity <|-- OrganicWaste
+IHasContactRange <|-- OrganicWaste
+IStaticSpriteEntity <|-- OrganicWaste
+OrganicWaste --> "Sprite" ISprite
+OrganicWaste --> "_worldService" IWorldService
 @enduml

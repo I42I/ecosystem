@@ -1,17 +1,12 @@
 @startuml
 abstract class Entity {
     - _color : IBrush?
-    + GetDistanceTo(otherPosition:Position) : double
     - Position_PropertyChanged(sender:object?, e:PropertyChangedEventArgs) : void
-    - _displayWidth : double = 800
-    - _displayHeight : double = 450
-    + DisplayX : double <<get>>
-    + DisplayY : double <<get>>
-    + UpdateDisplaySize(width:double, height:double) : void
+    + GetDistanceTo(otherPosition:Position) : double
     - <<readonly>> _id : int
     + DisplayName : string <<get>>
     + TypeId : int <<get>>
-    + StatsText : string <<get>>
+    + <<virtual>> StatsText : string <<get>>
     # Entity(position:Position)
     + <<virtual>> Update() : void
     # <<virtual>> OnPropertyChanged(propertyName:string) : void

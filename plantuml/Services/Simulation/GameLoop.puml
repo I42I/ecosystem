@@ -1,0 +1,19 @@
+@startuml
+class GameLoop {
+    - <<const>> TARGET_FPS : int = 60
+    - <<const>> MS_PER_UPDATE : double
+    - _previousTime : double
+    - _lag : double
+    - _isRunning : bool
+    - _loopTask : Task?
+    + GameLoop(updateLogic:Action, render:Action)
+    - GetCurrentTime() : double
+    + Start() : void
+    + Stop() : void
+    + WaitForStop() : void
+    - RunLoop() : void
+}
+GameLoop --> "_updateLogic" Action
+GameLoop --> "_render" Action
+GameLoop --> "_cancellationSource" CancellationTokenSource
+@enduml

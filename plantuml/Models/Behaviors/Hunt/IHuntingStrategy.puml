@@ -1,7 +1,5 @@
 @startuml
 interface IHuntingStrategy {
-    CalculateAttackDamage(baseAttackPower:double) : int
-    CalculateEnergyGain(baseAttackPower:double) : int
-    GetPotentialPrey(worldService:IWorldService) : IEnumerable<Animal>
+    GetPotentialPrey(worldService:IWorldService, position:Position, visionRadius:double) : IEnumerable<Animal>
 }
 @enduml

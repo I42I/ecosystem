@@ -1,8 +1,18 @@
 @startuml
-interface "IBehavior`1"<T> {
+interface "IBehavior`1"<in T> {
     Name : string <<get>>
     Priority : int <<get>>
     CanExecute(entity:T) : bool
     Execute(entity:T) : void
 }
+class "BehaviorWrapper`2"<TSource,TTarget> {
+    - <<readonly>> _entity : TSource
+    + BehaviorWrapper(behavior:IBehavior<TSource>, entity:TSource)
+    + Name : string <<get>>
+    + Priority : int <<get>>
+    + CanExecute(entity:TTarget) : bool
+    + Execute(entity:TTarget) : void
+}
+"IBehavior`1" "<TTarget>" <|-- "BehaviorWrapper`2"
+"BehaviorWrapper`2" --> "_behavior<TSource>" "IBehavior`1"
 @enduml

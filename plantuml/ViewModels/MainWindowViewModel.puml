@@ -1,21 +1,34 @@
 @startuml
 class MainWindowViewModel <<partial>> {
+    - <<readonly>> _lock : object
     - _status : string = "Ready"
     - _simulationSpeed : double = 1.0
     - _debug : bool = true
+    - _simulationTime : string = "00:00:00"
+    - _simulationSeed : int
     + MainWindowViewModel(simulationEngine:ISimulationEngine, timeManager:ITimeManager, worldService:IWorldService)
+    - UpdateGridCells() : void
     + InitializeAndStart() : void
-    - StartSimulation() : void
-    - PauseSimulation() : void
+    - _isRunning : bool = true
+    - ToggleSimulation() : void
     - ResetSimulation() : void
+    - _isDebugMode : bool = false
+    - ToggleDebug() : void
     <<partial>> - OnSimulationSpeedChanged(value:double) : void
     - _windowWidth : double = 800
-    - _windowHeight : double = 450
+    - _windowHeight : double = 600
     <<partial>> - OnWindowWidthChanged(value:double) : void
     <<partial>> - OnWindowHeightChanged(value:double) : void
+    - Entities_CollectionChanged(sender:object?, e:NotifyCollectionChangedEventArgs) : void
+}
+class "ObservableCollection`1"<T> {
 }
 ViewModelBase <|-- MainWindowViewModel
 MainWindowViewModel --> "_simulationEngine" ISimulationEngine
 MainWindowViewModel --> "_timeManager" ITimeManager
 MainWindowViewModel --> "_worldService" IWorldService
+MainWindowViewModel --> "_entityViewModels<EntityViewModel>" "ObservableCollection`1"
+MainWindowViewModel --> "EntityViewModels<EntityViewModel>" "ObservableCollection`1"
+MainWindowViewModel --> "_gridCells<GridCellViewModel>" "ObservableCollection`1"
+MainWindowViewModel --> "GridCells<GridCellViewModel>" "ObservableCollection`1"
 @enduml

@@ -1,12 +1,14 @@
 @startuml
 interface IEntityFactory {
-    CreateAnimal(energy:double, health:double, position:Position, isMale:bool) : T
-    CreatePlant(energy:double, health:double, position:Position) : T
+    CreateAnimal(initialHealthPercent:double, initialEnergyPercent:double, position:Position, isMale:bool) : T
+    CreatePlant(initialHealthPercent:double, initialEnergyPercent:double, position:Position) : T
+    CreateMeat(position:Position) : Meat
 }
 class EntityFactory {
     + EntityFactory(serviceProvider:IServiceProvider, worldService:IWorldService, timeManager:ITimeManager, entityLocator:IEntityLocator<Animal>, plantLocator:IEntityLocator<Plant>)
-    + CreateAnimal(energy:double, health:double, position:Position, isMale:bool) : T
-    + CreatePlant(energy:double, health:double, position:Position) : T
+    + CreateAnimal(initialHealthPercent:double, initialEnergyPercent:double, position:Position, isMale:bool) : T
+    + CreatePlant(initialHealthPercent:double, initialEnergyPercent:double, position:Position) : T
+    + CreateMeat(position:Position) : Meat
 }
 class "IEntityLocator`1"<T> {
 }

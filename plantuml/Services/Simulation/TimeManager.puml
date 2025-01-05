@@ -5,30 +5,35 @@ interface ITimeManager {
     RegisterTickAction(action:Action) : void
     Start() : void
     Pause() : void
+    WaitForStop() : void
     Reset() : void
     SetSimulationSpeed(speed:double) : void
 }
 class TimeManager {
-    - _timer : Timer?
-    - _currentTime : double
+    - <<const>> FIXED_TIME_STEP : double
     - _isRunning : bool
+    - _currentTime : double
     - _simulationSpeed : double = 1.0
-    - _baseIntervalMilliseconds : int = 1000
+    - _isResetting : bool
     + CurrentTime : double <<get>>
-    - <<readonly>> _targetFPS : int = 60
-    - <<readonly>> _fixedDeltaTime : double
     + DeltaTime : double <<get>>
+    +  <<event>> SimulationUpdated : EventHandler? 
+    - _displayTime : double
+    - <<const>> DISPLAY_TIME_MULTIPLIER : double = 10.0
     + TimeManager()
+    - UpdateLogic() : void
+    - Render() : void
     + RegisterTickAction(action:Action) : void
     + Start() : void
     + Pause() : void
+    + WaitForStop() : void
+    + DisplayTime : double <<get>>
     + Reset() : void
     + SetSimulationSpeed(speed:double) : void
-    - GetInterval() : int
-    - Tick(state:object?) : void
 }
 class "List`1"<T> {
 }
 ITimeManager <|-- TimeManager
 TimeManager o-> "_tickActions<Action>" "List`1"
+TimeManager --> "_gameLoop" GameLoop
 @enduml

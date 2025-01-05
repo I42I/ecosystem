@@ -1,0 +1,23 @@
+@startuml
+interface IAnimationManager {
+    PlayAnimation(animEvent:IAnimationEvent) : void
+    Update(deltaTime:double) : void
+    HasQueuedAnimations : bool <<get>>
+}
+class AnimationManager {
+    - _currentAnimation : IAnimationEvent?
+    - _idleStateTimer : double
+    - <<const>> IDLE_STATE_DURATION : double = 2.0
+    + HasQueuedAnimations : bool <<get>>
+    + AnimationManager(sprite:AnimatedSprite)
+    + PlayAnimation(animEvent:IAnimationEvent) : void
+    + Update(deltaTime:double) : void
+}
+class "Queue`1"<T> {
+}
+IAnimationManager --> "CurrentState" AnimationState
+IAnimationManager <|-- AnimationManager
+AnimationManager --> "_sprite" AnimatedSprite
+AnimationManager o-> "_animationQueue<IAnimationEvent>" "Queue`1"
+AnimationManager o-> "CurrentState" AnimationState
+@enduml

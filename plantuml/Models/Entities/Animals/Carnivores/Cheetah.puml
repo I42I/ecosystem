@@ -1,0 +1,21 @@
+@startuml
+class Cheetah {
+    + {static} DefaultMaxHealth : int <<get>>
+    + {static} DefaultMaxEnergy : int <<get>>
+    + <<override>> MaxHealth : int <<get>>
+    + <<override>> MaxEnergy : int <<get>>
+    + <<override>> BaseAttackPower : double <<get>>
+    # <<override>> BaseAttackRange : double <<get>>
+    # <<override>> BaseBiteCooldownDuration : double <<get>>
+    + <<override>> BaseHungerThreshold : double <<get>>
+    # <<override>> BaseReproductionThreshold : double <<get>>
+    # <<override>> BaseReproductionEnergyCost : double <<get>>
+    # <<override>> SpeciesEnergyCostModifier : double <<get>>
+    + Cheetah(entityLocator:IEntityLocator<Animal>, preyLocator:IEntityLocator<Animal>, worldService:IWorldService, timeManager:ITimeManager, entityFactory:IEntityFactory, position:Position, healthPoints:int, energy:int, isMale:bool)
+    + <<override>> CreateOffspring(position:Position) : Animal
+}
+Carnivore <|-- Cheetah
+Cheetah --> "PreferredEnvironment" EnvironmentType
+Cheetah --> "_territoryCenter" Position
+Cheetah --> "_entityFactory" IEntityFactory
+@enduml

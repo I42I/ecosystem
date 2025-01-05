@@ -2,11 +2,16 @@
 class GroupMovementBehavior {
     - <<readonly>> _groupRadius : double
     - <<readonly>> _separationDistance : double
+    - _behaviorAccumulator : double
+    - <<const>> GROUP_CHECK_INTERVAL : double = 3.0
+    - <<const>> ISOLATION_THRESHOLD : double = 0.15
     + GroupMovementBehavior(worldService:IWorldService, groupRadius:double, separationDistance:double)
     + Name : string <<get>>
     + Priority : int <<get>>
     + CanExecute(animal:Animal) : bool
+    - IsIsolated(animal:Animal, neighbors:List<Animal>) : bool
     + Execute(animal:Animal) : void
+    - FindClosestGroup(neighbors:List<Animal>, animal:Animal) : List<Animal>
 }
 class "IBehavior`1"<T> {
 }

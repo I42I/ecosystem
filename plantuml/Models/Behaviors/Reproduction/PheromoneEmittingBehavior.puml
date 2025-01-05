@@ -1,0 +1,14 @@
+@startuml
+class PheromoneEmittingBehavior {
+    + Name : string <<get>>
+    + Priority : int <<get>>
+    + PheromoneEmittingBehavior(worldService:IWorldService)
+    + CanExecute(animal:Animal) : bool
+    + Execute(animal:Animal) : void
+}
+class "IBehavior`1"<T> {
+}
+"IBehavior`1" "<Animal>" <|-- PheromoneEmittingBehavior
+PheromoneEmittingBehavior --> "_worldService" IWorldService
+PheromoneEmittingBehavior --> "_restBehavior" RestBehavior
+@enduml

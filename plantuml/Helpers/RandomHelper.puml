@@ -2,7 +2,9 @@
 class RandomHelper <<static>> {
     - {static} <<readonly>> lockObject : object
     - {static} instance : Random?
-    - {static} seed : int
+    - <<const>> BORDER_MARGIN : double = 0.05
+    - {static} _seed : int = 42
+    + {static} Seed : int <<get>>
     + {static} Initialize(seedValue:int) : void
     + {static} NextDouble() : double
     + {static} GetRandomPositionInRadius(centerX:double, centerY:double, radius:double) : (double X, double Y)

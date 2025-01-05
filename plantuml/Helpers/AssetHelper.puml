@@ -1,0 +1,5 @@
+@startuml
+class AssetHelper <<static>> {
+    + {static} GetAssetPath(assetName:string) : string
+}
+@enduml

@@ -1,8 +1,8 @@
 @startuml
 class GroundHuntingStrategy {
-    + CalculateAttackDamage(baseAttackPower:double) : int
-    + CalculateEnergyGain(baseAttackPower:double) : int
-    + GetPotentialPrey(worldService:IWorldService) : IEnumerable<Animal>
+    + GroundHuntingStrategy(worldService:IWorldService)
+    + GetPotentialPrey(worldService:IWorldService, position:Position, visionRadius:double) : IEnumerable<Animal>
 }
 IHuntingStrategy <|-- GroundHuntingStrategy
+GroundHuntingStrategy --> "_worldService" IWorldService
 @enduml

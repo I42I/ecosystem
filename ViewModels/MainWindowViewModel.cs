@@ -8,6 +8,8 @@ using ecosystem.Services.World;
 using ecosystem.Models.Core;
 using System.Collections.ObjectModel;
 using ecosystem.Helpers;
+using Avalonia.Media;
+using ecosystem.Models.Entities.Environment;
 
 namespace ecosystem.ViewModels;
 
@@ -38,12 +40,21 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] 
     private int _simulationSeed = RandomHelper.Seed;
 
+    private ObservableCollection<GridCellViewModel> _gridCells;
+    public ObservableCollection<GridCellViewModel> GridCells => _gridCells;
+
     public MainWindowViewModel(ISimulationEngine simulationEngine, ITimeManager timeManager, IWorldService worldService)
     {
+        Console.WriteLine("Initializing MainWindowViewModel");
         _simulationEngine = simulationEngine;
         _timeManager = timeManager;
         _worldService = worldService;
         _entityViewModels = new ObservableCollection<EntityViewModel>();
+        _gridCells = new ObservableCollection<GridCellViewModel>();
+        
+        Console.WriteLine("Updating grid cells");
+        UpdateGridCells();
+        Console.WriteLine($"Grid cells count: {_gridCells.Count}");
 
         if (timeManager is TimeManager tm)
         {
@@ -64,6 +75,65 @@ public partial class MainWindowViewModel : ViewModelBase
         }
 
         _worldService.Entities.CollectionChanged += Entities_CollectionChanged;
+    }
+
+    private void UpdateGridCells()
+    {
+        _gridCells.Clear();
+        
+        const int DETAIL_LEVEL = 4; // Plus le nombre est grand, plus la transition sera lisse
+        var baseWidth = WindowWidth / _worldService.Grid.Width;
+        var baseHeight = WindowHeight / _worldService.Grid.Height;
+
+        for (int x = 0; x < _worldService.Grid.Width; x++)
+        {
+            for (int y = 0; y < _worldService.Grid.Height; y++)
+            {
+                var (type, weight) = _worldService.Grid.GetEnvironmentInfoAt(x, y);
+                
+                // Subdiviser chaque cellule près des frontières
+                int subdivisions = DetermineSubdivisions(weight);
+                var subWidth = baseWidth / subdivisions;
+                var subHeight = baseHeight / subdivisions;
+
+                for (int sx = 0; sx < subdivisions; sx++)
+                {
+                    for (int sy = 0; sy < subdivisions; sy++)
+                    {
+                        var subX = x * baseWidth + sx * subWidth;
+                        var subY = y * baseHeight + sy * subHeight;
+
+                        // Interpoler la couleur
+                        var groundColor = Colors.SandyBrown;
+                        var waterColor = Colors.LightBlue;
+                        
+                        var color = new Color(
+                            (byte)(waterColor.R + (groundColor.R - waterColor.R) * weight),
+                            (byte)(waterColor.G + (groundColor.G - waterColor.G) * weight),
+                            (byte)(waterColor.B + (groundColor.B - waterColor.B) * weight),
+                            255
+                        );
+
+                        _gridCells.Add(new GridCellViewModel(
+                            subX,
+                            subY,
+                            subWidth + 0.5, // +0.5 pour éviter les gaps
+                            subHeight + 0.5,
+                            new SolidColorBrush(color)
+                        ));
+                    }
+                }
+            }
+        }
+    }
+
+    private int DetermineSubdivisions(float weight)
+    {
+        // Plus on est proche de 0.5 (frontière), plus on subdivise
+        float threshold = Math.Abs(weight - 0.5f);
+        if (threshold < 0.1f) return 4;      // Très près de la frontière
+        if (threshold < 0.2f) return 2;      // Assez près de la frontière
+        return 1;                            // Loin de la frontière
     }
 
     public void InitializeAndStart()
@@ -124,6 +194,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     partial void OnWindowWidthChanged(double value)
     {
+        UpdateGridCells();
         foreach (var entityVM in _entityViewModels)
         {
             entityVM.UpdateDisplaySize(value, WindowHeight);
@@ -132,6 +203,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     partial void OnWindowHeightChanged(double value)
     {
+        UpdateGridCells();
         foreach (var entityVM in _entityViewModels)
         {
             entityVM.UpdateDisplaySize(WindowWidth, value);

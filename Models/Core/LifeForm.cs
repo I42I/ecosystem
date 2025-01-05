@@ -106,6 +106,8 @@ public abstract class LifeForm : Entity, IHasContactRange
             HealthPoints = Math.Max(0, HealthPoints - damageToApply);
             _healthAccumulator -= damageToApply;
 
+            Console.WriteLine($"[{GetType().Name}#{TypeId}] took {damageToApply} damage. HP: {HealthPoints}/{MaxHealth}");
+
             if (HealthPoints <= 0)
             {
                 Die();

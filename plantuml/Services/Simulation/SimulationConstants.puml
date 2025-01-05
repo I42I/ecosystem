@@ -1,0 +1,44 @@
+@startuml
+class SimulationConstants <<static>> {
+    + <<const>> TICK_RATE : double = 60.0
+    + <<const>> SIMULATION_SPEED : double = 0.1
+    + <<const>> MOVEMENT_THRESHOLD : double = 0.0001
+    + <<const>> BASE_MOVEMENT_SPEED : double = 0.5
+    + <<const>> BEHAVIOR_UPDATE_INTERVAL : double = 0.01
+    + <<const>> PLANT_GROWTH_INTERVAL : double = 1.0
+    + <<const>> PLANT_REPRODUCTION_INTERVAL : double = 5.0
+    + <<const>> BASE_ENERGY_LOSS : double = 0.05
+    + <<const>> MOVEMENT_ENERGY_COST : double = 0.02
+    + <<const>> ENVIRONMENT_DAMAGE_RATE : double = 0.1
+    + <<const>> ATTACK_ENERGY_COST : double = 0.1
+    + <<const>> REPRODUCTION_ENERGY_COST : double = 0.5
+    + <<const>> BASE_HEALTH_LOSS : double = 0.01
+    + <<const>> HEALTH_LOSS_WHEN_STARVING : double = 0.02
+    + <<const>> MIN_HEALTH_FOR_CONVERSION : double = 10
+    + <<const>> ENERGY_HEALTH_CONVERSION_RATE : double = 10
+    + <<const>> MALE_REPRODUCTION_COOLDOWN : double = 30.0
+    + <<const>> GESTATION_PERIOD : double = 0.5
+    + <<const>> FEMALE_REPRODUCTION_COOLDOWN : double = 40.0
+    + <<const>> MAX_ENERGY_PERCENT : double = 100.0
+    + <<const>> HEALING_ENERGY_THRESHOLD : double = 90.0
+    + <<const>> HEALING_CONVERSION_RATE : double = 1
+    + <<const>> MAX_HEALTH_PERCENT : double = 100.0
+    + <<const>> WASTE_CONTACT_RADIUS : double = 0.005
+    + <<const>> WASTE_DECAY_RATE : double = 0.001
+    + <<const>> WASTE_BASE_ENERGY : double = 50
+    + <<const>> WASTE_MIN_ENERGY : double = 5
+    + <<const>> ROOT_GROWTH_RATE : double = 0.0001
+    + <<const>> MAX_ROOT_RADIUS : double = 0.2
+    + <<const>> MIN_ROOT_RADIUS : double = 0.05
+    + <<const>> WASTE_ABSORPTION_THRESHOLD : double = 0.001
+    + <<const>> PLANT_SEED_SPREAD_BASE_CHANCE : double = 0.05
+    + <<const>> PLANT_MIN_ENERGY_FOR_REPRODUCTION : int = 50
+    + <<const>> PLANT_MIN_HEALTH_FOR_REPRODUCTION : int = 30
+    + <<const>> PLANT_REPRODUCTION_ENERGY_COST : int = 30
+    + <<const>> PLANT_REPRODUCTION_CHECK_INTERVAL : double = 0.5
+    + <<const>> DIGESTION_TIME : double = 0.1
+    + <<const>> DIGESTION_EFFICIENCY : double = 0.7
+    + <<const>> MIN_WASTE_PER_DIGESTION : int = 1
+    + <<const>> WASTE_DROP_RADIUS : double = 0.01
+}
+@enduml

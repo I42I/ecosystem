@@ -1,0 +1,9 @@
+@startuml
+class BoolToValueConverter {
+    + TrueValue : string <<get>> <<set>>
+    + FalseValue : string <<get>> <<set>>
+    + Convert(value:object?, targetType:Type, parameter:object?, culture:CultureInfo) : object?
+    + ConvertBack(value:object?, targetType:Type, parameter:object?, culture:CultureInfo) : object?
+}
+IValueConverter <|-- BoolToValueConverter
+@enduml

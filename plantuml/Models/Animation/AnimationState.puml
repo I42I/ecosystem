@@ -1,0 +1,14 @@
+@startuml
+enum AnimationState {
+    Idle,
+    IdleAlt,
+    Moving,
+    Catching,
+    TakingDamage,
+    Sleeping,
+    Dying,
+    Dead,
+    Eat,
+    Dig,
+}
+@enduml

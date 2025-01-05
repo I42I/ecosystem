@@ -1,0 +1,34 @@
+@startuml
+class EntityViewModel {
+    - _displayWidth : double = 800
+    - _displayHeight : double = 600
+    + EntityViewModel(entity:Entity)
+    + DisplayX : double <<get>>
+    + DisplayY : double <<get>>
+    + StatsText : string <<get>>
+    + ScaledVisionRadius : double <<get>>
+    + ScaledContactRadius : double <<get>>
+    + ScaledRootRadius : double <<get>>
+    + CenteredX : double <<get>>
+    + CenteredY : double <<get>>
+    + CenteredContactX : double <<get>>
+    + CenteredContactY : double <<get>>
+    + CenteredRootX : double <<get>>
+    + CenteredRootY : double <<get>>
+    + UpdateDisplaySize(width:double, height:double) : void
+    - Entity_PropertyChanged(sender:object?, e:PropertyChangedEventArgs) : void
+    - Stats_PropertyChanged(sender:object?, e:PropertyChangedEventArgs) : void
+    + HasSprite : bool <<get>>
+    + SpriteSize : double <<get>>
+    + SpriteCenteredX : double <<get>>
+    + SpriteCenteredY : double <<get>>
+    - _lastDirection : double = 1
+    + MovementDirection : double <<get>>
+    + UpdateAnimation(deltaTime:double) : void
+}
+ViewModelBase <|-- EntityViewModel
+EntityViewModel --> "_entity" Entity
+EntityViewModel --> "Entity" Entity
+EntityViewModel --> "Color" IBrush
+EntityViewModel --> "SpriteBitmap" IImage
+@enduml

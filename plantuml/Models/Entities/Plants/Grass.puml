@@ -1,10 +1,17 @@
 @startuml
 class Grass {
+    + {static} DefaultMaxHealth : int <<get>>
+    + {static} DefaultMaxEnergy : int <<get>>
+    + <<override>> MaxHealth : int <<get>>
+    + <<override>> MaxEnergy : int <<get>>
     # <<override>> BaseAbsorptionRate : double <<get>>
-    + Grass(worldService:IWorldService, healthPoints:int, energy:int, position:Position)
+    + Grass(worldService:IWorldService, timeManager:ITimeManager, entityFactory:IEntityFactory, healthPoints:int, energy:int, position:Position)
     # <<override>> CanSpreadSeeds() : bool
     # <<override>> CreateOffspring(position:Position) : Plant
 }
 Plant <|-- Grass
+IStaticSpriteEntity <|-- Grass
+Grass --> "Sprite" ISprite
+Grass --> "_entityFactory" IEntityFactory
 Grass --> "PreferredEnvironment" EnvironmentType
 @enduml

@@ -1,7 +1,10 @@
 @startuml
 class MainWindow <<partial>> {
+    - <<const>> TOP_MARGIN : double = 30
+    - <<const>> BOTTOM_MARGIN : double = 50
     + MainWindow()
     - Window_SizeChanged(sender:object?, e:SizeChangedEventArgs) : void
+    - Window_Loaded(sender:object?, e:global::Avalonia.Interactivity.RoutedEventArgs) : void
 }
 Window <|-- MainWindow
 @enduml

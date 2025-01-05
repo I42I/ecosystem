@@ -1,0 +1,6 @@
+@startuml
+class TypeConverters <<static>> {
+}
+TypeConverters o-> "IsAnimal" IValueConverter
+TypeConverters o-> "IsPlant" IValueConverter
+@enduml

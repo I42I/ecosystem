@@ -1,0 +1,11 @@
+@startuml
+class GridCellViewModel {
+    + X : double <<get>>
+    + Y : double <<get>>
+    + Width : double <<get>>
+    + Height : double <<get>>
+    + GridCellViewModel(x:double, y:double, width:double, height:double, color:IBrush)
+}
+ViewModelBase <|-- GridCellViewModel
+GridCellViewModel --> "Color" IBrush
+@enduml

@@ -1,0 +1,11 @@
+@startuml
+interface IAnimationEvent {
+    IsBlocking : bool <<get>>
+}
+class AnimationEvent <<record>> {
+    + IsBlocking : bool <<get>> <<init>> = false
+}
+IAnimationEvent --> "State" AnimationState
+IAnimationEvent <|-- AnimationEvent
+AnimationEvent --> "State" AnimationState
+@enduml

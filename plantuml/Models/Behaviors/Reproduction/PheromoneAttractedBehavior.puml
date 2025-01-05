@@ -1,0 +1,15 @@
+@startuml
+class PheromoneAttractedBehavior {
+    - <<const>> MATING_SPEED_MULTIPLIER : double = 1.2
+    + Name : string <<get>>
+    + Priority : int <<get>>
+    + PheromoneAttractedBehavior(worldService:IWorldService)
+    + CanExecute(animal:Animal) : bool
+    + Execute(animal:Animal) : void
+    - FindMate(animal:Animal) : Animal?
+}
+class "IBehavior`1"<T> {
+}
+"IBehavior`1" "<Animal>" <|-- PheromoneAttractedBehavior
+PheromoneAttractedBehavior --> "_worldService" IWorldService
+@enduml

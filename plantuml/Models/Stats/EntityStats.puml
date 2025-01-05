@@ -1,9 +1,13 @@
 @startuml
 class EntityStats {
-    - <<readonly>> _lifeForm : LifeForm?
     - _currentBehavior : string?
+    - <<readonly>> _entity : Entity?
+    - <<readonly>> _lifeForm : LifeForm?
+    - _displayStats : string
     +  <<event>> PropertyChanged : PropertyChangedEventHandler? 
-    + EntityStats(lifeForm:LifeForm?)
+    + EntityStats(entity:Entity?)
+    - LifeForm_PropertyChanged(sender:object?, e:PropertyChangedEventArgs) : void
+    - OrganicWaste_PropertyChanged(sender:object?, e:PropertyChangedEventArgs) : void
     + CurrentBehavior : string? <<get>> <<set>>
     + DisplayStats : string <<get>>
     # <<virtual>> OnPropertyChanged(propertyName:string?) : void

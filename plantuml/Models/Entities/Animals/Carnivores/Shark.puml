@@ -1,15 +1,20 @@
 @startuml
 class Shark {
+    + {static} DefaultMaxHealth : int <<get>>
+    + {static} DefaultMaxEnergy : int <<get>>
+    + <<override>> MaxHealth : int <<get>>
+    + <<override>> MaxEnergy : int <<get>>
     + <<override>> BaseAttackPower : double <<get>>
     # <<override>> BaseAttackRange : double <<get>>
-    # <<override>> BaseHungerThreshold : double <<get>>
+    # <<override>> BaseBiteCooldownDuration : double <<get>>
+    + <<override>> BaseHungerThreshold : double <<get>>
     # <<override>> BaseReproductionThreshold : double <<get>>
     # <<override>> BaseReproductionEnergyCost : double <<get>>
     # <<override>> SpeciesEnergyCostModifier : double <<get>>
-    + Shark(entityLocator:IEntityLocator<Animal>, preyLocator:IEntityLocator<Animal>, worldService:IWorldService, timeManager:ITimeManager, healthPoints:int, energy:int, position:Position, isMale:bool)
+    + Shark(entityLocator:IEntityLocator<Animal>, preyLocator:IEntityLocator<Animal>, worldService:IWorldService, timeManager:ITimeManager, entityFactory:IEntityFactory, healthPoints:int, energy:int, position:Position, isMale:bool)
     + <<override>> CreateOffspring(position:Position) : Animal
-    # <<override>> GetEnvironmentMovementModifier() : double
 }
 Carnivore <|-- Shark
 Shark --> "PreferredEnvironment" EnvironmentType
+Shark --> "_entityFactory" IEntityFactory
 @enduml

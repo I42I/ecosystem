@@ -1,0 +1,19 @@
+@startuml
+class Antelope {
+    + {static} DefaultMaxHealth : int <<get>>
+    + {static} DefaultMaxEnergy : int <<get>>
+    + <<override>> MaxHealth : int <<get>>
+    + <<override>> MaxEnergy : int <<get>>
+    # <<override>> BaseBiteSize : int <<get>>
+    # <<override>> BaseBiteCooldownDuration : double <<get>>
+    + <<override>> BaseHungerThreshold : double <<get>>
+    # <<override>> BaseReproductionThreshold : double <<get>>
+    # <<override>> BaseReproductionEnergyCost : double <<get>>
+    # <<override>> SpeciesEnergyCostModifier : double <<get>>
+    + Antelope(entityLocator:IEntityLocator<Animal>, plantLocator:IEntityLocator<Plant>, worldService:IWorldService, timeManager:ITimeManager, entityFactory:IEntityFactory, position:Position, healthPoints:int, energy:int, isMale:bool)
+    + <<override>> CreateOffspring(position:Position) : Animal
+}
+Herbivore <|-- Antelope
+Antelope --> "PreferredEnvironment" EnvironmentType
+Antelope --> "_entityFactory" IEntityFactory
+@enduml

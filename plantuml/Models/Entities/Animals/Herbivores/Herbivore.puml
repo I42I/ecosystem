@@ -1,12 +1,12 @@
 @startuml
 abstract class Herbivore {
-    # {abstract} BaseHungerThreshold : double <<get>>
+    + {abstract} BaseHungerThreshold : double <<get>>
     # {abstract} BaseReproductionThreshold : double <<get>>
     # {abstract} BaseReproductionEnergyCost : double <<get>>
     # {abstract} BaseBiteSize : int <<get>>
-    # Herbivore(entityLocator:IEntityLocator<Animal>, plantLocator:IEntityLocator<Plant>, worldService:IWorldService, timeManager:ITimeManager, position:Position, healthPoints:int, energy:int, isMale:bool, visionRadius:double, contactRadius:double, basalMetabolicRate:double)
-    # FindNearestPlant() : Plant?
-    # <<virtual>> Eat(plant:Plant) : void
+    # Herbivore(entityLocator:IEntityLocator<Animal>, plantLocator:IEntityLocator<Plant>, worldService:IWorldService, timeManager:ITimeManager, entityFactory:IEntityFactory, position:Position, healthPoints:int, energy:int, isMale:bool, visionRadius:double, contactRadius:double, basalMetabolicRate:double)
+    + FindNearestPlant() : Plant?
+    + <<virtual>> Eat(plant:Plant) : void
 }
 class "IEntityLocator`1"<T> {
 }

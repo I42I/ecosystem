@@ -2,16 +2,17 @@
 interface ISimulationEngine {
      <<event>> SimulationUpdated : EventHandler? 
     InitializeSimulation() : void
+    ResetSimulation() : void
     CreateInitialEntities() : void
     UpdateSimulation() : void
 }
 class SimulationEngine {
     +  <<event>> SimulationUpdated : EventHandler? 
+    - <<readonly>> _updateLock : object
     + SimulationEngine(worldService:IWorldService, entityFactory:IEntityFactory, timeManager:ITimeManager)
     + InitializeSimulation() : void
+    + ResetSimulation() : void
     + CreateInitialEntities() : void
-    - CreateAnimal(count:int, health:double, energy:double) : void
-    - CreatePlants(count:int, health:double, energy:double) : void
     + UpdateSimulation() : void
 }
 ISimulationEngine <|-- SimulationEngine

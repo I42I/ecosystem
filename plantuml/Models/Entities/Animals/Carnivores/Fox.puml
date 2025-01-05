@@ -1,15 +1,24 @@
 @startuml
 class Fox {
+    + {static} DefaultMaxHealth : int <<get>>
+    + {static} DefaultMaxEnergy : int <<get>>
+    + <<override>> MaxHealth : int <<get>>
+    + <<override>> MaxEnergy : int <<get>>
     + <<override>> BaseAttackPower : double <<get>>
     # <<override>> BaseAttackRange : double <<get>>
-    # <<override>> BaseHungerThreshold : double <<get>>
+    # <<override>> BaseBiteCooldownDuration : double <<get>>
+    + <<override>> BaseHungerThreshold : double <<get>>
     # <<override>> BaseReproductionThreshold : double <<get>>
     # <<override>> BaseReproductionEnergyCost : double <<get>>
     # <<override>> SpeciesEnergyCostModifier : double <<get>>
-    + Fox(entityLocator:IEntityLocator<Animal>, preyLocator:IEntityLocator<Animal>, worldService:IWorldService, timeManager:ITimeManager, position:Position, healthPoints:int, energy:int, isMale:bool)
+    + Fox(entityLocator:IEntityLocator<Animal>, preyLocator:IEntityLocator<Animal>, worldService:IWorldService, timeManager:ITimeManager, entityFactory:IEntityFactory, position:Position, healthPoints:int, energy:int, isMale:bool)
     + <<override>> CreateOffspring(position:Position) : Animal
+    + <<override>> Attack(prey:Animal) : void
+    + <<override>> TakeDamage(amount:double) : void
+    + <<override>> UpdateAnimation(deltaTime:double) : void
 }
 Carnivore <|-- Fox
 Fox --> "PreferredEnvironment" EnvironmentType
 Fox --> "_territoryCenter" Position
+Fox --> "_entityFactory" IEntityFactory
 @enduml

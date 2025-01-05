@@ -5,7 +5,6 @@ class Position {
     + X : double <<get>> <<set>>
     + Y : double <<get>> <<set>>
     + Position(x:double, y:double)
-    + Position()
     - OnPropertyChanged(propertyName:string) : void
     +  <<event>> PropertyChanged : PropertyChangedEventHandler? 
 }

@@ -1,0 +1,7 @@
+@startuml
+interface IAnimatable {
+    UpdateAnimation(deltaTime:double) : void
+}
+IAnimatable --> "Sprite" AnimatedSprite
+IAnimatable --> "CurrentState" AnimationState
+@enduml

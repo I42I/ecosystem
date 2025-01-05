@@ -1,0 +1,12 @@
+@startuml
+interface IHasContactRange {
+    ContactRadius : double <<get>>
+}
+interface IHasVisionRange {
+    VisionRadius : double <<get>>
+}
+interface IHasRootSystem {
+    RootRadius : double <<get>>
+    SeedRadius : double <<get>>
+}
+@enduml

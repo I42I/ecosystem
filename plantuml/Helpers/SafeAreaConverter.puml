@@ -1,0 +1,15 @@
+@startuml
+class SafeAreaConverter {
+    - <<const>> TOP_MARGIN : double = 30.0
+    - <<const>> BOTTOM_MARGIN : double = 50.0
+    + Convert(value:object?, targetType:Type, parameter:object?, culture:CultureInfo) : object?
+    + ConvertBack(value:object?, targetType:Type, parameter:object?, culture:CultureInfo) : object?
+}
+class SafeAreaMarginConverter {
+    - <<const>> TOP_MARGIN : double = 30.0
+    + Convert(value:object?, targetType:Type, parameter:object?, culture:CultureInfo) : object?
+    + ConvertBack(value:object?, targetType:Type, parameter:object?, culture:CultureInfo) : object?
+}
+IValueConverter <|-- SafeAreaConverter
+IValueConverter <|-- SafeAreaMarginConverter
+@enduml

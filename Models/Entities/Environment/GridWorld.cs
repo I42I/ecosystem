@@ -1,65 +1,65 @@
-using System.Collections.Generic;
-using Avalonia.Media;
+using System;
+using ecosystem.Models.Core;
+using ecosystem.Helpers;
 
 namespace ecosystem.Models.Entities.Environment;
 
 public class GridWorld
 {
-    public int Width { get; }
-    public int Height { get; }
-    private readonly EnvironmentType[,] grid;
-    private readonly Dictionary<EnvironmentType, IBrush> environmentColors;
+    private readonly EnvironmentType[,] _grid;
+    private readonly float[,] _weights; // 0 = eau pure, 1 = terre pure
+    
+    private const int GRID_WIDTH = 20;
+    private const int GRID_HEIGHT = 13;
 
-    public GridWorld(int width, int height)
+    public int Width => GRID_WIDTH;
+    public int Height => GRID_HEIGHT;
+
+    public GridWorld(int displayWidth, int displayHeight)
     {
-        Width = width;
-        Height = height;
-        grid = new EnvironmentType[width, height];
-
-        environmentColors = new Dictionary<EnvironmentType, IBrush>
-        {
-            { EnvironmentType.Ground, new SolidColorBrush(Colors.SandyBrown) },
-            { EnvironmentType.Water, new SolidColorBrush(Colors.LightBlue) },
-            { EnvironmentType.Ground | EnvironmentType.Water, new SolidColorBrush(Colors.LightGreen) }
-        };
-        InitializeGrid();
+        _grid = new EnvironmentType[GRID_WIDTH, GRID_HEIGHT];
+        _weights = new float[GRID_WIDTH, GRID_HEIGHT];
+        GenerateGrid();
     }
 
-    private void InitializeGrid()
+    private void GenerateGrid()
     {
-        int halfWidth = Width / 2;
-        int halfHeight = Height / 2;
+        // Générer les centres des biomes
+        var waterCenters = BiomeGenerator.GenerateWaterCenters(GRID_WIDTH, GRID_HEIGHT, RandomHelper.Seed);
 
-        FillZone(0, 0, halfWidth, halfHeight, EnvironmentType.Ground);
-        
-        FillZone(halfWidth, 0, Width, halfHeight, EnvironmentType.Water);
-        
-        FillZone(0, halfHeight, halfWidth, Height, EnvironmentType.Ground | EnvironmentType.Water);
-        
-        FillZone(halfWidth, halfHeight, Width, Height, EnvironmentType.Ground);
-    }
-
-    private void FillZone(int startX, int startY, int endX, int endY, EnvironmentType type)
-    {
-        for (int x = startX; x < endX; x++)
+        // Pour chaque cellule
+        for (int x = 0; x < GRID_WIDTH; x++)
         {
-            for (int y = startY; y < endY; y++)
+            for (int y = 0; y < GRID_HEIGHT; y++)
             {
-                grid[x, y] = type;
+                // Calculer la distance au point d'eau le plus proche
+                float minDistance = float.MaxValue;
+                foreach (var center in waterCenters)
+                {
+                    float dx = x - center.x;
+                    float dy = y - center.y;
+                    float dist = (float)Math.Sqrt(dx * dx + dy * dy) / center.radius;
+                    minDistance = Math.Min(minDistance, dist);
+                }
+
+                // Interpolation douce
+                _weights[x, y] = Math.Clamp(minDistance, 0, 1);
+                _grid[x, y] = _weights[x, y] < 0.5f ? EnvironmentType.Water : EnvironmentType.Ground;
             }
         }
     }
 
-    public EnvironmentType GetEnvironmentAt(int x, int y)
+    public (EnvironmentType type, float weight) GetEnvironmentInfoAt(int x, int y)
     {
-        if (x < 0 || x >= Width || y < 0 || y >= Height)
-            return EnvironmentType.None;
-        return grid[x, y];
+        x = Math.Clamp(x, 0, GRID_WIDTH - 1);
+        y = Math.Clamp(y, 0, GRID_HEIGHT - 1);
+        return (_grid[x, y], _weights[x, y]);
     }
 
-    public IBrush GetEnvironmentColorAt(int x, int y)
+    public EnvironmentType GetEnvironmentAt(int x, int y)
     {
-        var environment = GetEnvironmentAt(x, y);
-        return environmentColors[environment];
+        x = Math.Clamp(x, 0, GRID_WIDTH - 1);
+        y = Math.Clamp(y, 0, GRID_HEIGHT - 1);
+        return _grid[x, y];
     }
 }

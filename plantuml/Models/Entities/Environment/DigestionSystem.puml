@@ -1,0 +1,19 @@
+@startuml
+interface IDigestive {
+    ProcessDigestion(deltaTime:double) : void
+    AddFood(amount:int) : void
+}
+class DigestionSystem {
+    - _digestionTimer : double
+    - _foodInDigestion : int
+    + DigestionSystem(animal:Animal, worldService:IWorldService, timeManager:ITimeManager)
+    + AddFood(amount:int) : void
+    + ProcessDigestion(deltaTime:double) : void
+    - CreateWaste() : void
+    - CalculateWasteAmount() : int
+}
+IDigestive <|-- DigestionSystem
+DigestionSystem --> "_animal" Animal
+DigestionSystem --> "_worldService" IWorldService
+DigestionSystem --> "_timeManager" ITimeManager
+@enduml
