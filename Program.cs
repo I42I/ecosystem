@@ -14,6 +14,8 @@ public class Program
         try
         {
             BuildAvaloniaApp()
+                .UseSkia()
+                .UseWebAssembly()
                 .StartWithClassicDesktopLifetime(args);
         }
         catch (Exception ex)
